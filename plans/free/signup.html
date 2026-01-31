@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Signup</title>
+  <title>Free Plan Signup</title>
   <style>
     body { font-family: Arial, sans-serif; background:#0b0b0b; color:#fff; text-align:center; padding:2rem; }
     form { margin:2rem auto; max-width:300px; background:#1a1a1a; padding:2rem; border-radius:8px; }
@@ -13,12 +13,12 @@
   </style>
 </head>
 <body>
-  <h1>Complete Signup</h1>
-  <div id="plan-info"></div>
+  <h1>Signup for Free Plan</h1>
+  <div id="plan-info">Free Plan</div>
   <form method="POST" action="/signup">
     <!-- Hidden fields populated from query string -->
     <input type="hidden" name="discordId" id="discordId">
-    <input type="hidden" name="plan" id="plan">
+    <input type="hidden" name="plan" value="free">
 
     <label>Set a Password:</label><br>
     <input type="password" name="password" required><br>
@@ -27,20 +27,9 @@
   </form>
 
   <script>
-    // Read query parameters from URL
     const params = new URLSearchParams(window.location.search);
     const discordId = params.get("discordId");
-    const plan = params.get("plan");
-
-    // Populate hidden fields
     document.getElementById("discordId").value = discordId;
-    document.getElementById("plan").value = plan;
-
-    // Show plan info
-    const info = document.getElementById("plan-info");
-    if (plan) {
-      info.textContent = "Signing up for " + plan.charAt(0).toUpperCase() + plan.slice(1) + " Plan";
-    }
   </script>
 </body>
 </html>
