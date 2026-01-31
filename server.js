@@ -1,5 +1,5 @@
 const express = require("express");
-const fetch = require("node-fetch");
+const fetch = require("node-fetch"); // make sure node-fetch is installed
 const Database = require("@replit/database");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
