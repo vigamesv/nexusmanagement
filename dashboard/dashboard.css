@@ -1,49 +1,95 @@
-body {
-  background: #0b0b0b;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
+  /* General page styling */
+  body {
+    background: #0b0b0b;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
 
-header {
-  background: #1a1a1a;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  /* Header bar */
+  header {
+    background: #1a1a1a;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.dashboard-main {
-  text-align: center;
-  padding: 3rem;
-}
+  header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
 
-.plan-text {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-  color: #ccc;
-}
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 
-.dashboard-links {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-}
+  .user-info span {
+    font-weight: bold;
+  }
 
-.dash-link {
-  background: #1a1a1a;
-  color: #fff;
-  padding: 1.2rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
+  .user-info button {
+    background: #a020f0;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
 
-.dash-link:hover {
-  transform: translateY(-5px);
-  background: #a020f0;
-}
+  .user-info button:hover {
+    background: #8a1cd1;
+  }
 
+  /* Dashboard main content */
+  .dashboard-main {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .dashboard-main h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .plan-text {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: #ccc;
+  }
+
+  /* Dashboard links (cards/buttons) */
+  .dashboard-links {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .dash-link {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 1.2rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  .dash-link:hover {
+    transform: translateY(-5px);
+    background: #a020f0;
+  }
+
+  /* Footer */
+  footer {
+    background: #1a1a1a;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #aaa;
+  }

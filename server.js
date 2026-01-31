@@ -1,5 +1,6 @@
 const express = require("express");
 const Database = require("@replit/database");
+const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const app = express();
@@ -54,25 +55,55 @@ app.get("/callback", async (req, res) => {
     });
     const userData = await userResponse.json();
 
-    // Always save Discord username + discriminator
-    await db.set(userData.id, {
-      id: userData.id,
-      username: userData.username,
-      discriminator: userData.discriminator,
-      plan,
-      infractions: 0,
-      promotions: 0
-    });
+    let existingUser = await db.get(userData.id);
 
-    // Create session token and persist it
-    const sessionToken = Math.random().toString(36).substring(2);
-    await saveSession(sessionToken, userData.id);
+    if (!existingUser) {
+      // First time login → create record without password
+      await db.set(userData.id, {
+        id: userData.id,
+        username: userData.username,
+        discriminator: userData.discriminator,
+        plan,
+        infractions: 0,
+        promotions: 0
+      });
+    } else {
+      // Update username/discriminator each login
+      existingUser.username = userData.username;
+      existingUser.discriminator = userData.discriminator;
+      existingUser.plan = plan;
+      await db.set(userData.id, existingUser);
+    }
 
-    res.redirect(`/dashboard/user.html?token=${sessionToken}`);
+    // Redirect to password entry page
+    return res.redirect(`/dashboard/login-pass.html?id=${userData.id}`);
   } catch (err) {
     console.error("OAuth Error:", err);
     res.status(500).send("Error during Discord login");
   }
+});
+
+// --- Route to set/check password ---
+app.post("/check-password", async (req, res) => {
+  const { id, password } = req.body;
+  const user = await db.get(id);
+  if (!user) return res.status(400).send("User not found");
+
+  if (!user.hashedPassword) {
+    // First time setting password
+    const hashed = await bcrypt.hash(password, 10);
+    user.hashedPassword = hashed;
+    await db.set(id, user);
+  } else {
+    // Verify password
+    const match = await bcrypt.compare(password, user.hashedPassword);
+    if (!match) return res.status(401).send("Invalid password");
+  }
+
+  // Issue session token
+  const sessionToken = Math.random().toString(36).substring(2);
+  await saveSession(sessionToken, id);
+  res.json({ token: sessionToken });
 });
 
 // --- Middleware for session check ---
