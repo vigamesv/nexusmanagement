@@ -9,7 +9,6 @@ const db = new Database();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname)); // serve index.html, plans folder, etc.
 
 // Debug: confirm secrets are loaded
 console.log("Client ID:", process.env.DISCORD_CLIENT_ID);
@@ -114,6 +113,9 @@ app.post("/signup", async (req, res) => {
 
   res.send("Signup complete");
 });
+
+// Serve static files last (homepage, plans folder, etc.)
+app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
