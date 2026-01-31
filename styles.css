@@ -139,5 +139,38 @@ footer { text-align: center; padding: 1rem; background: #1a1a1a; color: #aaa; }
 .reveal.active { opacity: 1; transform: translateY(0); }
 .clicked { transform: scale(0.95); }
 
+.hero-buttons {
+  display: flex;
+  gap: 1rem; /* space between buttons */
+}
+
+.explore-btn,
+.login-btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.explore-btn {
+  background: #a020f0;
+  color: #fff;
+}
+
+.explore-btn:hover {
+  background: #8a1cd1;
+}
+
+.login-btn {
+  background: #333;
+  color: #fff;
+}
+
+.login-btn:hover {
+  background: #555;
+}
+
 /* Responsive */
 @media (max-width: 600px) { .nav-links a { font-size: 0.9rem; } }
