@@ -8,7 +8,7 @@ channel = "stable-25_05"
 [deployment]
 run = ["sh", "-c", "node server.js"]
 deploymentTarget = "cloudrun"
-build = ["sh", "-c", "npm install pg"]
+build = ["sh", "-c", "npm install express @replit/database bcrypt dotenv"]
 
 [userenv]
 

@@ -1,40 +1,13 @@
 const express = require("express");
-const { Pool } = require("pg");
+const Database = require("@replit/database");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const app = express();
-
-// Connect to Postgres using DATABASE_URL from .env
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
+const db = new Database();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Ensure users table exists
-(async () => {
-  try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id TEXT PRIMARY KEY,
-        username TEXT,
-        discriminator TEXT,
-        avatar TEXT,
-        plan TEXT,
-        infractions INT DEFAULT 0,
-        promotions INT DEFAULT 0,
-        announcements INT DEFAULT 0,
-        password TEXT
-      )
-    `);
-    console.log("Users table ready");
-  } catch (err) {
-    console.error("Error creating users table:", err);
-  }
-})();
 
 // Simple in-memory sessions
 let sessions = {};
@@ -81,13 +54,26 @@ app.get("/callback", async (req, res) => {
       ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`
       : "https://cdn.discordapp.com/embed/avatars/0.png";
 
-    // Insert or update user in DB
-    await pool.query(
-      `INSERT INTO users (id, username, discriminator, avatar, plan)
-       VALUES ($1,$2,$3,$4,$5)
-       ON CONFLICT (id) DO UPDATE SET username=$2, discriminator=$3, avatar=$4, plan=$5`,
-      [userData.id, userData.username, userData.discriminator, avatarUrl, plan]
-    );
+    // Save or update user in Replit DB
+    let existingUser = await db.get(userData.id);
+    if (!existingUser) {
+      await db.set(userData.id, {
+        id: userData.id,
+        username: userData.username,
+        discriminator: userData.discriminator,
+        avatar: avatarUrl,
+        plan,
+        infractions: 0,
+        promotions: 0,
+        announcements: 0
+      });
+    } else {
+      existingUser.username = userData.username;
+      existingUser.discriminator = userData.discriminator;
+      existingUser.avatar = avatarUrl;
+      existingUser.plan = plan;
+      await db.set(userData.id, existingUser);
+    }
 
     // Create session token
     const sessionToken = Math.random().toString(36).substring(2);
@@ -106,8 +92,8 @@ async function authMiddleware(req, res, next) {
   const token = req.headers["authorization"];
   if (token && sessions[token]) {
     const userId = sessions[token];
-    const result = await pool.query("SELECT * FROM users WHERE id=$1", [userId]);
-    req.user = result.rows[0];
+    const user = await db.get(userId);
+    req.user = user;
     next();
   } else {
     res.status(401).send("Unauthorized");
