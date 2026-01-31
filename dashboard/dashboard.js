@@ -20,10 +20,14 @@ async function loadDashboard() {
 
   const user = await res.json();
 
-  // Save token for homepage Dashboard button
+  if (!user || !user.username) {
+    alert("User data missing. Please log in again.");
+    window.location.href = "/";
+    return;
+  }
+
   localStorage.setItem("sessionToken", token);
 
-  // Display actual Discord username + discriminator
   document.getElementById("username").textContent = `${user.username}#${user.discriminator}`;
   document.getElementById("displayName").textContent = user.username;
   document.getElementById("planBadge").textContent = user.plan;
