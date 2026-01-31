@@ -22,53 +22,8 @@ app.get("/login", (req, res) => {
   res.redirect(redirect);
 });
 
-// Callback after Discord login
-app.get("/callback", async (req, res) => {
-  const code = req.query.code;
-  const plan = req.query.state;
 
-  if (!code) return res.status(400).send("No code provided");
-
-  try {
-    const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_id: process.env.DISCORD_CLIENT_ID,
-        client_secret: process.env.DISCORD_CLIENT_SECRET,
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: process.env.DISCORD_REDIRECT_URI,
-        scope: "identify email"
-      })
-    });
-
-    const tokenData = await tokenResponse.json();
-    console.log("Token Data:", tokenData);
-
-    if (!tokenData.access_token) {
-      return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
-    }
-
-    const userResponse = await fetch("https://discord.com/api/users/@me", {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` }
-    });
-    const userData = await userResponse.json();
-    console.log("User Data:", userData);
-
-    const existingUser = await db.get(userData.id);
-
-    if (existingUser) {
-      res.send(`Welcome back ${userData.username}#${userData.discriminator}, please enter your password.`);
-    } else {
-      res.redirect(`/plans/${plan}/signup.html?discordId=${userData.id}&plan=${plan}`);
-    }
-  } catch (err) {
-    console.error("OAuth Error:", err);
-    res.status(500).send("Error during Discord login");
-  }
-});
-
+// Callback route (Discord OAuth)
 app.post("/password-check", async (req, res) => {
   const { discordId, password } = req.body;
   const user = await db.get(discordId);
