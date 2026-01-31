@@ -20,10 +20,14 @@ async function loadDashboard() {
 
   const user = await res.json();
 
-  document.getElementById("avatar").src = user.avatar;
-  document.getElementById("username").textContent = user.username + "#" + user.discriminator;
-  document.getElementById("displayName").textContent = user.username;
-  document.getElementById("planBadge").textContent = user.plan;
+  // Safe defaults
+  const username = user.username || "Unknown";
+  const discriminator = user.discriminator || "0000";
+  const plan = user.plan || "free";
+
+  document.getElementById("username").textContent = `${username}#${discriminator}`;
+  document.getElementById("displayName").textContent = username;
+  document.getElementById("planBadge").textContent = plan;
 
   document.getElementById("infractionsCount").textContent = user.infractions || 0;
   document.getElementById("promotionsCount").textContent = user.promotions || 0;

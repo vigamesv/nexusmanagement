@@ -9,7 +9,6 @@ const db = new Database();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Simple in-memory sessions
 let sessions = {};
 
 // Login route (Discord OAuth)
@@ -50,10 +49,6 @@ app.get("/callback", async (req, res) => {
     });
     const userData = await userResponse.json();
 
-    const avatarUrl = userData.avatar
-      ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`
-      : "https://cdn.discordapp.com/embed/avatars/0.png";
-
     // Save or update user in Replit DB
     let existingUser = await db.get(userData.id);
     if (!existingUser) {
@@ -61,7 +56,6 @@ app.get("/callback", async (req, res) => {
         id: userData.id,
         username: userData.username,
         discriminator: userData.discriminator,
-        avatar: avatarUrl,
         plan,
         infractions: 0,
         promotions: 0,
@@ -70,16 +64,13 @@ app.get("/callback", async (req, res) => {
     } else {
       existingUser.username = userData.username;
       existingUser.discriminator = userData.discriminator;
-      existingUser.avatar = avatarUrl;
       existingUser.plan = plan;
       await db.set(userData.id, existingUser);
     }
 
-    // Create session token
     const sessionToken = Math.random().toString(36).substring(2);
     sessions[sessionToken] = userData.id;
 
-    // Redirect to dashboard folder
     res.redirect(`/dashboard/user.html?token=${sessionToken}`);
   } catch (err) {
     console.error("OAuth Error:", err);
