@@ -13,6 +13,3 @@ build = ["sh", "-c", "npm install @replit/database"]
 [userenv]
 
 [userenv.shared]
-DISCORD_CLIENT_ID = "1467194183365431528"
-DISCORD_CLIENT_SECRET = "83OBX3Y3v6JKHtzmu6ls0OVbvDoHkX3-"
-DISCORD_REDIRECT_URI = "https://nexusmanagement--platonovivanovi.replit.app/callback"
