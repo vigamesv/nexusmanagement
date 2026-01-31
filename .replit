@@ -4,3 +4,8 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
+
+[deployment]
+run = ["sh", "-c", "node server.js"]
+deploymentTarget = "cloudrun"
+build = ["sh", "-c", "npm install @replit/database"]
