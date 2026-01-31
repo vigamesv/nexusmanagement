@@ -18,7 +18,7 @@ console.log("Redirect URI:", process.env.DISCORD_REDIRECT_URI);
 app.get("/login", (req, res) => {
   const plan = req.query.plan || "free";
   const redirect = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20email&state=${plan}`;
-  console.log("Redirecting to:", redirect);
+  console.log("Redirecting user to:", redirect);
   res.redirect(redirect);
 });
 
@@ -27,7 +27,10 @@ app.get("/callback", async (req, res) => {
   const code = req.query.code;
   const plan = req.query.state;
 
-  if (!code) return res.status(400).send("No code provided");
+  if (!code) {
+    console.error("No code provided in callback");
+    return res.status(400).send("No code provided");
+  }
 
   try {
     // Exchange code for token
@@ -48,6 +51,7 @@ app.get("/callback", async (req, res) => {
     console.log("Token Data:", tokenData);
 
     if (!tokenData.access_token) {
+      console.error("Failed to get access token:", tokenData);
       return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
     }
 
@@ -57,6 +61,11 @@ app.get("/callback", async (req, res) => {
     });
     const userData = await userResponse.json();
     console.log("User Data:", userData);
+
+    if (!userData.id) {
+      console.error("Failed to fetch user data:", userData);
+      return res.status(400).send("Failed to fetch user data: " + JSON.stringify(userData));
+    }
 
     const existingUser = await db.get(userData.id);
 
@@ -83,13 +92,6 @@ app.get("/callback", async (req, res) => {
     console.error("OAuth Error:", err);
     res.status(500).send("Error during Discord login");
   }
-  const tokenData = await tokenResponse.json();
-  console.log("Token Data:", tokenData);
-
-  if (!tokenData.access_token) {
-    return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
-  }
-
 });
 
 // Password check endpoint
@@ -97,12 +99,17 @@ app.post("/password-check", async (req, res) => {
   const { discordId, password } = req.body;
   const user = await db.get(discordId);
 
-  if (!user || !user.password) return res.status(400).send("User not found or no password set");
+  if (!user || !user.password) {
+    console.error("Password check failed: user not found or no password set");
+    return res.status(400).send("User not found or no password set");
+  }
 
   const match = await bcrypt.compare(password, user.password);
   if (match) {
+    console.log("Login successful for user:", discordId);
     res.send("Login successful");
   } else {
+    console.error("Invalid password for user:", discordId);
     res.status(401).send("Invalid password");
   }
 });
@@ -118,6 +125,7 @@ app.post("/signup", async (req, res) => {
     password: hashedPassword
   });
 
+  console.log("Signup complete for user:", discordId, "Plan:", plan);
   res.send("Signup complete");
 });
 
