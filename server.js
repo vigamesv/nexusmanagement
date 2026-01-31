@@ -1,5 +1,5 @@
 const express = require("express");
-const fetch = require("node-fetch"); // make sure node-fetch is installed
+const fetch = require("node-fetch"); // install node-fetch@2
 const Database = require("@replit/database");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
@@ -33,7 +33,6 @@ app.get("/callback", async (req, res) => {
   }
 
   try {
-    // Exchange code for token
     const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -51,11 +50,9 @@ app.get("/callback", async (req, res) => {
     console.log("Token Data:", tokenData);
 
     if (!tokenData.access_token) {
-      console.error("Failed to get access token:", tokenData);
       return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
     }
 
-    // Get user info
     const userResponse = await fetch("https://discord.com/api/users/@me", {
       headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
@@ -63,7 +60,6 @@ app.get("/callback", async (req, res) => {
     console.log("User Data:", userData);
 
     if (!userData.id) {
-      console.error("Failed to fetch user data:", userData);
       return res.status(400).send("Failed to fetch user data: " + JSON.stringify(userData));
     }
 
@@ -85,7 +81,6 @@ app.get("/callback", async (req, res) => {
         </html>
       `);
     } else {
-      // New user → redirect to signup page in correct folder
       res.redirect(`/plans/${plan}/signup.html?discordId=${userData.id}&plan=${plan}`);
     }
   } catch (err) {
@@ -100,16 +95,13 @@ app.post("/password-check", async (req, res) => {
   const user = await db.get(discordId);
 
   if (!user || !user.password) {
-    console.error("Password check failed: user not found or no password set");
     return res.status(400).send("User not found or no password set");
   }
 
   const match = await bcrypt.compare(password, user.password);
   if (match) {
-    console.log("Login successful for user:", discordId);
     res.send("Login successful");
   } else {
-    console.error("Invalid password for user:", discordId);
     res.status(401).send("Invalid password");
   }
 });
@@ -125,11 +117,10 @@ app.post("/signup", async (req, res) => {
     password: hashedPassword
   });
 
-  console.log("Signup complete for user:", discordId, "Plan:", plan);
   res.send("Signup complete");
 });
 
-// Serve static files last (homepage, plans folder, etc.)
+// Serve static files last
 app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
