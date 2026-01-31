@@ -33,14 +33,17 @@ header {
 }
 
 .dash-link {
-  background: #a020f0;
+  background: #1a1a1a;
   color: #fff;
-  padding: 1rem 2rem;
+  padding: 1.2rem 2rem;
   border-radius: 8px;
   text-decoration: none;
-  transition: background 0.3s ease;
+  font-weight: bold;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .dash-link:hover {
-  background: #8a1cd1;
+  transform: translateY(-5px);
+  background: #a020f0;
 }
+
