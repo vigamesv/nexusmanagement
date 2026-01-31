@@ -1,5 +1,5 @@
 const express = require("express");
-const fetch = require("node-fetch"); // install node-fetch@2
+const fetch = require("node-fetch"); // make sure node-fetch@2 is installed
 const Database = require("@replit/database");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
@@ -66,7 +66,6 @@ app.get("/callback", async (req, res) => {
     const existingUser = await db.get(userData.id);
 
     if (existingUser) {
-      // Inline password form
       res.send(`
         <html>
           <body style="background:#0b0b0b;color:#fff;font-family:Arial;text-align:center;padding:2rem;">
