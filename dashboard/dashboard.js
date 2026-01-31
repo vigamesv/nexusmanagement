@@ -23,13 +23,10 @@ async function loadDashboard() {
   // Save token for homepage Dashboard button
   localStorage.setItem("sessionToken", token);
 
-  const username = user?.username || "Unknown";
-  const discriminator = user?.discriminator || "0000";
-  const plan = user?.plan || "free";
-
-  document.getElementById("username").textContent = `${username}#${discriminator}`;
-  document.getElementById("displayName").textContent = username;
-  document.getElementById("planBadge").textContent = plan;
+  // Display actual Discord username + discriminator
+  document.getElementById("username").textContent = `${user.username}#${user.discriminator}`;
+  document.getElementById("displayName").textContent = user.username;
+  document.getElementById("planBadge").textContent = user.plan;
 
   document.getElementById("logoutBtn").onclick = () => {
     localStorage.removeItem("sessionToken");

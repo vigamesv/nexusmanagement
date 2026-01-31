@@ -54,24 +54,15 @@ app.get("/callback", async (req, res) => {
     });
     const userData = await userResponse.json();
 
-    // Save or update user in Replit DB
-    let existingUser = await db.get(userData.id);
-    if (!existingUser) {
-      await db.set(userData.id, {
-        id: userData.id,
-        username: userData.username,
-        discriminator: userData.discriminator,
-        plan,
-        infractions: 0,
-        promotions: 0,
-        announcements: 0
-      });
-    } else {
-      existingUser.username = userData.username;
-      existingUser.discriminator = userData.discriminator;
-      existingUser.plan = plan;
-      await db.set(userData.id, existingUser);
-    }
+    // Always save Discord username + discriminator
+    await db.set(userData.id, {
+      id: userData.id,
+      username: userData.username,
+      discriminator: userData.discriminator,
+      plan,
+      infractions: 0,
+      promotions: 0
+    });
 
     // Create session token and persist it
     const sessionToken = Math.random().toString(36).substring(2);
