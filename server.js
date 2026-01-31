@@ -9,11 +9,11 @@ const db = new Database();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
+app.use(express.static(__dirname)); // serve index.html, styles.css, script.js, and plans folder
 
 // Login route (Discord OAuth)
 app.get("/login", (req, res) => {
-  const plan = req.query.plan || "free";
+  const plan = req.query.plan || "free"; // detect plan from query
   const redirect = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20email&state=${plan}`;
   res.redirect(redirect);
 });
@@ -21,7 +21,7 @@ app.get("/login", (req, res) => {
 // Callback after Discord login
 app.get("/callback", async (req, res) => {
   const code = req.query.code;
-  const plan = req.query.state;
+  const plan = req.query.state; // plan passed through OAuth state
 
   if (!code) return res.status(400).send("No code provided");
 
@@ -53,7 +53,7 @@ app.get("/callback", async (req, res) => {
     const existingUser = await db.get(userData.id);
 
     if (existingUser) {
-      // User exists → check password directly
+      // User exists → show inline password form
       res.send(`
         <html>
           <body style="background:#0b0b0b;color:#fff;font-family:Arial;text-align:center;padding:2rem;">
