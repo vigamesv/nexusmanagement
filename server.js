@@ -83,6 +83,13 @@ app.get("/callback", async (req, res) => {
     console.error("OAuth Error:", err);
     res.status(500).send("Error during Discord login");
   }
+  const tokenData = await tokenResponse.json();
+  console.log("Token Data:", tokenData);
+
+  if (!tokenData.access_token) {
+    return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
+  }
+
 });
 
 // Password check endpoint
