@@ -7,6 +7,9 @@ require("dotenv").config();
 const app = express();
 const db = new Database();
 
+console.log("Client ID:", process.env.DISCORD_CLIENT_ID);
+console.log("Redirect URI:", process.env.DISCORD_REDIRECT_URI);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
@@ -15,7 +18,7 @@ app.use(express.static(__dirname));
 app.get("/login", (req, res) => {
   const plan = req.query.plan || "free";
   const redirect = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20email&state=${plan}`;
-  console.log("Redirecting to:", redirect); // 👀 debug
+  console.log("Redirecting to:", redirect);
   res.redirect(redirect);
 });
 
@@ -27,7 +30,6 @@ app.get("/callback", async (req, res) => {
   if (!code) return res.status(400).send("No code provided");
 
   try {
-    // Exchange code for token
     const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -37,36 +39,29 @@ app.get("/callback", async (req, res) => {
         grant_type: "authorization_code",
         code,
         redirect_uri: process.env.DISCORD_REDIRECT_URI,
-        scope: "identify email",
-      }),
+        scope: "identify email"
+      })
     });
 
     const tokenData = await tokenResponse.json();
-    console.log("Token Data:", tokenData); // 👀 debug
+    console.log("Token Data:", tokenData);
 
     if (!tokenData.access_token) {
-      return res
-        .status(400)
-        .send("Failed to get access token: " + JSON.stringify(tokenData));
+      return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
     }
 
-    // Get user info
     const userResponse = await fetch("https://discord.com/api/users/@me", {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
     const userData = await userResponse.json();
-    console.log("User Data:", userData); // 👀 debug
+    console.log("User Data:", userData);
 
     const existingUser = await db.get(userData.id);
 
     if (existingUser) {
-      res.send(
-        `Welcome back ${userData.username}#${userData.discriminator}, please enter your password.`,
-      );
+      res.send(`Welcome back ${userData.username}#${userData.discriminator}, please enter your password.`);
     } else {
-      res.redirect(
-        `/plans/${plan}/signup.html?discordId=${userData.id}&plan=${plan}`,
-      );
+      res.redirect(`/plans/${plan}/signup.html?discordId=${userData.id}&plan=${plan}`);
     }
   } catch (err) {
     console.error("OAuth Error:", err);
@@ -74,13 +69,11 @@ app.get("/callback", async (req, res) => {
   }
 });
 
-// Password check endpoint
 app.post("/password-check", async (req, res) => {
   const { discordId, password } = req.body;
   const user = await db.get(discordId);
 
-  if (!user || !user.password)
-    return res.status(400).send("User not found or no password set");
+  if (!user || !user.password) return res.status(400).send("User not found or no password set");
 
   const match = await bcrypt.compare(password, user.password);
   if (match) {
@@ -90,7 +83,6 @@ app.post("/password-check", async (req, res) => {
   }
 });
 
-// Signup endpoint
 app.post("/signup", async (req, res) => {
   const { discordId, password, plan } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -98,7 +90,7 @@ app.post("/signup", async (req, res) => {
   await db.set(discordId, {
     username: req.body.username || null,
     plan,
-    password: hashedPassword,
+    password: hashedPassword
   });
 
   res.send("Signup complete");
