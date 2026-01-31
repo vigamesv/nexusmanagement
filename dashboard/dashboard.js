@@ -20,7 +20,9 @@ async function loadDashboard() {
 
   const user = await res.json();
 
-  // Safe defaults
+  // Save token for homepage Dashboard button
+  localStorage.setItem("sessionToken", token);
+
   const username = user?.username || "Unknown";
   const discriminator = user?.discriminator || "0000";
   const plan = user?.plan || "free";
@@ -29,11 +31,8 @@ async function loadDashboard() {
   document.getElementById("displayName").textContent = username;
   document.getElementById("planBadge").textContent = plan;
 
-  document.getElementById("infractionsCount").textContent = user?.infractions || 0;
-  document.getElementById("promotionsCount").textContent = user?.promotions || 0;
-  document.getElementById("announcementsCount").textContent = user?.announcements || 0;
-
   document.getElementById("logoutBtn").onclick = () => {
+    localStorage.removeItem("sessionToken");
     window.location.href = "/logout?token=" + token;
   };
 }

@@ -41,3 +41,14 @@ document.querySelectorAll(".select-btn").forEach(button => {
     }
   });
 });
+// Show Dashboard button if token exists in URL or localStorage
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("sessionToken");
+  if (token) {
+    document.getElementById("dashboardBtn").style.display = "inline-block";
+    document.getElementById("dashboardBtn").onclick = () => {
+      window.location.href = "/dashboard/user.html?token=" + token;
+    };
+  }
+});
+
