@@ -1,24 +1,48 @@
 const express = require("express");
-const fetch = require("node-fetch"); // make sure node-fetch@2 is installed
-const Database = require("@replit/database");
+const { Pool } = require("pg");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const app = express();
-const db = new Database();
+
+// Connect to Postgres using DATABASE_URL from .env
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Debug: confirm secrets are loaded
-console.log("Client ID:", process.env.DISCORD_CLIENT_ID);
-console.log("Redirect URI:", process.env.DISCORD_REDIRECT_URI);
+// Ensure users table exists
+(async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        username TEXT,
+        discriminator TEXT,
+        avatar TEXT,
+        plan TEXT,
+        infractions INT DEFAULT 0,
+        promotions INT DEFAULT 0,
+        announcements INT DEFAULT 0,
+        password TEXT
+      )
+    `);
+    console.log("Users table ready");
+  } catch (err) {
+    console.error("Error creating users table:", err);
+  }
+})();
+
+// Simple in-memory sessions
+let sessions = {};
 
 // Login route (Discord OAuth)
 app.get("/login", (req, res) => {
   const plan = req.query.plan || "free";
   const redirect = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20email&state=${plan}`;
-  console.log("Redirecting user to:", redirect);
   res.redirect(redirect);
 });
 
@@ -27,10 +51,7 @@ app.get("/callback", async (req, res) => {
   const code = req.query.code;
   const plan = req.query.state;
 
-  if (!code) {
-    console.error("No code provided in callback");
-    return res.status(400).send("No code provided");
-  }
+  if (!code) return res.status(400).send("No code provided");
 
   try {
     const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
@@ -47,8 +68,6 @@ app.get("/callback", async (req, res) => {
     });
 
     const tokenData = await tokenResponse.json();
-    console.log("Token Data:", tokenData);
-
     if (!tokenData.access_token) {
       return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
     }
@@ -57,69 +76,57 @@ app.get("/callback", async (req, res) => {
       headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
     const userData = await userResponse.json();
-    console.log("User Data:", userData);
 
-    if (!userData.id) {
-      return res.status(400).send("Failed to fetch user data: " + JSON.stringify(userData));
-    }
+    const avatarUrl = userData.avatar
+      ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`
+      : "https://cdn.discordapp.com/embed/avatars/0.png";
 
-    const existingUser = await db.get(userData.id);
+    // Insert or update user in DB
+    await pool.query(
+      `INSERT INTO users (id, username, discriminator, avatar, plan)
+       VALUES ($1,$2,$3,$4,$5)
+       ON CONFLICT (id) DO UPDATE SET username=$2, discriminator=$3, avatar=$4, plan=$5`,
+      [userData.id, userData.username, userData.discriminator, avatarUrl, plan]
+    );
 
-    if (existingUser) {
-      res.send(`
-        <html>
-          <body style="background:#0b0b0b;color:#fff;font-family:Arial;text-align:center;padding:2rem;">
-            <h1>Welcome back, ${userData.username}#${userData.discriminator}</h1>
-            <form method="POST" action="/password-check" style="margin:2rem auto;max-width:300px;background:#1a1a1a;padding:2rem;border-radius:8px;">
-              <input type="hidden" name="discordId" value="${userData.id}">
-              <label>Password:</label><br>
-              <input type="password" name="password" required style="width:100%;padding:0.5rem;margin:0.5rem 0;border-radius:4px;border:none;"><br>
-              <button type="submit" style="background:#a020f0;color:#fff;border:none;padding:0.7rem 1.2rem;border-radius:6px;cursor:pointer;">Login</button>
-            </form>
-          </body>
-        </html>
-      `);
-    } else {
-      res.redirect(`/plans/${plan}/signup.html?discordId=${userData.id}&plan=${plan}`);
-    }
+    // Create session token
+    const sessionToken = Math.random().toString(36).substring(2);
+    sessions[sessionToken] = userData.id;
+
+    // Redirect to dashboard folder
+    res.redirect(`/dashboard/user.html?token=${sessionToken}`);
   } catch (err) {
     console.error("OAuth Error:", err);
     res.status(500).send("Error during Discord login");
   }
 });
 
-// Password check endpoint
-app.post("/password-check", async (req, res) => {
-  const { discordId, password } = req.body;
-  const user = await db.get(discordId);
-
-  if (!user || !user.password) {
-    return res.status(400).send("User not found or no password set");
-  }
-
-  const match = await bcrypt.compare(password, user.password);
-  if (match) {
-    res.send("Login successful");
+// Middleware for session check
+async function authMiddleware(req, res, next) {
+  const token = req.headers["authorization"];
+  if (token && sessions[token]) {
+    const userId = sessions[token];
+    const result = await pool.query("SELECT * FROM users WHERE id=$1", [userId]);
+    req.user = result.rows[0];
+    next();
   } else {
-    res.status(401).send("Invalid password");
+    res.status(401).send("Unauthorized");
   }
+}
+
+// API: get user info
+app.get("/api/user", authMiddleware, (req, res) => {
+  res.json(req.user);
 });
 
-// Signup endpoint
-app.post("/signup", async (req, res) => {
-  const { discordId, password, plan } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  await db.set(discordId, {
-    username: req.body.username || null,
-    plan,
-    password: hashedPassword
-  });
-
-  res.send("Signup complete");
+// Logout
+app.get("/logout", (req, res) => {
+  const token = req.query.token;
+  if (token) delete sessions[token];
+  res.redirect("/");
 });
 
-// Serve static files last
+// Serve static files (includes /dashboard folder)
 app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
