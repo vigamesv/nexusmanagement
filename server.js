@@ -61,16 +61,16 @@ app.get("/callback", async (req, res) => {
       // First time login → create record without password
       await db.set(userData.id, {
         id: userData.id,
-        username: userData.username,
-        discriminator: userData.discriminator,
+        username: userData.username || "Unknown",
+        discriminator: userData.discriminator || "0000",
         plan,
         infractions: 0,
         promotions: 0
       });
     } else {
       // Update username/discriminator each login
-      existingUser.username = userData.username;
-      existingUser.discriminator = userData.discriminator;
+      existingUser.username = userData.username || "Unknown";
+      existingUser.discriminator = userData.discriminator || "0000";
       existingUser.plan = plan;
       await db.set(userData.id, existingUser);
     }
