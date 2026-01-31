@@ -141,7 +141,8 @@ footer { text-align: center; padding: 1rem; background: #1a1a1a; color: #aaa; }
 
 .hero-buttons {
   display: flex;
-  gap: 1rem; /* space between buttons */
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .explore-btn,
@@ -171,6 +172,7 @@ footer { text-align: center; padding: 1rem; background: #1a1a1a; color: #aaa; }
 .login-btn:hover {
   background: #555;
 }
+
 
 /* Responsive */
 @media (max-width: 600px) { .nav-links a { font-size: 0.9rem; } }

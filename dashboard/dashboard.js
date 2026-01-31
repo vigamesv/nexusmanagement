@@ -21,17 +21,17 @@ async function loadDashboard() {
   const user = await res.json();
 
   // Safe defaults
-  const username = user.username || "Unknown";
-  const discriminator = user.discriminator || "0000";
-  const plan = user.plan || "free";
+  const username = user?.username || "Unknown";
+  const discriminator = user?.discriminator || "0000";
+  const plan = user?.plan || "free";
 
   document.getElementById("username").textContent = `${username}#${discriminator}`;
   document.getElementById("displayName").textContent = username;
   document.getElementById("planBadge").textContent = plan;
 
-  document.getElementById("infractionsCount").textContent = user.infractions || 0;
-  document.getElementById("promotionsCount").textContent = user.promotions || 0;
-  document.getElementById("announcementsCount").textContent = user.announcements || 0;
+  document.getElementById("infractionsCount").textContent = user?.infractions || 0;
+  document.getElementById("promotionsCount").textContent = user?.promotions || 0;
+  document.getElementById("announcementsCount").textContent = user?.announcements || 0;
 
   document.getElementById("logoutBtn").onclick = () => {
     window.location.href = "/logout?token=" + token;

@@ -23,17 +23,18 @@
       <p class="tagline">Professional staff tools for ER:LC communities.</p>
       <p class="subtext">Organize, track, and empower your team — all in one dashboard.</p>
       <div class="hero-buttons">
-        <button class="explore-btn">Explore Plans</button>
-        <button class="login-btn" onclick="window.location.href='/login'">Log In</button>
+        <button class="explore-btn" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">
+          Explore Plans
+        </button>
+        <button class="login-btn" onclick="window.location.href='/login'">
+          Log In
+        </button>
       </div>
     </div>
     <div class="hero-image fade-in delay">
       <img src="images/dashboard-preview.png" alt="Nexus Management Dashboard Preview">
     </div>
   </header>
-
-
-
 
   <!-- Plans Section -->
   <section class="plans" id="plans">

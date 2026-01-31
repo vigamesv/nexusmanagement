@@ -1,6 +1,5 @@
 const express = require("express");
 const Database = require("@replit/database");
-const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 const app = express();
@@ -9,16 +8,22 @@ const db = new Database();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-let sessions = {};
+// --- Sessions stored in DB for persistence ---
+async function saveSession(token, userId) {
+  await db.set("session:" + token, userId);
+}
+async function getSession(token) {
+  return await db.get("session:" + token);
+}
 
-// Login route (Discord OAuth)
+// --- Login route (Discord OAuth) ---
 app.get("/login", (req, res) => {
   const plan = req.query.plan || "free";
   const redirect = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20email&state=${plan}`;
   res.redirect(redirect);
 });
 
-// Callback after Discord login
+// --- Callback after Discord login ---
 app.get("/callback", async (req, res) => {
   const code = req.query.code;
   const plan = req.query.state;
@@ -68,8 +73,9 @@ app.get("/callback", async (req, res) => {
       await db.set(userData.id, existingUser);
     }
 
+    // Create session token and persist it
     const sessionToken = Math.random().toString(36).substring(2);
-    sessions[sessionToken] = userData.id;
+    await saveSession(sessionToken, userData.id);
 
     res.redirect(`/dashboard/user.html?token=${sessionToken}`);
   } catch (err) {
@@ -78,32 +84,35 @@ app.get("/callback", async (req, res) => {
   }
 });
 
-// Middleware for session check
+// --- Middleware for session check ---
 async function authMiddleware(req, res, next) {
   const token = req.headers["authorization"];
-  if (token && sessions[token]) {
-    const userId = sessions[token];
-    const user = await db.get(userId);
-    req.user = user;
-    next();
-  } else {
-    res.status(401).send("Unauthorized");
+  if (token) {
+    const userId = await getSession(token);
+    if (userId) {
+      const user = await db.get(userId);
+      req.user = user;
+      return next();
+    }
   }
+  res.status(401).send("Unauthorized");
 }
 
-// API: get user info
+// --- API: get user info ---
 app.get("/api/user", authMiddleware, (req, res) => {
   res.json(req.user);
 });
 
-// Logout
-app.get("/logout", (req, res) => {
+// --- Logout ---
+app.get("/logout", async (req, res) => {
   const token = req.query.token;
-  if (token) delete sessions[token];
+  if (token) {
+    await db.delete("session:" + token);
+  }
   res.redirect("/");
 });
 
-// Serve static files (includes /dashboard folder)
+// --- Serve static files ---
 app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
