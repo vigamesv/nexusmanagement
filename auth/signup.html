@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signup - Nexus Dashboard</title>
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+</head>
+<body>
+  <header>
+    <h1>Nexus Dashboard</h1>
+    <p class="subtitle">Roblox Account Signup</p>
+  </header>
+
+  <main class="feature-container">
+    <section class="feature-card visible">
+      <h2>Create Your Account</h2>
+      <form id="signupForm" class="form-grid">
+        <label for="roblox_user">Roblox Username:</label>
+        <input type="text" id="roblox_user" name="roblox_user" required>
+
+        <label for="roblox_id">Roblox ID:</label>
+        <input type="text" id="roblox_id" name="roblox_id" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit" class="primary-btn">Sign Up</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const roblox_user = document.getElementById("roblox_user").value;
+      const roblox_id = document.getElementById("roblox_id").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roblox_user, roblox_id, password })
+      });
+
+      const data = await res.json();
+      if (data.accountID) {
+        window.location.href = `/dashboard/user.html?ID=${data.accountID}`;
+      } else {
+        alert(data.error || "Signup failed");
+      }
+    });
+  </script>
+</body>
+</html>

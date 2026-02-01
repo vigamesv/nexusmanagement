@@ -1,160 +1,89 @@
 const express = require("express");
-const Database = require("@replit/database");
-const bcrypt = require("bcrypt");
-require("dotenv").config();
+const bodyParser = require("body-parser");
+const bcrypt = require("bcryptjs");
+const { Pool } = require("pg");
 
 const app = express();
-const db = new Database();
+app.use(bodyParser.json());
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-async function saveSession(token, userId) {
-  await db.set("session:" + token, userId);
-}
-async function getSession(token) {
-  return await db.get("session:" + token);
-}
-
-// Discord login
-app.get("/login", (req, res) => {
-  const plan = req.query.plan || "free";
-  const redirect = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20email&state=${plan}`;
-  res.redirect(redirect);
+// Connect to PostgreSQL
+const pool = new Pool({
+  connectionString: "postgresql://postgres:password@helium/heliumdb?sslmode=disable"
 });
 
-// OAuth callback
-app.get("/callback", async (req, res) => {
-  const code = req.query.code;
-  const plan = req.query.state;
+// Utility: generate account ID
+function generateAccountID(robloxUser) {
+  const date = new Date();
+  const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
+  const timeStr = date.toTimeString().split(" ")[0]; // HH:MM:SS
+  const last4 = robloxUser.slice(-4);
+  return `${dateStr}-${timeStr}-${last4}`;
+}
 
-  if (!code) return res.status(400).send("No code provided");
+// ✅ Signup Route
+app.post("/auth/signup", async (req, res) => {
+  const { roblox_user, roblox_id, password } = req.body;
+  if (!roblox_user || !roblox_id || !password) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
 
   try {
-    // Exchange code for token
-    const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_id: process.env.DISCORD_CLIENT_ID,
-        client_secret: process.env.DISCORD_CLIENT_SECRET,
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: process.env.DISCORD_REDIRECT_URI,
-        scope: "identify email"
-      })
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const accountID = generateAccountID(roblox_user);
+
+    const result = await pool.query(
+      `INSERT INTO users (roblox_user, roblox_id, account_password, account_id, owned_server_ids, server_ids)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, account_id`,
+      [roblox_user, roblox_id, hashedPassword, accountID, [], []]
+    );
+
+    res.json({
+      message: "Signup successful",
+      userID: result.rows[0].id,
+      accountID: result.rows[0].account_id
     });
-
-    const tokenData = await tokenResponse.json();
-    if (!tokenData.access_token) {
-      return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
-    }
-
-    // Get user info from Discord
-    const userResponse = await fetch("https://discord.com/api/users/@me", {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` }
-    });
-    const userData = await userResponse.json();
-
-    console.log("Discord userData:", userData);
-
-    // Fetch existing user if any
-    let existingUser = await db.get(userData.id);
-
-    // Save/update record with actual Discord values
-    const updatedUser = {
-      id: userData.id,
-      username: userData.username ?? existingUser?.username ?? null,
-      global_name: userData.global_name ?? existingUser?.global_name ?? null,
-      discriminator: userData.discriminator ?? existingUser?.discriminator ?? null,
-      plan,
-      infractions: existingUser?.infractions ?? 0,
-      promotions: existingUser?.promotions ?? 0,
-      hashedPassword: existingUser?.hashedPassword ?? null
-    };
-    await db.set(userData.id, updatedUser);
-
-    // Re-fetch after saving to get latest record
-    existingUser = await db.get(userData.id);
-
-    // Redirect logic
-    if (!existingUser.hashedPassword) {
-      // No password yet → signup
-      return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
-    } else {
-      // Has password → login-pass
-      return res.redirect(`/dashboard/login-pass.html?id=${userData.id}`);
-    }
   } catch (err) {
-    console.error("OAuth Error:", err);
-    res.status(500).send("Error during Discord login");
+    console.error(err);
+    res.status(500).json({ error: "Database error" });
   }
 });
 
-
-// Signup (set password)
-app.post("/signup", async (req, res) => {
-  const { id, password } = req.body;
-  const user = await db.get(id);
-  if (!user) return res.status(400).send("User not found");
-
-  if (user.hashedPassword) {
-    return res.status(400).send("Account already has a password");
+// ✅ Login Route
+app.post("/auth/login", async (req, res) => {
+  const { roblox_user, password } = req.body;
+  if (!roblox_user || !password) {
+    return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const hashed = await bcrypt.hash(password, 10);
-  user.hashedPassword = hashed;
-  await db.set(id, user);
+  try {
+    const result = await pool.query(
+      "SELECT * FROM users WHERE roblox_user = $1",
+      [roblox_user]
+    );
 
-  const sessionToken = Math.random().toString(36).substring(2);
-  await saveSession(sessionToken, id);
-  res.json({ token: sessionToken });
-});
-
-// Password check (login)
-app.post("/check-password", async (req, res) => {
-  const { id, password } = req.body;
-  const user = await db.get(id);
-  if (!user) return res.status(400).send("User not found");
-
-  const match = await bcrypt.compare(password, user.hashedPassword);
-  if (!match) return res.status(401).send("Invalid password");
-
-  const sessionToken = Math.random().toString(36).substring(2);
-  await saveSession(sessionToken, id);
-  res.json({ token: sessionToken });
-});
-
-// Middleware
-async function authMiddleware(req, res, next) {
-  const token = req.headers["authorization"];
-  if (token) {
-    const userId = await getSession(token);
-    if (userId) {
-      const user = await db.get(userId);
-      req.user = user;
-      return next();
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: "User not found" });
     }
-  }
-  res.status(401).send("Unauthorized");
-}
 
-// API
-app.get("/api/user", authMiddleware, (req, res) => {
-  res.json(req.user);
+    const user = result.rows[0];
+    const validPassword = await bcrypt.compare(password, user.account_password);
+
+    if (!validPassword) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    res.json({
+      message: "Login successful",
+      accountID: user.account_id,
+      redirectURL: `/dashboard/user.html?ID=${user.account_id}`
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
-// Logout
-app.get("/logout", async (req, res) => {
-  const token = req.query.token;
-  if (token) {
-    await db.delete("session:" + token);
-  }
-  res.redirect("/");
+// Start server
+app.listen(3000, () => {
+  console.log("Backend running on port 3000");
 });
-
-// Static files
-app.use(express.static(__dirname));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
