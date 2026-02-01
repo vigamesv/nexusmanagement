@@ -19,10 +19,11 @@ async function loadDashboard() {
   }
 
   const user = await res.json();
-  console.log("Frontend received user:", user);
+  console.log("User object from API:", user); // Debug log
 
   // Prefer global_name, fallback to username
   const displayName = user.global_name || user.username || "Unknown";
+
   // Only show discriminator if it's not "0"
   const tag = user.discriminator && user.discriminator !== "0"
     ? `#${user.discriminator}`
