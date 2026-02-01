@@ -73,9 +73,9 @@
       alert("Announcement saved locally. Backend integration coming soon!");
     });
 
-    // Render announcements
+    // Render Announcements
     function renderAnnouncements() {
-      list.innerHTML = "";
+      list.innerHTML = ""; // clear before re-render
       if (announcements.length === 0) {
         list.innerHTML = "<p class='log-entry'>No announcements saved yet.</p>";
         return;
@@ -95,6 +95,7 @@
         list.appendChild(card);
       });
     }
+
 
     // Delete announcement with confirmation
     function deleteAnnouncement(id) {
