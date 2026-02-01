@@ -242,3 +242,35 @@ h2 {
   background: #222;
   color: #fff;
 }
+/* Actions for announcements */
+.announcement-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.secondary-btn {
+  background: #444;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  background: #666;
+}
+
+.danger-btn {
+  background: #aa2222;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.danger-btn:hover {
+  background: #cc3333;
+}
