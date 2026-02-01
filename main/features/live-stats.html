@@ -18,10 +18,10 @@
       <h2><i class="fa-solid fa-chart-line"></i> Live Stats</h2>
       <p>Monitor live players and staff activity in real-time.</p>
 
-      <!-- Big Rectangular Box -->
-      <div class="big-box">
+      <!-- One Big Rectangular Box -->
+      <div class="stats-box">
 
-        <!-- Top Row (Overview) -->
+        <!-- Top Row -->
         <div class="overview-row">
           <div class="overview-box">
             <h3><i class="fa-solid fa-users"></i> Total Active Players</h3>
@@ -33,9 +33,9 @@
           </div>
         </div>
 
-        <!-- Columns Section -->
+        <!-- Columns -->
         <div class="columns-row">
-          <!-- Team Players (LEFT) -->
+          <!-- Team Players -->
           <div class="stats-column">
             <h2>Team Players</h2>
             <div class="stat-box"><h3>DOT</h3><p class="stat-value" data-target="4">0</p></div>
@@ -45,7 +45,7 @@
             <div class="stat-box"><h3>Civilian</h3><p class="stat-value" data-target="24">0</p></div>
           </div>
 
-          <!-- Active Staff (RIGHT) -->
+          <!-- Active Staff -->
           <div class="stats-column">
             <h2>Active Staff</h2>
             <div class="stat-box"><h3>Moderators</h3><p class="stat-value" data-target="2">0</p></div>
@@ -58,7 +58,6 @@
     </section>
   </main>
 
-  <!-- Fixed Return Button -->
   <button class="return-btn" onclick="location.href='/main/server.html'">
     <i class="fa-solid fa-arrow-left"></i> Return
   </button>
@@ -68,7 +67,6 @@
   </footer>
 
   <script>
-    // Counting animation
     function animateCounters() {
       const counters = document.querySelectorAll('.stat-value');
       counters.forEach(counter => {
@@ -88,7 +86,6 @@
         update();
       });
     }
-
     window.onload = animateCounters;
   </script>
 </body>

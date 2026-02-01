@@ -339,13 +339,16 @@ h2 {
   color: #fff !important;
   text-shadow: none !important;
 }
-/* Big Rectangular Box */
-.big-box {
+/* Big Rectangular Stats Box */
+.stats-box {
   background: #1c1c24;
-  padding: 20px;
+  padding: 25px;
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(255,255,255,0.2);
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
 /* Top Row Overview */
@@ -353,12 +356,11 @@ h2 {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  margin-bottom: 25px;
 }
 
 .overview-box {
   flex: 1;
-  background: #1c1c24;
+  background: #2a2a34;
   color: #fff;
   padding: 12px;
   border-radius: 8px;
@@ -374,7 +376,6 @@ h2 {
 .overview-box .stat-value {
   font-size: 1.2em;
   font-weight: bold;
-  color: #fff;
 }
 
 /* Columns Section */
@@ -394,9 +395,9 @@ h2 {
   text-align: center;
 }
 
-/* Stat Boxes */
+/* Stat Boxes inside columns */
 .stat-box {
-  background: #1c1c24;
+  background: #2a2a34;
   color: #fff;
   padding: 15px;
   border-radius: 8px;
@@ -408,5 +409,4 @@ h2 {
 .stat-value {
   font-size: 1.4em;
   font-weight: bold;
-  color: #fff;
 }
