@@ -54,29 +54,31 @@ app.get("/callback", async (req, res) => {
     });
     const userData = await userResponse.json();
 
-    console.log("Discord userData:", userData); // Debug log
+    console.log("Discord userData:", userData);
 
     let existingUser = await db.get(userData.id);
 
-    // Always overwrite with fresh Discord data
-    await db.set(userData.id, {
+    // Always save fresh Discord data
+    const updatedUser = {
       id: userData.id,
-      username: userData.username || null,
-      global_name: userData.global_name || null,
-      discriminator: userData.discriminator || null,
+      username: userData.username || existingUser?.username || "Unknown",
+      global_name: userData.global_name || existingUser?.global_name || "Unknown",
+      discriminator: userData.discriminator || existingUser?.discriminator || null,
       plan,
       infractions: existingUser?.infractions || 0,
       promotions: existingUser?.promotions || 0,
       hashedPassword: existingUser?.hashedPassword || null
-    });
+    };
+    await db.set(userData.id, updatedUser);
 
     if (!existingUser) {
-      // New user → log them in directly
-      const sessionToken = Math.random().toString(36).substring(2);
-      await saveSession(sessionToken, userData.id);
-      return res.redirect(`/dashboard/user.html?token=${sessionToken}`);
+      // brand new → go to signup to set password
+      return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
+    } else if (!existingUser.hashedPassword) {
+      // existing but no password yet → signup
+      return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
     } else {
-      // Existing user → require password
+      // existing with password → login
       return res.redirect(`/dashboard/login-pass.html?id=${userData.id}`);
     }
   } catch (err) {
@@ -85,20 +87,33 @@ app.get("/callback", async (req, res) => {
   }
 });
 
-// Password check
+// Signup (set password)
+app.post("/signup", async (req, res) => {
+  const { id, password } = req.body;
+  const user = await db.get(id);
+  if (!user) return res.status(400).send("User not found");
+
+  if (user.hashedPassword) {
+    return res.status(400).send("Account already has a password");
+  }
+
+  const hashed = await bcrypt.hash(password, 10);
+  user.hashedPassword = hashed;
+  await db.set(id, user);
+
+  const sessionToken = Math.random().toString(36).substring(2);
+  await saveSession(sessionToken, id);
+  res.json({ token: sessionToken });
+});
+
+// Password check (login)
 app.post("/check-password", async (req, res) => {
   const { id, password } = req.body;
   const user = await db.get(id);
   if (!user) return res.status(400).send("User not found");
 
-  if (!user.hashedPassword) {
-    const hashed = await bcrypt.hash(password, 10);
-    user.hashedPassword = hashed;
-    await db.set(id, user);
-  } else {
-    const match = await bcrypt.compare(password, user.hashedPassword);
-    if (!match) return res.status(401).send("Invalid password");
-  }
+  const match = await bcrypt.compare(password, user.hashedPassword);
+  if (!match) return res.status(401).send("Invalid password");
 
   const sessionToken = Math.random().toString(36).substring(2);
   await saveSession(sessionToken, id);
