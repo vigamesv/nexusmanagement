@@ -188,6 +188,31 @@ footer { text-align: center; padding: 1rem; background: #1a1a1a; color: #aaa; }
   color: #fff;
 }
 
+/* Login form fields */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-form .form-group label {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 0.3rem;
+}
+
+.login-form .form-group input {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid rgba(160,32,240,0.4);
+  background: #0b0b0b;
+  color: #fff;
+}
+
+.login-form .form-group input::placeholder {
+  color: #888;
+}
 
 
 /* Responsive */
