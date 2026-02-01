@@ -3,35 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <title>Login - Nexus Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="../styles.css"> <!-- reuse homepage styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body class="login-body">
-  <div class="login-container fade-in">
-    <div class="login-header">
-      <i class="fa-solid fa-shield-halved"></i>
-      <h1>Nexus Dashboard</h1>
-      <p class="subtitle">Secure Login</p>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#plans">Plans</a></li>
+    </ul>
+  </nav>
+
+  <!-- Login Section -->
+  <section class="hero">
+    <div class="hero-content fade-in">
+      <h1>Login to Your Account</h1>
+      <p class="tagline">Access your Nexus Dashboard</p>
+      <p class="subtext">Enter your Roblox username and password to continue.</p>
+
+      <div class="plan-card reveal" style="max-width:400px; margin-top:1.5rem;">
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="roblox_user"><i class="fa-solid fa-user"></i> Roblox Username</label>
+            <input type="text" id="roblox_user" name="roblox_user" placeholder="Enter Roblox username" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter password" required>
+          </div>
+
+          <button type="submit" class="explore-btn" style="width:100%;">
+            <i class="fa-solid fa-right-to-bracket"></i> Log In
+          </button>
+        </form>
+      </div>
     </div>
+  </section>
 
-    <form id="loginForm" class="login-form">
-      <div class="form-group">
-        <label for="roblox_user"><i class="fa-solid fa-user"></i> Roblox Username</label>
-        <input type="text" id="roblox_user" name="roblox_user" placeholder="Enter your Roblox username" required>
-      </div>
-
-      <div class="form-group">
-        <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required>
-      </div>
-
-      <button type="submit" class="primary-btn">
-        <i class="fa-solid fa-right-to-bracket"></i> Log In
-      </button>
-    </form>
-
-    <p class="login-footer">© 2026 Nexus Management | ER:LC Staff Tools</p>
-  </div>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
+  </footer>
 
   <script>
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
