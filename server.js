@@ -151,5 +151,18 @@ app.get("/logout", async (req, res) => {
 // Static files
 app.use(express.static(__dirname));
 
+// Reset a user's DB entry (for debugging)
+app.get("/reset-user/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await db.delete(id);
+    res.send(`Deleted DB entry for user ${id}. Log in again to refresh data.`);
+  } catch (err) {
+    console.error("Reset error:", err);
+    res.status(500).send("Error resetting user.");
+  }
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
