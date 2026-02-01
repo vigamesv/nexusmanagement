@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Stats - ER:LC Dashboard</title>
+  <link rel="stylesheet" href="/features/css/features.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>Live Stats</h1>
+    <p class="subtitle">Real-time ER:LC Server Data</p>
+  </header>
+
+  <main class="feature-container">
+    <section class="feature-card animate">
+      <h2><i class="fa-solid fa-chart-line"></i> Live Stats</h2>
+      <p>Monitor live players and staff activity in real-time.</p>
+      <span class="warning-tag">⚠️ ER:LC SERVER API KEY REQUIRED</span>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-box">
+          <h3><i class="fa-solid fa-users"></i> Total Players</h3>
+          <p class="stat-value" data-target="57"><span class="spinner"></span></p>
+        </div>
+        <div class="stat-box">
+          <h3><i class="fa-solid fa-user-shield"></i> Staff Online</h3>
+          <p class="stat-value" data-target="4"><span class="spinner"></span></p>
+        </div>
+        <div class="stat-box">
+          <h3><i class="fa-solid fa-list"></i> Queue</h3>
+          <p class="stat-value" data-target="0"><span class="spinner"></span></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Nexus Management</p>
+  </footer>
+
+  <script>
+    // Scroll reveal animation
+    const animatedElements = document.querySelectorAll('.animate');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          animateCounters();
+        }
+      });
+    }, { threshold: 0.2 });
+
+    animatedElements.forEach(el => observer.observe(el));
+
+    // Counter animation
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stat-value');
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        let count = 0;
+        const increment = target / 100;
+        counter.innerHTML = "0 / " + target;
+        const update = () => {
+          count += increment;
+          if (count < target) {
+            counter.textContent = Math.floor(count) + " / " + target;
+            requestAnimationFrame(update);
+          } else {
+            counter.textContent = target + " / " + target;
+          }
+        };
+        update();
+      });
+    }
+  </script>
+</body>
+</html>
