@@ -117,7 +117,8 @@ footer {
   margin-top: 40px;
   max-width: 400px;
 }
-/* Bottom grid for Servers + Premium */
+
+/* Bottom grid for Servers */
 .bottom-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -127,85 +128,18 @@ footer {
   margin-top: 40px;
 }
 
-.servers-link, .premium-link {
+.servers-link {
   text-align: center;
   padding: 20px;
 }
 
-.premium-link {
-  opacity: 0.8;
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); /* golden glow */
-  border: 2px dashed #ffd700; /* gold border */
-}
-
-.disabled-btn {
-  background: #555;
-  cursor: not-allowed;
-}
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  width: 100%;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.feature-block {
-  background: #1c1c24;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 0 20px rgba(128,0,255,0.25);
-  text-align: center;
-}
-
-.feature-block h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  color: #9a9aff;
-}
-
-.feature-block i {
-  margin-right: 6px;
-  color: #8000ff;
-}
-
-.feature-block p {
-  font-size: 0.95rem;
-  color: #ccc;
-}
-
-.warning-tag {
-  display: inline-block;
-  margin-top: 10px;
-  color: #ff4444;
-  font-weight: bold;
-  font-size: 0.9rem;
-  background: #220000;
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-/* Premium glow */
-.premium-link {
-  opacity: 0.85;
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
-  border: 2px dashed #ffd700;
-}
-
-.disabled-btn {
-  background: #555;
-  cursor: not-allowed;
-}
 /* Modal overlay */
 .modal {
   display: none;
   position: fixed;
   z-index: 2000;
-  inset: 0; /* shorthand for top/right/bottom/left:0 */
+  inset: 0;
   background-color: rgba(0,0,0,0.7);
-
-  /* Flexbox centering */
   justify-content: center;
   align-items: center;
 }
@@ -219,14 +153,10 @@ footer {
   max-width: 400px;
   box-shadow: 0 0 25px rgba(128,0,255,0.5);
   color: #fff;
-
-  /* Center children vertically */
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-
-  /* Fade-in animation */
   opacity: 0;
   transform: scale(0.95);
   animation: fadeIn 0.4s ease forwards;
@@ -266,7 +196,6 @@ footer {
   }
 }
 
-
 /* API Key Badge */
 .api-key-badge {
   background: #00aa55;
@@ -277,4 +206,3 @@ footer {
   margin-left: 10px;
   box-shadow: 0 0 10px rgba(0,255,136,0.6);
 }
-
