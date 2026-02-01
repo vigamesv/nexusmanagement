@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Server Dashboard - Nexus Management</title>
+  <link rel="stylesheet" href="server.css">
+</head>
+<body>
+  <header>
+    <h1 id="serverName">Server Dashboard</h1>
+    <p class="subtitle">Manage your ER:LC server with powerful tools</p>
+  </header>
+
+  <main>
+    <section class="server-overview">
+      <h2>Overview</h2>
+      <p>Plan: <span id="planBadge"></span></p>
+      <p>Staff Count: <span id="staffCount"></span></p>
+      <p>Active Infractions: <span id="activeInfractions"></span></p>
+    </section>
+
+    <section class="tools">
+      <h2>Available Tools</h2>
+      <div class="tool-card">
+        <h3>👥 Add Staff</h3>
+        <button onclick="addStaff()">Add Staff</button>
+      </div>
+      <div class="tool-card">
+        <h3>⚖️ Manage Infractions</h3>
+        <button onclick="manageInfractions()">Manage Infractions</button>
+      </div>
+      <div class="tool-card locked">
+        <h3>📊 Live Stats</h3>
+        <button disabled>Locked (Premium)</button>
+      </div>
+    </section>
+
+    <section class="logs">
+      <h2>Recent Logs</h2>
+      <div id="logsList"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Nexus Management</p>
+  </footer>
+
+  <script src="server.js"></script>
+</body>
+</html>
