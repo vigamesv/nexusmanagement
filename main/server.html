@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>ER:LC Dashboard - Nexus Management</title>
   <link rel="stylesheet" href="server.css">
-  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -17,51 +16,33 @@
   </header>
 
   <main class="dashboard-container">
-    <!-- Overview Stats -->
-    <section class="overview card animate">
-      <div class="overview-grid">
-        <div class="overview-block">
-          <h3><i class="fa-solid fa-users"></i> Total Players</h3>
-          <p class="stat-value" data-target="57"><span class="spinner"></span></p>
-        </div>
-        <div class="overview-block">
-          <h3><i class="fa-solid fa-user-shield"></i> Total Staff</h3>
-          <p class="stat-value" data-target="4"><span class="spinner"></span></p>
-        </div>
-        <div class="overview-block">
-          <h3><i class="fa-solid fa-list"></i> Total Queue</h3>
-          <p class="stat-value" data-target="0"><span class="spinner"></span></p>
-        </div>
+    <!-- Feature Hub Grid -->
+    <section class="features-grid">
+      <div class="feature-block card animate">
+        <h3><i class="fa-solid fa-bullhorn"></i> Server Auto‑Announcements</h3>
+        <p>Automated SSU/Shutdown messages for your server.</p>
+        <span class="warning-tag">API KEY REQUIRED</span>
       </div>
-      <div class="stats-header">
-        <span class="warning-tag">API KEY NEEDED FOR LIVE STATS</span>
-      </div>
-    </section>
 
-    <!-- Team Players (each role its own box) -->
-    <section class="team-players card animate">
-      <h2>Team Players</h2>
-      <div class="team-grid">
-        <div class="team-block">
-          <h3><i class="fa-solid fa-truck"></i> DOT</h3>
-          <p class="stat-value" data-target="4"><span class="spinner"></span></p>
-        </div>
-        <div class="team-block">
-          <h3><i class="fa-solid fa-fire-extinguisher"></i> Fire Department</h3>
-          <p class="stat-value" data-target="8"><span class="spinner"></span></p>
-        </div>
-        <div class="team-block">
-          <h3><i class="fa-solid fa-star"></i> Sheriff</h3>
-          <p class="stat-value" data-target="6"><span class="spinner"></span></p>
-        </div>
-        <div class="team-block">
-          <h3><i class="fa-solid fa-shield-halved"></i> Police</h3>
-          <p class="stat-value" data-target="15"><span class="spinner"></span></p>
-        </div>
-        <div class="team-block">
-          <h3><i class="fa-solid fa-user"></i> Civilian</h3>
-          <p class="stat-value" data-target="24"><span class="spinner"></span></p>
-        </div>
+      <div class="feature-block card animate">
+        <h3><i class="fa-solid fa-gavel"></i> Infractions Manager</h3>
+        <p>Issue warnings, kicks, and bans with logs.</p>
+      </div>
+
+      <div class="feature-block card animate">
+        <h3><i class="fa-solid fa-user-plus"></i> Promotions Tool</h3>
+        <p>Promote staff members with rank tracking.</p>
+      </div>
+
+      <div class="feature-block card animate">
+        <h3><i class="fa-solid fa-chart-line"></i> Live Stats</h3>
+        <p>View live players and staff online.</p>
+        <span class="warning-tag">API KEY REQUIRED</span>
+      </div>
+
+      <div class="feature-block card animate">
+        <h3><i class="fa-solid fa-database"></i> Logs & History</h3>
+        <p>Track punishments, promotions, and staff activity.</p>
       </div>
     </section>
 
@@ -75,41 +56,17 @@
     <p>&copy; 2026 Nexus Management</p>
   </footer>
 
-  <!-- JS Animations -->
   <script>
     const animatedElements = document.querySelectorAll('.animate');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          if (entry.target.classList.contains('overview') || entry.target.classList.contains('team-players')) {
-            animateCounters();
-          }
         }
       });
     }, { threshold: 0.2 });
 
     animatedElements.forEach(el => observer.observe(el));
-
-    function animateCounters() {
-      const counters = document.querySelectorAll('.stat-value');
-      counters.forEach(counter => {
-        const target = +counter.getAttribute('data-target');
-        let count = 0;
-        const increment = target / 100;
-        counter.innerHTML = "0 / " + target;
-        const update = () => {
-          count += increment;
-          if (count < target) {
-            counter.textContent = Math.floor(count) + " / " + target;
-            requestAnimationFrame(update);
-          } else {
-            counter.textContent = target + " / " + target;
-          }
-        };
-        update();
-      });
-    }
   </script>
 </body>
 </html>
