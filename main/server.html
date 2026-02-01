@@ -11,7 +11,7 @@
     <h1>ER:LC Dashboard</h1>
     <p class="subtitle">Staff Management Panel</p>
     <nav class="nav-tabs">
-      <span>Overview</span>
+      <span>Overview</span> | <span>Sessions</span>
     </nav>
   </header>
 
@@ -21,7 +21,6 @@
       <div class="feature-block card animate">
         <h3><i class="fa-solid fa-bullhorn"></i> Server Auto‑Announcements</h3>
         <p>Automated SSU/Shutdown messages for your server.</p>
-        <span class="warning-tag">API KEY REQUIRED</span><br>
         <button class="primary-btn" onclick="location.href='/main/features/auto-announcements.html'">Open</button>
       </div>
 
@@ -40,7 +39,6 @@
       <div class="feature-block card animate">
         <h3><i class="fa-solid fa-chart-line"></i> Live Stats</h3>
         <p>View live players and staff online.</p>
-        <span class="warning-tag">API KEY REQUIRED</span><br>
         <button class="primary-btn" onclick="location.href='/main/features/live-stats.html'">Open</button>
       </div>
 
@@ -48,7 +46,6 @@
       <div class="feature-block card animate">
         <h3><i class="fa-solid fa-database"></i> Logs & History</h3>
         <p>Track punishments, promotions, and staff activity.</p>
-        <span class="warning-tag">API KEY REQUIRED</span><br>
         <button class="primary-btn" onclick="location.href='/main/features/logs.html'">Open</button>
       </div>
 
@@ -71,17 +68,46 @@
     <p>&copy; 2026 Nexus Management</p>
   </footer>
 
-  <script>
-    const animatedElements = document.querySelectorAll('.animate');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.2 });
+  <!-- API Key Modal -->
+  <div id="apiKeyModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h2>Enter API Key</h2>
+      <form id="apiKeyForm">
+        <label for="serverId">Server ID:</label>
+        <input type="text" id="serverId" name="serverId" required>
 
-    animatedElements.forEach(el => observer.observe(el));
+        <label for="apiKey">API Key:</label>
+        <input type="text" id="apiKey" name="apiKey" required>
+
+        <button type="submit" class="primary-btn">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Show modal on page load
+    window.onload = function() {
+      document.getElementById("apiKeyModal").style.display = "block";
+    };
+
+    function closeModal() {
+      document.getElementById("apiKeyModal").style.display = "none";
+    }
+
+    // Handle form submission (frontend only)
+    document.getElementById("apiKeyForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const serverId = document.getElementById("serverId").value;
+      const apiKey = document.getElementById("apiKey").value;
+
+      // For now, just log to console (backend integration later)
+      console.log("Server ID:", serverId);
+      console.log("API Key:", apiKey);
+
+      alert("API Key saved locally. Backend integration coming soon!");
+      closeModal();
+    });
   </script>
 </body>
 </html>
