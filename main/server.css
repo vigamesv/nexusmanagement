@@ -251,3 +251,15 @@ footer {
   color: #fff;
   text-align: center;
 }
+
+/* API Key Badge */
+.api-key-badge {
+  background: #00aa55;
+  color: #fff;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-left: 10px;
+  box-shadow: 0 0 10px rgba(0,255,136,0.6);
+}
+

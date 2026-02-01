@@ -15,6 +15,10 @@
     </nav>
     <!-- Change API Key Button -->
     <button class="primary-btn" style="margin-top:10px;" onclick="openModal()">Change API Key</button>
+    <!-- Confirmation Badge -->
+    <span id="apiKeyBadge" class="api-key-badge" style="display:none;">
+      ✅ API Key Set
+    </span>
   </header>
 
   <main class="dashboard-container">
@@ -104,6 +108,9 @@
 
       // For now, just log to console (backend integration later)
       console.log("API Key:", apiKey);
+
+      // Show confirmation badge
+      document.getElementById("apiKeyBadge").style.display = "inline-block";
 
       alert("API Key saved locally. Backend integration coming soon!");
       closeModal();
