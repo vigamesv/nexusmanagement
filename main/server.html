@@ -31,7 +31,7 @@
     <!-- Live Stats -->
     <section class="live-stats card animate">
       <div class="stats-header">
-        <span class="warning-tag">⚠️ API KEY REQUIRED</span>
+        <span class="warning-tag">⚠️ ER:LC SERVER API KEY REQUIRED</span>
       </div>
       <div class="stats-grid">
         <div class="stat-block">
@@ -40,7 +40,7 @@
         </div>
         <div class="stat-block">
           <h3>ONLINE STAFF</h3>
-          <p class="stat-value" data-target="40">0</p>
+          <p class="stat-value" data-target="12">0</p>
         </div>
       </div>
     </section>
@@ -76,7 +76,6 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          // Trigger counters when live-stats becomes visible
           if (entry.target.classList.contains('live-stats')) {
             animateCounters();
           }
@@ -92,7 +91,7 @@
       counters.forEach(counter => {
         const target = +counter.getAttribute('data-target');
         let count = 0;
-        const increment = target / 100; // speed factor
+        const increment = target / 100;
         const update = () => {
           count += increment;
           if (count < target) {
