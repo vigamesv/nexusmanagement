@@ -93,13 +93,13 @@
     };
 
     function openModal() {
-      const modal = document.getElementById("apiKeyModal");
-      modal.style.display = "flex";
+      document.getElementById("apiKeyModal").style.display = "flex";
     }
 
     function closeModal() {
       document.getElementById("apiKeyModal").style.display = "none";
     }
+
 
     // Handle form submission (frontend only)
     document.getElementById("apiKeyForm").addEventListener("submit", function(e) {
