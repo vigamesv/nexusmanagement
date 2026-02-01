@@ -434,3 +434,25 @@ h2 {
   justify-content: space-between;
   margin-top: 10px;
 }
+/* Permissions Table */
+.permissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  color: #fff;
+}
+
+.permissions-table th,
+.permissions-table td {
+  border: 1px solid #555;
+  padding: 10px;
+  text-align: center;
+}
+
+.permissions-table th {
+  background: #2a2a34;
+}
+
+.permissions-table td {
+  background: #1c1c24;
+}

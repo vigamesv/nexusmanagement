@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ER:LC Dashboard - Nexus Management</title>
+  <title>Nexus Dashboard - Staff Management</title>
   <link rel="stylesheet" href="server.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -30,10 +30,11 @@
         <button class="primary-btn" onclick="location.href='/main/features/auto-announcements.html'">Open</button>
       </div>
 
+      <!-- Replaced Infractions with Shift Management -->
       <div class="feature-block card animate">
-        <h3><i class="fa-solid fa-gavel"></i> Infractions Manager</h3>
-        <p>Issue warnings, kicks, and bans with logs.</p>
-        <button class="primary-btn" onclick="location.href='/main/features/infractions.html'">Open</button>
+        <h3><i class="fa-solid fa-clock"></i> Shift Management</h3>
+        <p>Log and review staff shifts.</p>
+        <button class="primary-btn" onclick="location.href='/main/features/shifts.html'">Open</button>
       </div>
 
       <div class="feature-block card animate">
@@ -56,7 +57,7 @@
       </div>
 
       <div class="feature-block card animate premium-link disabled">
-        <h3><i class="fa-solid fa-gem"></i> Premium Dashboard</h3>
+        <h3><i class="fa-solid fa-gem"></i> Staff Permissions Editor</h3>
         <p>Exclusive advanced tools and analytics.</p>
         <button class="primary-btn disabled-btn" disabled>Coming Soon</button>
       </div>
@@ -86,7 +87,6 @@
     </div>
   </div>
 
-
   <script>
     // Show modal on page load
     window.onload = function() {
@@ -100,7 +100,6 @@
     function closeModal() {
       document.getElementById("apiKeyModal").style.display = "none";
     }
-
 
     // Handle form submission (frontend only)
     document.getElementById("apiKeyForm").addEventListener("submit", function(e) {
