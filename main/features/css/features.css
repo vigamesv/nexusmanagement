@@ -179,19 +179,16 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
-/* Warning Banner at Top (full width) */
+/* Warning Banner - plain text only */
 .warning-banner {
-  background: #220000;
   color: #ff4444;
   font-weight: bold;
   font-size: 1rem;
-  padding: 12px;
   margin-top: 15px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 0 10px rgba(255,68,68,0.6);
-  border-bottom: 2px solid #8000ff; /* purple line under banner */
 }
+
 
 
 /* Fixed Return Button */
