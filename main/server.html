@@ -1,53 +1,112 @@
-<main class="dashboard-container">
-  <!-- Free Plan -->
-  <section class="plan-section card">
-    <h2>Free Plan</h2>
-    <p>Includes staff tools, infraction management, and live stats (API key required).</p>
-    <button class="primary-btn">Current Plan</button>
-  </section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ER:LC Dashboard - Nexus Management</title>
+  <link rel="stylesheet" href="server.css">
+</head>
+<body>
+  <header>
+    <h1>ER:LC Dashboard</h1>
+    <p class="subtitle">Manage your Emergency Response: Liberty County server with powerful tools</p>
+  </header>
 
-  <!-- Server Limit -->
-  <section class="server-limit card">
-    <h2>Server Limit</h2>
-    <p class="big-text">Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
-    <div class="progress-bar">
-      <div class="progress" style="width: 100%;"></div>
-    </div>
-  </section>
+  <main class="dashboard-container">
+    <!-- Free Plan -->
+    <section class="plan-section card animate">
+      <h2>Free Plan</h2>
+      <p>Includes staff tools, infraction management, and live stats (API key required).</p>
+      <button class="primary-btn">Current Plan</button>
+    </section>
 
-  <!-- Live Stats (moved up, directly after Server Limit) -->
-  <section class="live-stats card animate">
-    <div class="stats-header">
-      <span class="warning-tag">API KEY REQUIRED</span>
-    </div>
-    <div class="stats-grid">
-      <div class="stat-block">
-        <h3>LIVE PLAYERS</h3>
-        <p class="stat-value" data-target="40"><span class="spinner"></span></p>
+    <!-- Server Limit -->
+    <section class="server-limit card animate">
+      <h2>Server Limit</h2>
+      <p class="big-text">Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
+      <div class="progress-bar">
+        <div class="progress" style="width: 100%;"></div>
       </div>
-      <div class="stat-block">
-        <h3>ONLINE STAFF</h3>
-        <p class="stat-value" data-target="12"><span class="spinner"></span></p>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Management Tools -->
-  <section class="management-tools card animate">
-    <h2>Management Tools</h2>
-    <div class="tools-grid">
-      <div class="tool-block">
-        <h3>Manage Promotions</h3>
-        <button class="primary-btn">Open</button>
+    <!-- Live Stats -->
+    <section class="live-stats card animate">
+      <div class="stats-header">
+        <span class="warning-tag">API KEY REQUIRED</span>
       </div>
-      <div class="tool-block">
-        <h3>Manage Staff</h3>
-        <button class="primary-btn">Open</button>
+      <div class="stats-grid">
+        <div class="stat-block">
+          <h3>LIVE PLAYERS</h3>
+          <p class="stat-value" data-target="40"><span class="spinner"></span></p>
+        </div>
+        <div class="stat-block">
+          <h3>ONLINE STAFF</h3>
+          <p class="stat-value" data-target="12"><span class="spinner"></span></p>
+        </div>
       </div>
-      <div class="tool-block">
-        <h3>Manage Infractions</h3>
-        <button class="primary-btn">Open</button>
+    </section>
+
+    <!-- Management Tools -->
+    <section class="management-tools card animate">
+      <h2>Management Tools</h2>
+      <div class="tools-grid">
+        <div class="tool-block">
+          <h3>Manage Promotions</h3>
+          <button class="primary-btn">Open</button>
+        </div>
+        <div class="tool-block">
+          <h3>Manage Staff</h3>
+          <button class="primary-btn">Open</button>
+        </div>
+        <div class="tool-block">
+          <h3>Manage Infractions</h3>
+          <button class="primary-btn">Open</button>
+        </div>
       </div>
-    </div>
-  </section>
-</main>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Nexus Management</p>
+  </footer>
+
+  <!-- JavaScript for animations -->
+  <script>
+    // Scroll reveal animation
+    const animatedElements = document.querySelectorAll('.animate');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          if (entry.target.classList.contains('live-stats')) {
+            animateCounters();
+          }
+        }
+      });
+    }, { threshold: 0.2 });
+
+    animatedElements.forEach(el => observer.observe(el));
+
+    // Animated counters with spinner
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stat-value');
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        let count = 0;
+        const increment = target / 100;
+        // remove spinner before counting
+        counter.innerHTML = "0 / " + target;
+        const update = () => {
+          count += increment;
+          if (count < target) {
+            counter.textContent = Math.floor(count) + " / " + target;
+            requestAnimationFrame(update);
+          } else {
+            counter.textContent = target + " / " + target;
+          }
+        };
+        update();
+      });
+    }
+  </script>
+</body>
+</html>
