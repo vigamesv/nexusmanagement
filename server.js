@@ -2,11 +2,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const { Pool } = require("pg");
+const path = require("path");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname))); // serve frontend files
 
-// Connect to PostgreSQL
 const pool = new Pool({
   connectionString: "postgresql://postgres:password@helium/heliumdb?sslmode=disable"
 });
@@ -20,7 +21,7 @@ function generateAccountID(robloxUser) {
   return `${dateStr}-${timeStr}-${last4}`;
 }
 
-// ✅ Signup Route
+// Signup
 app.post("/auth/signup", async (req, res) => {
   const { roblox_user, roblox_id, password } = req.body;
   if (!roblox_user || !roblox_id || !password) {
@@ -48,7 +49,7 @@ app.post("/auth/signup", async (req, res) => {
   }
 });
 
-// ✅ Login Route
+// Login
 app.post("/auth/login", async (req, res) => {
   const { roblox_user, password } = req.body;
   if (!roblox_user || !password) {
@@ -83,7 +84,6 @@ app.post("/auth/login", async (req, res) => {
   }
 });
 
-// Start server
 app.listen(3000, () => {
   console.log("Backend running on port 3000");
 });

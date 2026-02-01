@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Nexus Dashboard</title>
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+</head>
+<body>
+  <header>
+    <h1>Nexus Dashboard</h1>
+    <p class="subtitle">Login</p>
+  </header>
+
+  <main class="feature-container">
+    <section class="feature-card visible">
+      <h2>Login to Your Account</h2>
+      <form id="loginForm" class="form-grid">
+        <label for="roblox_user">Roblox Username:</label>
+        <input type="text" id="roblox_user" name="roblox_user" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit" class="primary-btn">Login</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const roblox_user = document.getElementById("roblox_user").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roblox_user, password })
+      });
+
+      const data = await res.json();
+      if (data.redirectURL) {
+        window.location.href = data.redirectURL;
+      } else {
+        alert(data.error || "Login failed");
+      }
+    });
+  </script>
+</body>
+</html>
