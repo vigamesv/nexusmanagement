@@ -34,13 +34,18 @@ app.get("/", (req, res) => {
 // ✅ Roblox account linking
 app.get("/auth/link-roblox", async (req, res) => {
   try {
-    // Example: call Roblox API to get current user info
-    // Replace with correct Open Cloud endpoint
-    const response = await fetch("https://apis.roblox.com/users/v1/users/me", {
-      headers: { "x-api-key": process.env.ROBLOX_API_KEY }
-    });
-    const data = await response.json();
+    const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).send("Missing Roblox userId");
+    }
 
+    // Call Roblox Users API
+    const response = await fetch(`https://users.roblox.com/v1/users/${userId}`);
+    if (!response.ok) {
+      throw new Error(`Roblox API error: ${response.status}`);
+    }
+
+    const data = await response.json();
     const roblox_user = data.name;
     const roblox_id = data.id;
     const accountID = generateAccountID(roblox_user);
@@ -60,6 +65,7 @@ app.get("/auth/link-roblox", async (req, res) => {
     res.status(500).send("Roblox linking failed");
   }
 });
+
 
 // ✅ Signup (password only)
 app.post("/auth/signup", async (req, res) => {
