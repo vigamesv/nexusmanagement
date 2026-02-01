@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Live Stats - ER:LC Dashboard</title>
+  <title>Live Stats - Nexus Dashboard</title>
   <link rel="stylesheet" href="/main/features/css/features.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -19,7 +19,7 @@
       <p>Monitor live players and staff activity in real-time.</p>
 
       <!-- One Big Rectangular Box -->
-      <div class="stats-box">
+      <div class="stats-rectangle">
 
         <!-- Top Row -->
         <div class="overview-row">
@@ -58,6 +58,7 @@
     </section>
   </main>
 
+  <!-- Fixed Return Button -->
   <button class="return-btn" onclick="location.href='/main/server.html'">
     <i class="fa-solid fa-arrow-left"></i> Return
   </button>
@@ -67,6 +68,7 @@
   </footer>
 
   <script>
+    // Counting animation
     function animateCounters() {
       const counters = document.querySelectorAll('.stat-value');
       counters.forEach(counter => {

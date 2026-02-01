@@ -340,15 +340,17 @@ h2 {
   text-shadow: none !important;
 }
 /* Big Rectangular Stats Box */
-.stats-box {
+.stats-rectangle {
   background: #1c1c24;
   padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  box-shadow: 0 0 20px rgba(128,0,255,0.6); /* glowing border outline */
   color: #fff;
   display: flex;
   flex-direction: column;
   gap: 25px;
+  max-width: 1000px;   /* fixed width for rectangle */
+  margin: 0 auto;      /* center horizontally */
 }
 
 /* Top Row Overview */
