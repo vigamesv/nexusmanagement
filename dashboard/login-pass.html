@@ -3,28 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <title>Login - Nexus Dashboard</title>
-  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
-  <header>
-    <h1>Nexus Dashboard</h1>
-    <p class="subtitle">Login</p>
-  </header>
+<body class="login-body">
+  <div class="login-container fade-in">
+    <div class="login-header">
+      <i class="fa-solid fa-shield-halved"></i>
+      <h1>Nexus Dashboard</h1>
+      <p class="subtitle">Secure Login</p>
+    </div>
 
-  <main class="feature-container">
-    <section class="feature-card visible">
-      <h2>Login to Your Account</h2>
-      <form id="loginForm" class="form-grid">
-        <label for="roblox_user">Roblox Username:</label>
-        <input type="text" id="roblox_user" name="roblox_user" required>
+    <form id="loginForm" class="login-form">
+      <div class="form-group">
+        <label for="roblox_user"><i class="fa-solid fa-user"></i> Roblox Username</label>
+        <input type="text" id="roblox_user" name="roblox_user" placeholder="Enter your Roblox username" required>
+      </div>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+      <div class="form-group">
+        <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      </div>
 
-        <button type="submit" class="primary-btn">Login</button>
-      </form>
-    </section>
-  </main>
+      <button type="submit" class="primary-btn">
+        <i class="fa-solid fa-right-to-bracket"></i> Log In
+      </button>
+    </form>
+
+    <p class="login-footer">© 2026 Nexus Management | ER:LC Staff Tools</p>
+  </div>
 
   <script>
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
