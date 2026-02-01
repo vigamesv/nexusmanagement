@@ -1,19 +1,19 @@
 async function loadServers() {
   const token = localStorage.getItem("sessionToken");
-  if (!token) {
-    window.location.href = "/";
-    return;
-  }
+  //if (!token) {
+  //  window.location.href = "/";
+  //  return;
+  //}
 
   const res = await fetch("/api/servers", {
     headers: { Authorization: token }
   });
 
-  if (!res.ok) {
-    alert("Session expired. Please log in again.");
-    window.location.href = "/";
-    return;
-  }
+  //if (!res.ok) {
+  //  alert("Session expired. Please log in again.");
+  //  window.location.href = "/";
+  //  return;
+  //}
 
   const servers = await res.json();
 

@@ -3,10 +3,10 @@ async function loadServerDashboard() {
   const urlParams = new URLSearchParams(window.location.search);
   const serverId = urlParams.get("id");
 
-  if (!token || !serverId) {
-    window.location.href = "/";
-    return;
-  }
+  //if (!token || !serverId) {
+  //  window.location.href = "/";
+  //  return;
+  //}
 
   const res = await fetch(`/api/server/${serverId}`, {
     headers: { Authorization: token }
