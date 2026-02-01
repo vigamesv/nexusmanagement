@@ -1,85 +1,70 @@
 /* Global */
 body {
-  background: linear-gradient(135deg, #0a0a0f, #1a0f2e);
-  color: #ddd;
+  background: #0a0a0f;
+  color: #eee;
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
 }
 
-header, footer {
+/* Header */
+header {
   text-align: center;
-  padding: 30px;
+  padding: 40px 20px;
   background: #111;
-  border-bottom: 3px solid #8000ff;
-}
-
-footer {
-  border-top: 3px solid #8000ff;
+  border-bottom: 4px solid #8000ff;
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin: 0;
 }
 
 .subtitle {
+  font-size: 1.3rem;
   color: #aaa;
-  font-size: 1.2rem;
 }
 
 /* Layout */
 .dashboard-container {
   display: flex;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 40px auto;
   padding: 20px;
 }
 
 /* Sidebar */
 .sidebar {
-  width: 260px;
+  width: 280px;
   background: #1c1c24;
-  border-radius: 10px;
-  padding: 25px;
-  margin-right: 30px;
+  border-radius: 12px;
+  padding: 30px;
+  margin-right: 40px;
+  box-shadow: 0 0 20px rgba(128,0,255,0.4);
 }
 
 .sidebar h2 {
+  font-size: 1.6rem;
   margin-bottom: 20px;
   color: #8000ff;
-  font-size: 1.4rem;
-}
-
-.folder-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.folder-list li {
-  margin: 12px 0;
 }
 
 .folder-list a {
   display: block;
-  padding: 12px 16px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
   border-radius: 8px;
   background: #2a2a33;
+  font-size: 1.2rem;
   color: #ddd;
   text-decoration: none;
-  font-size: 1.1rem;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .folder-list a:hover {
   background: #8000ff;
   color: #fff;
-}
-
-.folder-list .locked a {
-  opacity: 0.6;
-  cursor: not-allowed;
+  transform: translateX(5px);
 }
 
 /* Main content */
@@ -100,42 +85,41 @@ h1 {
 /* Cards */
 .card {
   background: #1c1c24;
-  border-radius: 10px;
-  padding: 30px;
-  margin: 30px auto;
+  border-radius: 12px;
+  padding: 40px;
+  margin: 40px auto;
+  max-width: 800px;
+  box-shadow: 0 0 25px rgba(128,0,255,0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 20px rgba(128, 0, 255, 0.5);
-}
-
-.large-card {
-  max-width: 700px;
+  transform: scale(1.04);
+  box-shadow: 0 0 35px rgba(128,0,255,0.6);
 }
 
 /* Plan section */
 .plans {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  margin: 30px auto;
+  gap: 40px;
+  margin: 40px auto;
 }
 
 .plan-card {
   background: #1c1c24;
-  border-radius: 10px;
-  padding: 25px;
-  width: 250px;
+  border-radius: 12px;
+  padding: 30px;
+  width: 280px;
 }
 
 .plan-card.premium {
   border: 3px solid #8000ff;
-  box-shadow: 0 0 20px rgba(128, 0, 255, 0.6);
+  box-shadow: 0 0 30px rgba(128,0,255,0.7);
 }
 
 .highlight {
+  font-size: 1.2rem;
   color: #ffccff;
   font-weight: bold;
 }
@@ -145,11 +129,11 @@ h1 {
   background: #8000ff;
   color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 14px 28px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 1.2rem;
   transition: background 0.2s ease;
-  font-size: 1rem;
 }
 
 .primary-btn:hover {
@@ -160,24 +144,19 @@ h1 {
   background: #333;
   color: #ddd;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: not-allowed;
-  font-size: 1rem;
-}
-
-.big-btn {
-  font-size: 1.2rem;
   padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: not-allowed;
 }
 
 /* Progress bar */
 .progress-bar {
   background: #333;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
-  height: 16px;
-  margin: 15px auto;
+  height: 20px;
+  margin: 20px auto;
   width: 85%;
 }
 
@@ -187,11 +166,7 @@ h1 {
 }
 
 .upgrade-note {
+  font-size: 1rem;
   color: #aaa;
-  font-size: 0.9rem;
-}
-
-/* Text scaling */
-.big-text {
-  font-size: 1.1rem;
+  margin-top: 10px;
 }
