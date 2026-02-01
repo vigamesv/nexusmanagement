@@ -12,7 +12,7 @@
   </header>
 
   <main class="dashboard-container">
-    <!-- Sidebar with features -->
+    <!-- Sidebar -->
     <aside class="sidebar">
       <h2>Features</h2>
       <ul class="folder-list">
@@ -23,20 +23,21 @@
       </ul>
     </aside>
 
-    <!-- Main content area -->
+    <!-- Main content -->
     <section class="main-content">
       <!-- Panels -->
       <div id="overview" class="panel active">
         <div class="plans">
-          <button class="primary-btn">Free Plan</button>
+          <button class="primary-btn big-btn">Free Plan</button>
           <div class="plan-card premium">
-            <p>Premium needed for live stats</p>
+            <p class="highlight">Premium needed for live stats</p>
+            <button class="primary-btn big-btn">Upgrade to Premium</button>
           </div>
         </div>
 
-        <div class="server-limit card">
+        <div class="server-limit card large-card">
           <h2>Server Limit</h2>
-          <p>Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
+          <p class="big-text">Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
           <div class="progress-bar">
             <div class="progress" style="width: 100%;"></div>
           </div>
@@ -45,26 +46,26 @@
       </div>
 
       <div id="addStaff" class="panel">
-        <div class="tool-card card">
+        <div class="tool-card card large-card">
           <h2>Add Staff</h2>
-          <p>Add new staff members to your server with basic role assignment.</p>
-          <button class="primary-btn">Add Staff</button>
+          <p class="big-text">Add new staff members to your server with role assignment.</p>
+          <button class="primary-btn big-btn">Add Staff</button>
         </div>
       </div>
 
       <div id="infractions" class="panel">
-        <div class="tool-card card">
+        <div class="tool-card card large-card">
           <h2>Manage Infractions</h2>
-          <p>Basic infraction management with warning and ban tracking.</p>
-          <button class="primary-btn">Manage Infractions</button>
+          <p class="big-text">Manage warnings and bans with tracking tools.</p>
+          <button class="primary-btn big-btn">Manage Infractions</button>
         </div>
       </div>
 
       <div id="liveStats" class="panel">
-        <div class="tool-card card locked">
+        <div class="tool-card card large-card locked">
           <h2>Live Stats</h2>
-          <p>Premium feature: real-time server statistics and analytics.</p>
-          <button class="secondary-btn" disabled>Locked</button>
+          <p class="big-text">Premium feature: real-time server statistics and analytics.</p>
+          <button class="secondary-btn big-btn" disabled>Locked</button>
         </div>
       </div>
     </section>
@@ -76,9 +77,7 @@
 
   <script>
     function showPanel(panelId) {
-      // Hide all panels
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      // Show selected panel
       document.getElementById(panelId).classList.add('active');
     }
   </script>
