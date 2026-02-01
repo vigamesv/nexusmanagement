@@ -95,6 +95,11 @@ h2 {
   color: #9a9aff;
 }
 
+.overview-block i {
+  margin-right: 6px;
+  color: #8000ff;
+}
+
 /* Stats columns */
 .stats-columns {
   display: grid;
@@ -118,13 +123,18 @@ h2 {
   margin-bottom: 6px;
 }
 
+.stat-block i {
+  margin-right: 6px;
+  color: #8000ff;
+}
+
 .stat-value {
   font-size: 1.3rem;
   font-weight: bold;
   color: #fff;
 }
 
-/* Spinner for counters */
+/* Spinner */
 .spinner {
   border: 4px solid #333;
   border-top: 4px solid #ff3333;
@@ -137,44 +147,6 @@ h2 {
 
 @keyframes spin {
   100% { transform: rotate(360deg); }
-}
-
-/* Active Staff */
-.active-staff h2 {
-  margin-bottom: 15px;
-}
-
-.staff-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.staff-list li {
-  background: #222;
-  margin: 8px 0;
-  padding: 10px;
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(128,0,255,0.2);
-}
-
-/* Recent Punishments */
-.punishments h2 {
-  margin-bottom: 15px;
-}
-
-.punishment-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.punishment-list li {
-  background: #222;
-  margin: 8px 0;
-  padding: 10px;
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(255,0,0,0.2);
 }
 
 /* Buttons */

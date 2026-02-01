@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>ER:LC Dashboard - Nexus Management</title>
   <link rel="stylesheet" href="server.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <header>
@@ -19,15 +21,15 @@
     <section class="overview card animate">
       <div class="overview-grid">
         <div class="overview-block">
-          <h3>Total Players</h3>
+          <h3><i class="fa-solid fa-users"></i> Total Players</h3>
           <p class="stat-value" data-target="57"><span class="spinner"></span></p>
         </div>
         <div class="overview-block">
-          <h3>Total Staff</h3>
+          <h3><i class="fa-solid fa-user-shield"></i> Total Staff</h3>
           <p class="stat-value" data-target="4"><span class="spinner"></span></p>
         </div>
         <div class="overview-block">
-          <h3>Total Queue</h3>
+          <h3><i class="fa-solid fa-list"></i> Total Queue</h3>
           <p class="stat-value" data-target="0"><span class="spinner"></span></p>
         </div>
       </div>
@@ -42,42 +44,22 @@
         <!-- Team Players -->
         <div class="stats-column">
           <h2>Team Players</h2>
-          <div class="stat-block"><h3>DOT</h3><p class="stat-value" data-target="4"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3>Fire Department</h3><p class="stat-value" data-target="8"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3>Sheriff</h3><p class="stat-value" data-target="6"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3>Police</h3><p class="stat-value" data-target="15"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3>Civilian</h3><p class="stat-value" data-target="24"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-truck"></i> DOT</h3><p class="stat-value" data-target="4"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-fire-extinguisher"></i> Fire Department</h3><p class="stat-value" data-target="8"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-star"></i> Sheriff</h3><p class="stat-value" data-target="6"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-shield-halved"></i> Police</h3><p class="stat-value" data-target="15"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-user"></i> Civilian</h3><p class="stat-value" data-target="24"><span class="spinner"></span></p></div>
         </div>
 
         <!-- Staff Online -->
         <div class="stats-column">
           <h2>Staff Online</h2>
-          <div class="stat-block"><h3>Moderators</h3><p class="stat-value" data-target="0"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3>Admins</h3><p class="stat-value" data-target="1"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3>Co Owners</h3><p class="stat-value" data-target="0"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3>Owners</h3><p class="stat-value" data-target="1"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-gavel"></i> Moderators</h3><p class="stat-value" data-target="0"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-user-tie"></i> Admins</h3><p class="stat-value" data-target="1"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-crown"></i> Co Owners</h3><p class="stat-value" data-target="0"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3><i class="fa-solid fa-star-of-david"></i> Owners</h3><p class="stat-value" data-target="1"><span class="spinner"></span></p></div>
         </div>
       </div>
-    </section>
-
-    <!-- Active Staff -->
-    <section class="active-staff card animate">
-      <h2>Active Staff</h2>
-      <ul class="staff-list">
-        <li><strong>xRoyal_Admin</strong> (Owner) – 9212h 10m</li>
-        <li><strong>ModeratorMike</strong> (Head Admin) – 9209h 40m</li>
-        <li><strong>StaffSarah</strong> (Senior Admin) – 9209h 10m</li>
-      </ul>
-    </section>
-
-    <!-- Recent Punishments -->
-    <section class="punishments card animate">
-      <h2>Recent Punishments</h2>
-      <ul class="punishment-list">
-        <li><strong>TrollerX99</strong>: Mass VDM and exploiting (By: xRoyal_Admin) – Game Ban – in 7 hours</li>
-        <li><strong>SpeedyGamer</strong>: Excessive speeding in city limits (By: ModeratorMike) – Warning – in 7 hours</li>
-        <li><strong>RandomRDM</strong>: Server Ban</li>
-      </ul>
     </section>
 
     <!-- Servers Button -->
@@ -92,7 +74,6 @@
 
   <!-- JS Animations -->
   <script>
-    // Scroll reveal animation
     const animatedElements = document.querySelectorAll('.animate');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -107,7 +88,6 @@
 
     animatedElements.forEach(el => observer.observe(el));
 
-    // Animated counters with spinner
     function animateCounters() {
       const counters = document.querySelectorAll('.stat-value');
       counters.forEach(counter => {
