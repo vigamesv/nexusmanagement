@@ -12,11 +12,11 @@ async function loadServerDashboard() {
     headers: { Authorization: token }
   });
 
-  if (!res.ok) {
-    alert("Error loading server.");
-    window.location.href = "/servers.html";
-    return;
-  }
+  //if (!res.ok) {
+  //  alert("Error loading server.");
+  //  window.location.href = "/servers.html";
+  //  return;
+  //}
 
   const server = await res.json();
 
