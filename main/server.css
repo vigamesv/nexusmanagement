@@ -1,85 +1,9 @@
-/* Global */
-body {
-  background: #0a0a0f;
-  color: #eee;
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-/* Header */
-header {
-  text-align: center;
-  padding: 40px 20px;
-  background: #111;
-  border-bottom: 4px solid #8000ff;
-}
-
-h1 {
-  font-size: 3rem;
-  margin: 0;
-}
-
-.subtitle {
-  font-size: 1.3rem;
-  color: #aaa;
-}
-
-/* Layout */
+/* General layout */
 .dashboard-container {
-  display: flex;
-  max-width: 1400px;
+  max-width: 1000px;
   margin: 40px auto;
   padding: 20px;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 280px;
-  background: #1c1c24;
-  border-radius: 12px;
-  padding: 30px;
-  margin-right: 40px;
-  box-shadow: 0 0 20px rgba(128,0,255,0.4);
-}
-
-.sidebar h2 {
-  font-size: 1.6rem;
-  margin-bottom: 20px;
-  color: #8000ff;
-}
-
-.folder-list a {
-  display: block;
-  padding: 14px 18px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  background: #2a2a33;
-  font-size: 1.2rem;
-  color: #ddd;
-  text-decoration: none;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.folder-list a:hover {
-  background: #8000ff;
-  color: #fff;
-  transform: translateX(5px);
-}
-
-/* Main content */
-.main-content {
-  flex: 1;
   text-align: center;
-}
-
-/* Panels */
-.panel {
-  display: none;
-}
-
-.panel.active {
-  display: block;
 }
 
 /* Cards */
@@ -87,41 +11,49 @@ h1 {
   background: #1c1c24;
   border-radius: 12px;
   padding: 40px;
-  margin: 40px auto;
-  max-width: 800px;
+  margin: 30px auto;
   box-shadow: 0 0 25px rgba(128,0,255,0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-  transform: scale(1.04);
+  transform: scale(1.03);
   box-shadow: 0 0 35px rgba(128,0,255,0.6);
 }
 
 /* Plan section */
-.plans {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin: 40px auto;
+.plan-section {
+  border: 2px solid #00ffcc;
 }
 
-.plan-card {
-  background: #1c1c24;
-  border-radius: 12px;
-  padding: 30px;
-  width: 280px;
+.plan-section h2 {
+  color: #00ffcc;
 }
 
-.plan-card.premium {
-  border: 3px solid #8000ff;
-  box-shadow: 0 0 30px rgba(128,0,255,0.7);
+/* Features */
+.features {
+  margin-top: 40px;
 }
 
-.highlight {
-  font-size: 1.2rem;
-  color: #ffccff;
+.feature-card {
+  text-align: left;
+  max-width: 800px;
+}
+
+.feature-card h3 {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+}
+
+.feature-card p {
+  font-size: 1.1rem;
+}
+
+/* Warning tag */
+.warning {
+  color: #ff4444;
   font-weight: bold;
+  margin-top: 10px;
 }
 
 /* Buttons */
@@ -140,16 +72,6 @@ h1 {
   background: #9a33ff;
 }
 
-.secondary-btn {
-  background: #333;
-  color: #ddd;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  cursor: not-allowed;
-}
-
 /* Progress bar */
 .progress-bar {
   background: #333;
@@ -165,35 +87,6 @@ h1 {
   height: 100%;
 }
 
-.upgrade-note {
-  font-size: 1rem;
-  color: #aaa;
-  margin-top: 10px;
-}
-.plans {
-  display: flex;
-  justify-content: center;
-  margin: 40px auto;
-}
-
-.plan-card {
-  background: #1c1c24;
-  border-radius: 12px;
-  padding: 30px;
-  width: 300px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.plan-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(128,0,255,0.5);
-}
-
-.plan-card.free {
-  border: 2px solid #00ffcc;
-}
-
-.plan-card.free h2 {
-  color: #00ffcc;
+.big-text {
+  font-size: 1.2rem;
 }

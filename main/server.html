@@ -12,84 +12,43 @@
   </header>
 
   <main class="dashboard-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h2>Features</h2>
-      <ul class="folder-list">
-        <li><a href="#" onclick="showPanel('overview')">Overview</a></li>
-        <li><a href="#" onclick="showPanel('addStaff')">Add Staff</a></li>
-        <li><a href="#" onclick="showPanel('infractions')">Manage Infractions</a></li>
-        <li class="locked"><a href="#" onclick="showPanel('liveStats')">Live Stats</a></li>
-      </ul>
-    </aside>
+    <!-- Free Plan -->
+    <section class="plan-section card">
+      <h2>Free Plan</h2>
+      <p>Includes staff tools, infraction management, and live stats (API key required).</p>
+      <button class="primary-btn">Current Plan</button>
+    </section>
 
-    <!-- Main content -->
-    <section class="main-content">
-      <!-- Panels -->
-      <div id="overview" class="panel active">
-        <!-- Free Plan only -->
-        <div class="plans">
-          <div class="plan-card free">
-            <h2>Free Plan</h2>
-            <p>Includes staff tools and infraction management.</p>
-            <button class="primary-btn">Current Plan</button>
-          </div>
-        </div>
+    <!-- Server Limit -->
+    <section class="server-limit card">
+      <h2>Server Limit</h2>
+      <p class="big-text">Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
+      <div class="progress-bar">
+        <div class="progress" style="width: 100%;"></div>
+      </div>
+    </section>
 
-        <!-- Grid layout for server limit + tools -->
-        <div class="grid-layout">
-          <div class="server-limit card">
-            <h2>Server Limit</h2>
-            <p class="big-text">Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
-            <div class="progress-bar">
-              <div class="progress" style="width: 100%;"></div>
-            </div>
-          </div>
+    <!-- Features listed directly -->
+    <section class="features">
+      <h2>Available Tools</h2>
 
-          <div class="tools card">
-            <h2>Available Tools</h2>
-            <div class="tool-card">
-              <h3>Add Staff</h3>
-              <p>Add new staff members with role assignment.</p>
-              <button class="primary-btn">Add Staff</button>
-            </div>
-            <div class="tool-card">
-              <h3>Manage Infractions</h3>
-              <p>Track warnings and bans with basic tools.</p>
-              <button class="primary-btn">Manage Infractions</button>
-            </div>
-            <div class="tool-card locked">
-              <h3>Live Stats</h3>
-              <p>Feature not available at launch.</p>
-              <button class="secondary-btn" disabled>Locked</button>
-            </div>
-          </div>
-        </div>
+      <div class="feature-card card">
+        <h3>Add Staff</h3>
+        <p>Add new staff members to your server with role assignment.</p>
+        <button class="primary-btn">Add Staff</button>
       </div>
 
-      <!-- Other panels -->
-      <div id="addStaff" class="panel">
-        <div class="tool-card card large-card">
-          <h2>Add Staff</h2>
-          <p>Add new staff members to your server with role assignment.</p>
-          <button class="primary-btn">Add Staff</button>
-        </div>
+      <div class="feature-card card">
+        <h3>Manage Infractions</h3>
+        <p>Track warnings and bans with basic tools.</p>
+        <button class="primary-btn">Manage Infractions</button>
       </div>
 
-      <div id="infractions" class="panel">
-        <div class="tool-card card large-card">
-          <h2>Manage Infractions</h2>
-          <p>Manage warnings and bans with tracking tools.</p>
-          <button class="primary-btn">Manage Infractions</button>
-        </div>
-      </div>
-
-      <div id="liveStats" class="panel">
-        <div class="tool-card card large-card locked">
-          <h2>Live Stats</h2>
-          <p>Feature not available at launch.</p>
-          <button class="secondary-btn" disabled>Locked</button>
-        </div>
+      <div class="feature-card card">
+        <h3>Live Stats</h3>
+        <p>View real-time server statistics and analytics.</p>
+        <p class="warning">⚠️ ER:LC SERVER API KEY REQUIRED</p>
+        <button class="primary-btn">View Stats</button>
       </div>
     </section>
   </main>
@@ -97,12 +56,5 @@
   <footer>
     <p>&copy; 2026 Nexus Management</p>
   </footer>
-
-  <script>
-    function showPanel(panelId) {
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      document.getElementById(panelId).classList.add('active');
-    }
-  </script>
 </body>
 </html>
