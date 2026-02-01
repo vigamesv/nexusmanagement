@@ -24,22 +24,22 @@
       <div class="stats-grid">
         <div class="stat-box">
           <h3><i class="fa-solid fa-users"></i> Total Players</h3>
-          <p class="stat-value">35/40</p>
+          <p class="stat-value" data-target="35" data-limit="40"><span class="spinner"></span></p>
         </div>
         <div class="stat-box">
           <h3><i class="fa-solid fa-list"></i> Queue</h3>
-          <p class="stat-value">3</p>
+          <p class="stat-value" data-target="3"><span class="spinner"></span></p>
         </div>
       </div>
 
       <!-- Team Players Breakdown -->
       <h2 style="margin-top:30px;"><i class="fa-solid fa-users"></i> Team Players</h2>
       <div class="stats-grid">
-        <div class="stat-box"><h3><i class="fa-solid fa-truck"></i> DOT</h3><p class="stat-value">4</p></div>
-        <div class="stat-box"><h3><i class="fa-solid fa-fire-extinguisher"></i> Fire Department</h3><p class="stat-value">8</p></div>
-        <div class="stat-box"><h3><i class="fa-solid fa-star"></i> Sheriff</h3><p class="stat-value">6</p></div>
-        <div class="stat-box"><h3><i class="fa-solid fa-shield-halved"></i> Police</h3><p class="stat-value">15</p></div>
-        <div class="stat-box"><h3><i class="fa-solid fa-user"></i> Civilian</h3><p class="stat-value">24</p></div>
+        <div class="stat-box"><h3><i class="fa-solid fa-truck"></i> DOT</h3><p class="stat-value" data-target="4"><span class="spinner"></span></p></div>
+        <div class="stat-box"><h3><i class="fa-solid fa-fire-extinguisher"></i> Fire Department</h3><p class="stat-value" data-target="8"><span class="spinner"></span></p></div>
+        <div class="stat-box"><h3><i class="fa-solid fa-star"></i> Sheriff</h3><p class="stat-value" data-target="6"><span class="spinner"></span></p></div>
+        <div class="stat-box"><h3><i class="fa-solid fa-shield-halved"></i> Police</h3><p class="stat-value" data-target="15"><span class="spinner"></span></p></div>
+        <div class="stat-box"><h3><i class="fa-solid fa-user"></i> Civilian</h3><p class="stat-value" data-target="24"><span class="spinner"></span></p></div>
       </div>
     </section>
   </main>
@@ -60,11 +60,42 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
+          animateCounters();
         }
       });
     }, { threshold: 0.2 });
 
     animatedElements.forEach(el => observer.observe(el));
+
+    // Counter animation
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stat-value');
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const limit = counter.getAttribute('data-limit'); // only used for Total Players
+        let count = 0;
+        const increment = Math.max(1, target / 100);
+
+        const update = () => {
+          count += increment;
+          if (count < target) {
+            counter.textContent = Math.floor(count) + (limit ? "/" + limit : "");
+            requestAnimationFrame(update);
+          } else {
+            counter.textContent = target + (limit ? "/" + limit : "");
+            // Glow effects
+            if (target > 0) {
+              if (counter.parentElement.querySelector('h3').textContent.includes("Queue")) {
+                counter.classList.add("queue-active");
+              } else {
+                counter.classList.add("active");
+              }
+            }
+          }
+        };
+        update();
+      });
+    }
   </script>
 </body>
 </html>
