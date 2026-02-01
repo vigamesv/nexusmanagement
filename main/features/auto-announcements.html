@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auto Announcements - ER:LC Dashboard</title>
+  <link rel="stylesheet" href="/main/features/css/features.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>Auto Announcements</h1>
+    <p class="subtitle">Schedule automated :h or :m messages</p>
+    <div class="warning-banner">API KEY REQUIRED</div>
+  </header>
+
+  <main class="feature-container">
+    <section class="feature-card animate">
+      <h2><i class="fa-solid fa-bullhorn"></i> Auto Announcements</h2>
+      <p>Configure announcements to be sent automatically at chosen intervals.</p>
+
+      <!-- Announcement Form -->
+      <form id="announcementForm" class="form-grid">
+        <label for="announcementText">Announcement Command:</label>
+        <input type="text" id="announcementText" placeholder="Enter :h or :m" required>
+
+        <label for="interval">Interval (minutes):</label>
+        <select id="interval" required>
+          <option value="5">Every 5 minutes</option>
+          <option value="10">Every 10 minutes</option>
+          <option value="15">Every 15 minutes</option>
+          <option value="30">Every 30 minutes</option>
+        </select>
+
+        <button type="submit" class="primary-btn">Save Announcement</button>
+      </form>
+
+      <!-- Preview List -->
+      <div id="announcementList" class="stats-grid" style="margin-top:20px;">
+        <!-- Saved announcements will appear here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Fixed Return Button -->
+  <button class="return-btn" onclick="location.href='/main/server.html'">
+    <i class="fa-solid fa-arrow-left"></i> Return
+  </button>
+
+  <footer>
+    <p>&copy; 2026 Nexus Management</p>
+  </footer>
+
+  <script>
+    // Reveal animation
+    const animatedElements = document.querySelectorAll('.animate');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.2 });
+    animatedElements.forEach(el => observer.observe(el));
+
+    // Handle form submission (frontend only)
+    const form = document.getElementById("announcementForm");
+    const list = document.getElementById("announcementList");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const text = document.getElementById("announcementText").value;
+      const interval = document.getElementById("interval").value;
+
+      // Create a preview card
+      const card = document.createElement("div");
+      card.className = "stat-box";
+      card.innerHTML = `
+        <h3><i class="fa-solid fa-bullhorn"></i> ${text}</h3>
+        <p class="log-entry">Scheduled every ${interval} minutes</p>
+      `;
+      list.appendChild(card);
+
+      // Reset form
+      form.reset();
+
+      alert("Announcement saved locally. Backend integration coming soon!");
+    });
+  </script>
+</body>
+</html>

@@ -221,3 +221,24 @@ h2 {
   margin: 6px 0;
   text-align: left;
 }
+/* Form Grid */
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.form-grid label {
+  font-weight: bold;
+  text-align: left;
+}
+
+.form-grid input,
+.form-grid select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #222;
+  color: #fff;
+}
