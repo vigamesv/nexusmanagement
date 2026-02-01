@@ -242,6 +242,16 @@ h2 {
   background: #222;
   color: #fff;
 }
+
+/* Announcement Cards */
+#announcementList .stat-box {
+  background: #1c1c24;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
 /* Actions for announcements */
 .announcement-actions {
   display: flex;
