@@ -21,7 +21,7 @@ async function loadDashboard() {
   const user = await res.json();
   console.log("Frontend received user:", user); // Debug log
 
-  // Prefer global_name, then username
+  // Prefer global_name, fallback to username
   const displayName = user.global_name || user.username || "Unknown";
   // Only show discriminator if it's not "0" and exists
   const tag = user.discriminator && user.discriminator !== "0"
@@ -30,8 +30,11 @@ async function loadDashboard() {
 
   localStorage.setItem("sessionToken", token);
 
+  // Top-right corner
   document.getElementById("username").textContent = `${displayName}${tag}`;
+  // Welcome message
   document.getElementById("displayName").textContent = displayName;
+  // Plan badge
   document.getElementById("planBadge").textContent = user.plan || "free";
 
   document.getElementById("logoutBtn").onclick = () => {
