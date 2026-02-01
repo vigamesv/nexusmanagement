@@ -293,3 +293,25 @@ h2 {
 .danger-btn:hover {
   background: #cc3333;
 }
+/* Infractions List */
+.infractions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.infractions-list .stat-box {
+  background: #1c1c24;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(128,0,255,0.4);
+}
+
+/* Reuse announcement-actions styling */
+.announcement-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
