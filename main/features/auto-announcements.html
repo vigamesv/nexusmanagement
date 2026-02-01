@@ -14,7 +14,7 @@
   </header>
 
   <main class="feature-container">
-    <section class="feature-card animate">
+    <section class="feature-card visible">
       <h2><i class="fa-solid fa-bullhorn"></i> Auto Announcements</h2>
       <p>Configure announcements to be sent automatically at chosen intervals.</p>
 
@@ -36,7 +36,7 @@
 
       <!-- Saved Announcements Section -->
       <h2 style="margin-top:30px;"><i class="fa-solid fa-list"></i> Saved Announcements</h2>
-      <div id="announcementList" class="stats-grid">
+      <div id="announcementList" class="announcement-list">
         <p class="log-entry">No announcements saved yet.</p>
       </div>
     </section>
@@ -73,9 +73,9 @@
       alert("Announcement saved locally. Backend integration coming soon!");
     });
 
-    // Render Announcements
+    // Render announcements
     function renderAnnouncements() {
-      list.innerHTML = ""; // clear before re-render
+      list.innerHTML = "";
       if (announcements.length === 0) {
         list.innerHTML = "<p class='log-entry'>No announcements saved yet.</p>";
         return;
@@ -95,7 +95,6 @@
         list.appendChild(card);
       });
     }
-
 
     // Delete announcement with confirmation
     function deleteAnnouncement(id) {
