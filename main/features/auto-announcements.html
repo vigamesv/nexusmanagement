@@ -34,8 +34,9 @@
         <button type="submit" class="primary-btn">Save Announcement</button>
       </form>
 
-      <!-- Preview List -->
-      <div id="announcementList" class="stats-grid" style="margin-top:20px;">
+      <!-- Saved Announcements Section -->
+      <h2 style="margin-top:30px;"><i class="fa-solid fa-list"></i> Saved Announcements</h2>
+      <div id="announcementList" class="stats-grid">
         <!-- Saved announcements will appear here -->
       </div>
     </section>
@@ -51,40 +52,62 @@
   </footer>
 
   <script>
-    // Reveal animation
-    const animatedElements = document.querySelectorAll('.animate');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.2 });
-    animatedElements.forEach(el => observer.observe(el));
-
-    // Handle form submission (frontend only)
     const form = document.getElementById("announcementForm");
     const list = document.getElementById("announcementList");
 
+    let announcements = []; // local array for demo
+
+    // Handle form submission
     form.addEventListener("submit", function(e) {
       e.preventDefault();
       const text = document.getElementById("announcementText").value;
       const interval = document.getElementById("interval").value;
 
-      // Create a preview card
-      const card = document.createElement("div");
-      card.className = "stat-box";
-      card.innerHTML = `
-        <h3><i class="fa-solid fa-bullhorn"></i> ${text}</h3>
-        <p class="log-entry">Scheduled every ${interval} minutes</p>
-      `;
-      list.appendChild(card);
+      const announcement = { id: Date.now(), text, interval };
+      announcements.push(announcement);
+      renderAnnouncements();
 
-      // Reset form
       form.reset();
-
       alert("Announcement saved locally. Backend integration coming soon!");
     });
+
+    // Render announcements
+    function renderAnnouncements() {
+      list.innerHTML = "";
+      announcements.forEach(a => {
+        const card = document.createElement("div");
+        card.className = "stat-box";
+        card.innerHTML = `
+          <h3><i class="fa-solid fa-bullhorn"></i> ${a.text}</h3>
+          <p class="log-entry">Scheduled every ${a.interval} minutes</p>
+          <div class="announcement-actions">
+            <button class="secondary-btn" onclick="editAnnouncement(${a.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+            <button class="danger-btn" onclick="deleteAnnouncement(${a.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // Delete announcement
+    function deleteAnnouncement(id) {
+      announcements = announcements.filter(a => a.id !== id);
+      renderAnnouncements();
+    }
+
+    // Edit announcement
+    function editAnnouncement(id) {
+      const a = announcements.find(a => a.id === id);
+      if (!a) return;
+
+      // Pre-fill form
+      document.getElementById("announcementText").value = a.text;
+      document.getElementById("interval").value = a.interval;
+
+      // Remove old entry so saving replaces it
+      announcements = announcements.filter(x => x.id !== id);
+      renderAnnouncements();
+    }
   </script>
 </body>
 </html>
