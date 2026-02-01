@@ -216,3 +216,8 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+/* Stat Value Glow */
+.stat-value.active {
+  color: #00ff88; /* bright green */
+  text-shadow: 0 0 10px rgba(0,255,136,0.8);
+}
