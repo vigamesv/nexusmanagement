@@ -29,24 +29,24 @@
     </section>
 
     <!-- Live Stats -->
-    <section class="live-stats card">
+    <section class="live-stats card animate">
       <div class="stats-header">
         <span class="warning-tag">⚠️ API KEY REQUIRED</span>
       </div>
       <div class="stats-grid">
         <div class="stat-block">
           <h3>LIVE PLAYERS</h3>
-          <p class="stat-value">0 / 40</p>
+          <p class="stat-value" data-target="40">0</p>
         </div>
         <div class="stat-block">
           <h3>ONLINE STAFF</h3>
-          <p class="stat-value">0 / 40</p>
+          <p class="stat-value" data-target="40">0</p>
         </div>
       </div>
     </section>
 
     <!-- Management Tools -->
-    <section class="management-tools card">
+    <section class="management-tools card animate">
       <h2>Management Tools</h2>
       <div class="tools-grid">
         <div class="tool-block">
@@ -68,5 +68,43 @@
   <footer>
     <p>&copy; 2026 Nexus Management</p>
   </footer>
+
+  <script>
+    // Scroll reveal animation
+    const animatedElements = document.querySelectorAll('.animate');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Trigger counters when live-stats becomes visible
+          if (entry.target.classList.contains('live-stats')) {
+            animateCounters();
+          }
+        }
+      });
+    }, { threshold: 0.2 });
+
+    animatedElements.forEach(el => observer.observe(el));
+
+    // Animated counters
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stat-value');
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        let count = 0;
+        const increment = target / 100; // speed factor
+        const update = () => {
+          count += increment;
+          if (count < target) {
+            counter.textContent = Math.floor(count) + " / " + target;
+            requestAnimationFrame(update);
+          } else {
+            counter.textContent = target + " / " + target;
+          }
+        };
+        update();
+      });
+    }
+  </script>
 </body>
 </html>
