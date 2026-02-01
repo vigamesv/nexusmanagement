@@ -21,16 +21,18 @@ async function loadDashboard() {
   const user = await res.json();
   console.log("Frontend received user:", user); // Debug log
 
-  // Use safe defaults instead of failing
-  const username = user.username || "Unknown";
-  const discriminator = user.discriminator || "0000";
-  const plan = user.plan || "free";
+  // Prefer global_name, then username
+  const displayName = user.global_name || user.username || "Unknown";
+  // Only show discriminator if it's not "0" and exists
+  const tag = user.discriminator && user.discriminator !== "0"
+    ? `#${user.discriminator}`
+    : "";
 
   localStorage.setItem("sessionToken", token);
 
-  document.getElementById("username").textContent = `${username}#${discriminator}`;
-  document.getElementById("displayName").textContent = username;
-  document.getElementById("planBadge").textContent = plan;
+  document.getElementById("username").textContent = `${displayName}${tag}`;
+  document.getElementById("displayName").textContent = displayName;
+  document.getElementById("planBadge").textContent = user.plan || "free";
 
   document.getElementById("logoutBtn").onclick = () => {
     localStorage.removeItem("sessionToken");

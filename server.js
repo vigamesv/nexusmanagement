@@ -61,8 +61,9 @@ app.get("/callback", async (req, res) => {
     // Always overwrite with fresh Discord data
     await db.set(userData.id, {
       id: userData.id,
-      username: userData.username || "Unknown",
-      discriminator: userData.discriminator || "0000",
+      username: userData.username || null,
+      global_name: userData.global_name || null,
+      discriminator: userData.discriminator || null,
       plan,
       infractions: existingUser?.infractions || 0,
       promotions: existingUser?.promotions || 0,
