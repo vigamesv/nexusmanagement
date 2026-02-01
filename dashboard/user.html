@@ -3,34 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <title>User Dashboard - Nexus Management</title>
-  <link rel="stylesheet" href="dashboard.css">
-  <link rel="icon" type="image/webp" href="/images/favicon.webp">
-
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <header>
-    <h1>Nexus Management</h1>
-    <div class="user-info">
-      <!-- Top-right corner shows display name -->
-      <span id="username"></span>
-      <button id="logoutBtn">Logout</button>
-    </div>
+    <h1>Nexus Dashboard</h1>
+    <p class="subtitle">User Dashboard</p>
   </header>
 
-  <main class="dashboard-main">
-    <!-- Welcome message uses global_name if available -->
-    <h2>Welcome back, <span id="displayName"></span>!</h2>
-    <p class="plan-text">Your current plan: <span id="planBadge"></span></p>
+  <main class="feature-container">
+    <section class="feature-card visible">
+      <h2><i class="fa-solid fa-user"></i> Welcome</h2>
+      <p id="robloxUser">Loading Roblox user...</p>
+      <p id="accountID" class="warning-text">Loading Account ID...</p>
+      <p class="warning-banner">⚠️ Never share your Account ID — it allows people to log into your account.</p>
+    </section>
 
-    <div class="dashboard-links">
-          <a class="dashboard-link" href="/main/"
-    </div>
+    <section class="feature-card visible">
+      <h2><i class="fa-solid fa-bars"></i> Navigation</h2>
+      <div class="nav-buttons">
+        <button class="primary-btn" onclick="location.href='/main/servers.html'">
+          <i class="fa-solid fa-server"></i> Servers
+        </button>
+        <button class="primary-btn" onclick="location.href='/main/features/logs.html'">
+          <i class="fa-solid fa-book"></i> Logs
+        </button>
+        <button class="primary-btn" onclick="location.href='/main/features/permissions.html'">
+          <i class="fa-solid fa-lock"></i> Permissions
+        </button>
+        <button class="primary-btn" onclick="location.href='/main/features/sessions.html'">
+          <i class="fa-solid fa-calendar-check"></i> Sessions
+        </button>
+      </div>
+    </section>
   </main>
 
   <footer>
     <p>&copy; 2026 Nexus Management</p>
   </footer>
 
-  <script src="dashboard.js"></script>
+  <script>
+    // Utility: get query parameter
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    async function loadUser() {
+      const accountID = getQueryParam("ID");
+      if (!accountID) {
+        document.getElementById("robloxUser").textContent = "No account ID provided.";
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/user/${accountID}`);
+        const data = await res.json();
+
+        if (data.error) {
+          document.getElementById("robloxUser").textContent = "Error loading user.";
+          document.getElementById("accountID").textContent = "";
+        } else {
+          document.getElementById("robloxUser").textContent = `Roblox User: ${data.roblox_user}`;
+          document.getElementById("accountID").textContent = `Account ID: ${data.account_id}`;
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById("robloxUser").textContent = "Failed to fetch user data.";
+      }
+    }
+
+    loadUser();
+  </script>
 </body>
 </html>

@@ -2,12 +2,17 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcryptjs");
 const { Pool } = require("pg");
+const fetch = require("node-fetch");
 const path = require("path");
 
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname))); // serve frontend files
 
+// Serve static files (homepage, CSS, JS, dashboard pages)
+app.use(express.static(path.join(__dirname)));
+app.use("/dashboard", express.static(path.join(__dirname, "dashboard")));
+
+// PostgreSQL connection
 const pool = new Pool({
   connectionString: "postgresql://postgres:password@helium/heliumdb?sslmode=disable"
 });
@@ -21,27 +26,60 @@ function generateAccountID(robloxUser) {
   return `${dateStr}-${timeStr}-${last4}`;
 }
 
-// Signup
+// ✅ Homepage route
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// ✅ Roblox account linking
+app.get("/auth/link-roblox", async (req, res) => {
+  try {
+    // Example: call Roblox API to get current user info
+    // Replace with correct Open Cloud endpoint
+    const response = await fetch("https://apis.roblox.com/users/v1/users/me", {
+      headers: { "x-api-key": process.env.ROBLOX_API_KEY }
+    });
+    const data = await response.json();
+
+    const roblox_user = data.name;
+    const roblox_id = data.id;
+    const accountID = generateAccountID(roblox_user);
+
+    // Save user record with empty password initially
+    await pool.query(
+      `INSERT INTO users (roblox_user, roblox_id, account_password, account_id, owned_server_ids, server_ids)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       ON CONFLICT (roblox_id) DO NOTHING`,
+      [roblox_user, roblox_id, "", accountID, [], []]
+    );
+
+    // Redirect to signup page with account ID
+    res.redirect(`/dashboard/signup.html?ID=${accountID}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Roblox linking failed");
+  }
+});
+
+// ✅ Signup (password only)
 app.post("/auth/signup", async (req, res) => {
-  const { roblox_user, roblox_id, password } = req.body;
-  if (!roblox_user || !roblox_id || !password) {
+  const { account_id, password } = req.body;
+  if (!account_id || !password) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const accountID = generateAccountID(roblox_user);
 
-    const result = await pool.query(
-      `INSERT INTO users (roblox_user, roblox_id, account_password, account_id, owned_server_ids, server_ids)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, account_id`,
-      [roblox_user, roblox_id, hashedPassword, accountID, [], []]
+    await pool.query(
+      "UPDATE users SET account_password = $1 WHERE account_id = $2",
+      [hashedPassword, account_id]
     );
 
     res.json({
       message: "Signup successful",
-      userID: result.rows[0].id,
-      accountID: result.rows[0].account_id
+      accountID: account_id,
+      redirectURL: `/dashboard/user.html?ID=${account_id}`
     });
   } catch (err) {
     console.error(err);
@@ -49,7 +87,7 @@ app.post("/auth/signup", async (req, res) => {
   }
 });
 
-// Login
+// ✅ Login
 app.post("/auth/login", async (req, res) => {
   const { roblox_user, password } = req.body;
   if (!roblox_user || !password) {
@@ -78,6 +116,26 @@ app.post("/auth/login", async (req, res) => {
       accountID: user.account_id,
       redirectURL: `/dashboard/user.html?ID=${user.account_id}`
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+// ✅ Fetch user info
+app.get("/api/user/:accountID", async (req, res) => {
+  const { accountID } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT roblox_user, account_id FROM users WHERE account_id = $1",
+      [accountID]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database error" });

@@ -2,44 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign Up - Nexus Management</title>
+  <title>Signup - Nexus Dashboard</title>
   <link rel="stylesheet" href="dashboard.css">
-  <link rel="icon" type="image/webp" href="/images/favicon.webp">
-
 </head>
 <body>
-  <main class="signup">
-    <h2>Create Your Account</h2>
-    <p>Set a password to secure your Nexus Management account.</p>
-    <form id="signupForm">
-      <input type="password" id="passwordInput" placeholder="Password" required>
-      <button type="submit">Sign Up</button>
-    </form>
-    <p id="errorMsg" style="color:red;"></p>
+  <header>
+    <h1>Nexus Dashboard</h1>
+    <p class="subtitle">Create Your Account</p>
+  </header>
+
+  <main class="feature-container">
+    <section class="feature-card visible">
+      <h2>Set Your Password</h2>
+      <form id="signupForm" class="form-grid">
+        <input type="hidden" id="account_id" name="account_id">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit" class="primary-btn">Sign Up</button>
+      </form>
+    </section>
   </main>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get("id");
+    const accountID = urlParams.get("ID");
+    document.getElementById("account_id").value = accountID;
 
-    document.getElementById("signupForm").onsubmit = async (e) => {
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const password = document.getElementById("passwordInput").value;
+      const password = document.getElementById("password").value;
+      const account_id = document.getElementById("account_id").value;
 
-      const res = await fetch("/signup", {
+      const res = await fetch("/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId, password })
+        body: JSON.stringify({ account_id, password })
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem("sessionToken", data.token);
-        window.location.href = "/dashboard/user.html?token=" + data.token;
+      const data = await res.json();
+      if (data.redirectURL) {
+        window.location.href = data.redirectURL;
       } else {
-        document.getElementById("errorMsg").textContent = "Error creating account.";
+        alert(data.error || "Signup failed");
       }
-    };
+    });
   </script>
 </body>
 </html>
