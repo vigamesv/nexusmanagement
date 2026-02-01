@@ -74,7 +74,7 @@ app.get("/callback", async (req, res) => {
 
       return res.redirect(`/dashboard/user.html?token=${sessionToken}`);
     } else {
-      // Existing user → require password
+      // Existing user → refresh username/discriminator
       existingUser.username = userData.username || "Unknown";
       existingUser.discriminator = userData.discriminator || "0000";
       existingUser.plan = plan;
