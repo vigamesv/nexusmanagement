@@ -1,14 +1,53 @@
+/* Global reset */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: #eee;
+  background: radial-gradient(circle at top left, #0a0a0f, #1a0f2e 60%, #0a0a0f 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header & Footer */
+header, footer {
+  text-align: center;
+  width: 100%;
+  padding: 30px;
+  background: #111;
+  border-bottom: 3px solid #8000ff;
+}
+
+footer {
+  border-top: 3px solid #8000ff;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+/* Dashboard container */
+.dashboard-container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cards */
 .card {
   background: #1c1c24;
   border-radius: 12px;
   padding: 30px;
-  margin: 20px auto;
-  box-shadow: 0 0 25px rgba(128,0,255,0.3);
+  margin: 25px auto;
+  box-shadow: 0 0 25px rgba(128,0,255,0.25);
+  width: 95%;
+  max-width: 950px;
   opacity: 0;
   transform: translateY(40px);
   transition: all 0.6s ease;
-  width: 90%;
-  max-width: 900px;
 }
 
 .card.visible {
@@ -16,15 +55,28 @@
   transform: translateY(0);
 }
 
+/* Section headers */
+h2 {
+  color: #fff;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #8000ff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Warning tag */
 .warning-tag {
-  color: #ff3333;
+  color: #ff4444;
   font-weight: bold;
   font-size: 1rem;
   background: #220000;
   padding: 6px 12px;
   border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 20px;
 }
 
+/* Stats grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -36,6 +88,7 @@
 .stat-block h3 {
   font-size: 1.2rem;
   margin-bottom: 8px;
+  color: #9a9aff;
 }
 
 .stat-value {
@@ -44,6 +97,7 @@
   color: #fff;
 }
 
+/* Spinner */
 .spinner {
   border: 4px solid #333;
   border-top: 4px solid #ff3333;
@@ -58,13 +112,21 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Tools grid */
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 30px;
   text-align: center;
 }
 
+.tool-block h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #9a9aff;
+}
+
+/* Buttons */
 .primary-btn {
   background: #8000ff;
   color: #fff;
@@ -73,9 +135,10 @@
   border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .primary-btn:hover {
   background: #9a33ff;
+  transform: scale(1.05);
 }
