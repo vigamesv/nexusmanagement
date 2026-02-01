@@ -16,7 +16,6 @@ async function loadServers() {
   }
 
   const servers = await res.json();
-  console.log("Servers object from API:", servers);
 
   const serverList = document.getElementById("serverList");
   if (servers.length === 0) {
@@ -27,8 +26,8 @@ async function loadServers() {
         <h3>${s.name}</h3>
         <p>Plan: ${s.plan}</p>
         <p>Staff Count: ${s.staffCount}</p>
-        <button onclick="manageServer('${s.id}')">Manage</button>
-        <button onclick="settingsServer('${s.id}')">Settings</button>
+        <button class="primary-btn" onclick="manageServer('${s.id}')">Manage</button>
+        <button class="secondary-btn" onclick="settingsServer('${s.id}')">Settings</button>
       </div>
     `).join("");
   }

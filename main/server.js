@@ -19,7 +19,6 @@ async function loadServerDashboard() {
   }
 
   const server = await res.json();
-  console.log("Server object from API:", server);
 
   document.getElementById("serverName").textContent = server.name;
   document.getElementById("planBadge").textContent = server.plan;
@@ -37,43 +36,5 @@ function addStaff() {
 function manageInfractions() {
   alert("Manage Infractions tool coming soon!");
 }
-// Get all servers owned by the logged-in user
-app.get("/api/servers", authMiddleware, async (req, res) => {
-  const userId = req.user.id;
-  const servers = await db.get(`servers:${userId}`) || [];
-  res.json(servers);
-});
-
-// Get a specific server
-app.get("/api/server/:id", authMiddleware, async (req, res) => {
-  const userId = req.user.id;
-  const servers = await db.get(`servers:${userId}`) || [];
-  const server = servers.find(s => s.id === req.params.id);
-  if (!server) return res.status(404).send("Server not found");
-  res.json(server);
-});
-
-// Create a new server
-app.post("/create-server", authMiddleware, async (req, res) => {
-  const userId = req.user.id;
-  const { name, plan } = req.body;
-
-  let servers = await db.get(`servers:${userId}`) || [];
-
-  const newServer = {
-    id: Math.random().toString(36).substring(2, 10), // random short ID
-    name,
-    plan: plan || "free",
-    staffCount: 0,
-    activeInfractions: 0,
-    logs: []
-  };
-
-  servers.push(newServer);
-  await db.set(`servers:${userId}`, servers);
-
-  res.json(newServer);
-});
-
 
 loadServerDashboard();

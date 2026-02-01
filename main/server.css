@@ -1,0 +1,103 @@
+/* Global styles */
+body {
+  background: linear-gradient(135deg, #0a0a0f, #1a0f2e);
+  color: #ddd;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header & Footer */
+header, footer {
+  text-align: center;
+  padding: 20px;
+  background: #111;
+  border-bottom: 2px solid #8000ff;
+}
+
+footer {
+  border-top: 2px solid #8000ff;
+}
+
+.subtitle {
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* Main content */
+.dashboard-main {
+  padding: 20px;
+}
+
+/* Cards */
+.card {
+  background: #1c1c24;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 15px 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(128, 0, 255, 0.4);
+}
+
+/* Server cards (list view) */
+.server-card {
+  background: #1c1c24;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.server-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(128, 0, 255, 0.4);
+}
+
+/* Buttons */
+.primary-btn {
+  background: #8000ff;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #9a33ff;
+}
+
+.secondary-btn {
+  background: #333;
+  color: #ddd;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #444;
+}
+
+/* Locked tool cards */
+.tool-card.locked {
+  opacity: 0.6;
+}
+
+.tool-card.locked button {
+  cursor: not-allowed;
+}
+
+/* Error messages */
+.error {
+  color: #ff4d4d;
+  font-size: 14px;
+  margin-top: 10px;
+}
