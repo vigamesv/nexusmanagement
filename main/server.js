@@ -38,24 +38,17 @@ function manageInfractions() {
 }
 
 function authMiddleware(req, res, next) {
-  // Check environment variable
-  if (process.env.DISABLE_AUTH === "true") {
-    // Bypass authentication for testing
-    req.user = { id: "test-user" }; // fake user object
-    return next();
-  }
-
-  // Normal authentication flow
-  const token = req.headers.authorization;
-  if (!token) {
-    return res.status(401).send("Unauthorized");
-  }
-
-  // TODO: verify token properly here
-  // Example: decode JWT or check session store
-  req.user = { id: "real-user-id" }; 
+  // TEMPORARY: disable authentication
+  req.user = { id: "test-user" }; // fake user object
   next();
+  app.get("/api/servers", authMiddleware, async (req, res) => {
+    const userId = req.user.id; // always "test-user"
+    const servers = await db.get(`servers:${userId}`) || [];
+    res.json(servers);
+  });
+
 }
+
 
 
 loadServerDashboard();
