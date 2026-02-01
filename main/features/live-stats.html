@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Live Stats - ER:LC Dashboard</title>
-  <link rel="stylesheet" href="/features/css/features.css">
+  <link rel="stylesheet" href="/main/features/css/features.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
     <section class="feature-card animate">
       <h2><i class="fa-solid fa-chart-line"></i> Live Stats</h2>
       <p>Monitor live players and staff activity in real-time.</p>
-      <span class="warning-tag">⚠️ ER:LC SERVER API KEY REQUIRED</span>
+      <span class="warning-tag">API KEY REQUIRED</span>
 
       <!-- Stats Grid -->
       <div class="stats-grid">
@@ -41,7 +41,6 @@
   </footer>
 
   <script>
-    // Scroll reveal animation
     const animatedElements = document.querySelectorAll('.animate');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -54,7 +53,6 @@
 
     animatedElements.forEach(el => observer.observe(el));
 
-    // Counter animation
     function animateCounters() {
       const counters = document.querySelectorAll('.stat-value');
       counters.forEach(counter => {
