@@ -1,3 +1,94 @@
+/* Global Theme */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: #eee;
+  background: linear-gradient(180deg, #0a0a0f 0%, #1a0f2e 50%, #0a0a0f 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header & Footer */
+header, footer {
+  text-align: center;
+  width: 100%;
+  padding: 25px;
+  background: #111;
+  border-bottom: 3px solid #8000ff;
+}
+
+footer {
+  border-top: 3px solid #8000ff;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.subtitle {
+  color: #aaa;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+/* Container */
+.feature-container {
+  max-width: 1000px;
+  width: 100%;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Feature Card */
+.feature-card {
+  background: #1c1c24;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px auto;
+  box-shadow: 0 0 25px rgba(128,0,255,0.25);
+  width: 95%;
+  max-width: 850px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.6s ease;
+}
+
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Section Headers */
+h2 {
+  color: #fff;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #8000ff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.feature-card p {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin: 10px 0 20px;
+}
+
+/* API Key Required Tag */
+.warning-tag {
+  display: inline-block;
+  margin-top: 10px;
+  color: #ff4444;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: #220000;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Stats Grid */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -11,6 +102,12 @@
   padding: 15px;
   box-shadow: 0 0 15px rgba(128,0,255,0.25);
   text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.stat-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(128,0,255,0.5);
 }
 
 .stat-box h3 {
@@ -30,6 +127,7 @@
   color: #fff;
 }
 
+/* Spinner */
 .spinner {
   border: 4px solid #333;
   border-top: 4px solid #ff3333;
@@ -42,4 +140,40 @@
 
 @keyframes spin {
   100% { transform: rotate(360deg); }
+}
+
+/* Buttons */
+.primary-btn {
+  background: #8000ff;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #9a33ff;
+  transform: scale(1.05);
+}
+
+.disabled-btn {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Premium Glow (future use) */
+.premium-card {
+  opacity: 0.85;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+  border: 2px dashed #ffd700;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
