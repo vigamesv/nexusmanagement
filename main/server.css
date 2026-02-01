@@ -198,6 +198,7 @@ footer {
   cursor: not-allowed;
 }
 /* Modal Styles */
+/* Modal Styles */
 .modal {
   display: none; 
   position: fixed; 
@@ -206,19 +207,23 @@ footer {
   top: 0; 
   width: 100%; 
   height: 100%; 
-  overflow: auto; 
   background-color: rgba(0,0,0,0.7);
+
+  /* Centering with flexbox */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
   background-color: #1c1c24;
-  margin: 10% auto;
-  padding: 20px;
+  padding: 30px;
   border-radius: 12px;
   width: 90%;
   max-width: 400px;
   box-shadow: 0 0 25px rgba(128,0,255,0.5);
   color: #fff;
+  text-align: center;
 }
 
 .close-btn {
@@ -232,22 +237,13 @@ footer {
   color: #fff;
 }
 
-.modal-content label {
-  display: block;
-  margin-top: 15px;
-  font-weight: bold;
-}
-
 .modal-content input {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+  padding: 10px;
+  margin: 15px 0;
   border-radius: 6px;
   border: 1px solid #555;
   background: #222;
   color: #fff;
+  text-align: center;
 }
-
-
-
-

@@ -74,12 +74,7 @@
       <span class="close-btn" onclick="closeModal()">&times;</span>
       <h2>Enter API Key</h2>
       <form id="apiKeyForm">
-        <label for="serverId">Server ID:</label>
-        <input type="text" id="serverId" name="serverId" required>
-
-        <label for="apiKey">API Key:</label>
-        <input type="text" id="apiKey" name="apiKey" required>
-
+        <input type="text" id="apiKey" name="apiKey" placeholder="Your ER:LC API Key" required>
         <button type="submit" class="primary-btn">Save</button>
       </form>
     </div>
@@ -88,7 +83,7 @@
   <script>
     // Show modal on page load
     window.onload = function() {
-      document.getElementById("apiKeyModal").style.display = "block";
+      document.getElementById("apiKeyModal").style.display = "flex";
     };
 
     function closeModal() {
@@ -98,14 +93,12 @@
     // Handle form submission (frontend only)
     document.getElementById("apiKeyForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const serverId = document.getElementById("serverId").value;
       const apiKey = document.getElementById("apiKey").value;
 
       // For now, just log to console (backend integration later)
-      console.log("Server ID:", serverId);
       console.log("API Key:", apiKey);
 
-      alert("API Key saved locally. Backend integration coming soon!");
+      alert("API Key Saved!");
       closeModal();
     });
   </script>
