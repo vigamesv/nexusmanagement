@@ -199,7 +199,7 @@ footer {
 }
 /* Modal overlay */
 .modal {
-  display: none;              /* hidden by default */
+  display: none;
   position: fixed;
   z-index: 2000;
   left: 0;
