@@ -1,4 +1,4 @@
-/* Global background and text */
+/* Background */
 body {
   margin: 0;
   padding: 0;
@@ -26,6 +26,11 @@ footer {
   color: #aaa;
 }
 
+.nav-tabs {
+  margin-top: 10px;
+  color: #aaa;
+}
+
 /* Dashboard container */
 .dashboard-container {
   max-width: 1200px;
@@ -50,13 +55,6 @@ footer {
   transition: all 0.6s ease;
 }
 
-/* Glow effect for important sections */
-.live-stats,
-.management-tools {
-  border: 2px solid #8000ff;
-  box-shadow: 0 0 20px rgba(128,0,255,0.6);
-}
-
 .card.visible {
   opacity: 1;
   transform: translateY(0);
@@ -71,7 +69,7 @@ h2 {
   padding-bottom: 5px;
 }
 
-/* Warning tag (no emoji) */
+/* Warning tag */
 .warning-tag {
   color: #ff4444;
   font-weight: bold;
@@ -80,7 +78,21 @@ h2 {
   padding: 6px 12px;
   border-radius: 6px;
   display: inline-block;
-  margin-bottom: 20px;
+  margin-top: 15px;
+}
+
+/* Overview grid */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  text-align: center;
+}
+
+.overview-block h3 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: #9a9aff;
 }
 
 /* Stats columns */
@@ -127,22 +139,42 @@ h2 {
   100% { transform: rotate(360deg); }
 }
 
-/* Management Tools */
-.management-tools h2 {
-  margin-bottom: 20px;
+/* Active Staff */
+.active-staff h2 {
+  margin-bottom: 15px;
 }
 
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 30px;
-  text-align: center;
+.staff-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.tool-block h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  color: #9a9aff;
+.staff-list li {
+  background: #222;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(128,0,255,0.2);
+}
+
+/* Recent Punishments */
+.punishments h2 {
+  margin-bottom: 15px;
+}
+
+.punishment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.punishment-list li {
+  background: #222;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(255,0,0,0.2);
 }
 
 /* Buttons */

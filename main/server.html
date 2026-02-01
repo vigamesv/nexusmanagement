@@ -8,82 +8,76 @@
 <body>
   <header>
     <h1>ER:LC Dashboard</h1>
-    <p class="subtitle">Manage your Emergency Response: Liberty County server with powerful tools</p>
+    <p class="subtitle">Staff Management Panel</p>
+    <nav class="nav-tabs">
+      <span>Overview</span> | <span>Sessions</span>
+    </nav>
   </header>
 
   <main class="dashboard-container">
-    <!-- Live Stats -->
-    <section class="live-stats card animate">
-      <div class="stats-header">
-        <span class="warning-tag">API KEY REQUIRED</span>
+    <!-- Overview Stats -->
+    <section class="overview card animate">
+      <div class="overview-grid">
+        <div class="overview-block">
+          <h3>Total Players</h3>
+          <p class="stat-value" data-target="57"><span class="spinner"></span></p>
+        </div>
+        <div class="overview-block">
+          <h3>Total Staff</h3>
+          <p class="stat-value" data-target="4"><span class="spinner"></span></p>
+        </div>
+        <div class="overview-block">
+          <h3>Total Queue</h3>
+          <p class="stat-value" data-target="0"><span class="spinner"></span></p>
+        </div>
       </div>
+      <div class="stats-header">
+        <span class="warning-tag">API KEY NEEDED FOR LIVE STATS</span>
+      </div>
+    </section>
 
+    <!-- Team Players & Staff Online -->
+    <section class="live-stats card animate">
       <div class="stats-columns">
-        <!-- Team Members -->
+        <!-- Team Players -->
         <div class="stats-column">
-          <h2>Team Members</h2>
-          <div class="stat-block">
-            <h3>Police Department</h3>
-            <p class="stat-value" data-target="12"><span class="spinner"></span></p>
-          </div>
-          <div class="stat-block">
-            <h3>Fire Department</h3>
-            <p class="stat-value" data-target="8"><span class="spinner"></span></p>
-          </div>
-          <div class="stat-block">
-            <h3>DOT</h3>
-            <p class="stat-value" data-target="5"><span class="spinner"></span></p>
-          </div>
-          <div class="stat-block">
-            <h3>Sheriff</h3>
-            <p class="stat-value" data-target="6"><span class="spinner"></span></p>
-          </div>
-          <div class="stat-block">
-            <h3>Civilian</h3>
-            <p class="stat-value" data-target="15"><span class="spinner"></span></p>
-          </div>
+          <h2>Team Players</h2>
+          <div class="stat-block"><h3>DOT</h3><p class="stat-value" data-target="4"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3>Fire Department</h3><p class="stat-value" data-target="8"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3>Sheriff</h3><p class="stat-value" data-target="6"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3>Police</h3><p class="stat-value" data-target="15"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3>Civilian</h3><p class="stat-value" data-target="24"><span class="spinner"></span></p></div>
         </div>
 
-        <!-- Staff Members -->
+        <!-- Staff Online -->
         <div class="stats-column">
-          <h2>Staff Members</h2>
-          <div class="stat-block">
-            <h3>Moderators</h3>
-            <p class="stat-value" data-target="8"><span class="spinner"></span></p>
-          </div>
-          <div class="stat-block">
-            <h3>Administrators</h3>
-            <p class="stat-value" data-target="4"><span class="spinner"></span></p>
-          </div>
-          <div class="stat-block">
-            <h3>Co Owners</h3>
-            <p class="stat-value" data-target="2"><span class="spinner"></span></p>
-          </div>
-          <div class="stat-block">
-            <h3>Owner</h3>
-            <p class="stat-value" data-target="1"><span class="spinner"></span></p>
-          </div>
+          <h2>Staff Online</h2>
+          <div class="stat-block"><h3>Moderators</h3><p class="stat-value" data-target="0"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3>Admins</h3><p class="stat-value" data-target="1"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3>Co Owners</h3><p class="stat-value" data-target="0"><span class="spinner"></span></p></div>
+          <div class="stat-block"><h3>Owners</h3><p class="stat-value" data-target="1"><span class="spinner"></span></p></div>
         </div>
       </div>
     </section>
 
-    <!-- Management Tools -->
-    <section class="management-tools card animate">
-      <h2>Management Tools</h2>
-      <div class="tools-grid">
-        <div class="tool-block">
-          <h3>Manage Promotions</h3>
-          <button class="primary-btn">Open</button>
-        </div>
-        <div class="tool-block">
-          <h3>Manage Staff</h3>
-          <button class="primary-btn">Open</button>
-        </div>
-        <div class="tool-block">
-          <h3>Manage Infractions</h3>
-          <button class="primary-btn">Open</button>
-        </div>
-      </div>
+    <!-- Active Staff -->
+    <section class="active-staff card animate">
+      <h2>Active Staff</h2>
+      <ul class="staff-list">
+        <li><strong>xRoyal_Admin</strong> (Owner) – 9212h 10m</li>
+        <li><strong>ModeratorMike</strong> (Head Admin) – 9209h 40m</li>
+        <li><strong>StaffSarah</strong> (Senior Admin) – 9209h 10m</li>
+      </ul>
+    </section>
+
+    <!-- Recent Punishments -->
+    <section class="punishments card animate">
+      <h2>Recent Punishments</h2>
+      <ul class="punishment-list">
+        <li><strong>TrollerX99</strong>: Mass VDM and exploiting (By: xRoyal_Admin) – Game Ban – in 7 hours</li>
+        <li><strong>SpeedyGamer</strong>: Excessive speeding in city limits (By: ModeratorMike) – Warning – in 7 hours</li>
+        <li><strong>RandomRDM</strong>: Server Ban</li>
+      </ul>
     </section>
 
     <!-- Servers Button -->
@@ -104,7 +98,7 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          if (entry.target.classList.contains('live-stats')) {
+          if (entry.target.classList.contains('overview') || entry.target.classList.contains('live-stats')) {
             animateCounters();
           }
         }
