@@ -38,26 +38,29 @@
       </div>
     </section>
 
-    <!-- Team Players & Staff Online -->
-    <section class="live-stats card animate">
-      <div class="stats-columns">
-        <!-- Team Players -->
-        <div class="stats-column">
-          <h2>Team Players</h2>
-          <div class="stat-block"><h3><i class="fa-solid fa-truck"></i> DOT</h3><p class="stat-value" data-target="4"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3><i class="fa-solid fa-fire-extinguisher"></i> Fire Department</h3><p class="stat-value" data-target="8"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3><i class="fa-solid fa-star"></i> Sheriff</h3><p class="stat-value" data-target="6"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3><i class="fa-solid fa-shield-halved"></i> Police</h3><p class="stat-value" data-target="15"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3><i class="fa-solid fa-user"></i> Civilian</h3><p class="stat-value" data-target="24"><span class="spinner"></span></p></div>
+    <!-- Team Players (each role its own box) -->
+    <section class="team-players card animate">
+      <h2>Team Players</h2>
+      <div class="team-grid">
+        <div class="team-block">
+          <h3><i class="fa-solid fa-truck"></i> DOT</h3>
+          <p class="stat-value" data-target="4"><span class="spinner"></span></p>
         </div>
-
-        <!-- Staff Online -->
-        <div class="stats-column">
-          <h2>Staff Online</h2>
-          <div class="stat-block"><h3><i class="fa-solid fa-gavel"></i> Moderators</h3><p class="stat-value" data-target="0"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3><i class="fa-solid fa-user-tie"></i> Admins</h3><p class="stat-value" data-target="1"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3><i class="fa-solid fa-crown"></i> Co Owners</h3><p class="stat-value" data-target="0"><span class="spinner"></span></p></div>
-          <div class="stat-block"><h3><i class="fa-solid fa-star-of-david"></i> Owners</h3><p class="stat-value" data-target="1"><span class="spinner"></span></p></div>
+        <div class="team-block">
+          <h3><i class="fa-solid fa-fire-extinguisher"></i> Fire Department</h3>
+          <p class="stat-value" data-target="8"><span class="spinner"></span></p>
+        </div>
+        <div class="team-block">
+          <h3><i class="fa-solid fa-star"></i> Sheriff</h3>
+          <p class="stat-value" data-target="6"><span class="spinner"></span></p>
+        </div>
+        <div class="team-block">
+          <h3><i class="fa-solid fa-shield-halved"></i> Police</h3>
+          <p class="stat-value" data-target="15"><span class="spinner"></span></p>
+        </div>
+        <div class="team-block">
+          <h3><i class="fa-solid fa-user"></i> Civilian</h3>
+          <p class="stat-value" data-target="24"><span class="spinner"></span></p>
         </div>
       </div>
     </section>
@@ -79,7 +82,7 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          if (entry.target.classList.contains('overview') || entry.target.classList.contains('live-stats')) {
+          if (entry.target.classList.contains('overview') || entry.target.classList.contains('team-players')) {
             animateCounters();
           }
         }
