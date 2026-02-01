@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sessions Management - Nexus Dashboard</title>
+  <link rel="stylesheet" href="/main/features/css/features.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>Nexus Dashboard</h1>
+    <p class="subtitle">Sessions Management</p>
+    <div class="warning-banner">STAFF ACCESS REQUIRED</div>
+  </header>
+
+  <main class="feature-container">
+    <section class="feature-card visible">
+      <h2><i class="fa-solid fa-calendar-check"></i> Manage Sessions</h2>
+      <p>Start and end SSU/Shutdown sessions. ER:LC + Discord integration will be added after backend setup.</p>
+
+      <!-- Session Form -->
+      <form class="form-grid">
+        <label for="sessionType">Session Type:</label>
+        <select id="sessionType" required>
+          <option value="SSU">SSU (Server Startup)</option>
+          <option value="Shutdown">Shutdown</option>
+        </select>
+
+        <label for="serverCode">Server Code:</label>
+        <input type="text" id="serverCode" placeholder="Enter ER:LC server code" required>
+
+        <label for="owner">Session Owner:</label>
+        <input type="text" id="owner" placeholder="Enter owner username" required>
+
+        <button type="submit" class="primary-btn">Log Session</button>
+      </form>
+
+      <!-- Example Sessions List -->
+      <h2 style="margin-top:30px;"><i class="fa-solid fa-list"></i> Example Sessions</h2>
+      <div class="sessions-list">
+        <div class="stat-box">
+          <h3><i class="fa-solid fa-server"></i> SSU Session</h3>
+          <p class="log-entry">Server Code: ABC123</p>
+          <p class="log-entry">Owner: Alex</p>
+          <div class="announcement-actions">
+            <button class="secondary-btn"><i class="fa-solid fa-pen"></i> Edit</button>
+            <button class="danger-btn"><i class="fa-solid fa-trash"></i> Delete</button>
+          </div>
+        </div>
+
+        <div class="stat-box">
+          <h3><i class="fa-solid fa-server"></i> Shutdown Session</h3>
+          <p class="log-entry">Server Code: XYZ789</p>
+          <p class="log-entry">Owner: Chris</p>
+          <div class="announcement-actions">
+            <button class="secondary-btn"><i class="fa-solid fa-pen"></i> Edit</button>
+            <button class="danger-btn"><i class="fa-solid fa-trash"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Fixed Return Button -->
+  <button class="return-btn" onclick="location.href='/main/server.html'">
+    <i class="fa-solid fa-arrow-left"></i> Return
+  </button>
+
+  <footer>
+    <p>&copy; 2026 Nexus Management</p>
+  </footer>
+</body>
+</html>
