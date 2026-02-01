@@ -58,9 +58,10 @@ app.get("/callback", async (req, res) => {
 
     console.log("Discord userData:", userData);
 
+    // Check if user exists
     let existingUser = await db.get(userData.id);
 
-    // Save/update DB record
+    // Save/update record first
     const updatedUser = {
       id: userData.id,
       username: userData.username || existingUser?.username || null,
@@ -73,7 +74,7 @@ app.get("/callback", async (req, res) => {
     };
     await db.set(userData.id, updatedUser);
 
-    // Decide where to redirect
+    // Redirect logic
     if (!existingUser) {
       // brand new → signup
       return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
@@ -89,7 +90,6 @@ app.get("/callback", async (req, res) => {
     res.status(500).send("Error during Discord login");
   }
 });
-
 
 // Signup (set password)
 app.post("/signup", async (req, res) => {
