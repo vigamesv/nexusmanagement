@@ -9,7 +9,6 @@ const db = new Database();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Sessions stored in DB for persistence ---
 async function saveSession(token, userId) {
   await db.set("session:" + token, userId);
 }
@@ -17,14 +16,14 @@ async function getSession(token) {
   return await db.get("session:" + token);
 }
 
-// --- Login route (Discord OAuth) ---
+// Discord login
 app.get("/login", (req, res) => {
   const plan = req.query.plan || "free";
   const redirect = `https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.DISCORD_REDIRECT_URI)}&response_type=code&scope=identify%20email&state=${plan}`;
   res.redirect(redirect);
 });
 
-// --- Callback after Discord login ---
+// OAuth callback
 app.get("/callback", async (req, res) => {
   const code = req.query.code;
   const plan = req.query.state;
@@ -55,10 +54,12 @@ app.get("/callback", async (req, res) => {
     });
     const userData = await userResponse.json();
 
+    console.log("Discord userData:", userData); // Debug log
+
     let existingUser = await db.get(userData.id);
 
     if (!existingUser) {
-      // First time login → create record without password
+      // New user → create record and log them in directly
       await db.set(userData.id, {
         id: userData.id,
         username: userData.username || "Unknown",
@@ -67,46 +68,47 @@ app.get("/callback", async (req, res) => {
         infractions: 0,
         promotions: 0
       });
+
+      const sessionToken = Math.random().toString(36).substring(2);
+      await saveSession(sessionToken, userData.id);
+
+      return res.redirect(`/dashboard/user.html?token=${sessionToken}`);
     } else {
-      // Update username/discriminator each login
+      // Existing user → require password
       existingUser.username = userData.username || "Unknown";
       existingUser.discriminator = userData.discriminator || "0000";
       existingUser.plan = plan;
       await db.set(userData.id, existingUser);
-    }
 
-    // Redirect to password entry page
-    return res.redirect(`/dashboard/login-pass.html?id=${userData.id}`);
+      return res.redirect(`/dashboard/login-pass.html?id=${userData.id}`);
+    }
   } catch (err) {
     console.error("OAuth Error:", err);
     res.status(500).send("Error during Discord login");
   }
 });
 
-// --- Route to set/check password ---
+// Password check
 app.post("/check-password", async (req, res) => {
   const { id, password } = req.body;
   const user = await db.get(id);
   if (!user) return res.status(400).send("User not found");
 
   if (!user.hashedPassword) {
-    // First time setting password
     const hashed = await bcrypt.hash(password, 10);
     user.hashedPassword = hashed;
     await db.set(id, user);
   } else {
-    // Verify password
     const match = await bcrypt.compare(password, user.hashedPassword);
     if (!match) return res.status(401).send("Invalid password");
   }
 
-  // Issue session token
   const sessionToken = Math.random().toString(36).substring(2);
   await saveSession(sessionToken, id);
   res.json({ token: sessionToken });
 });
 
-// --- Middleware for session check ---
+// Middleware
 async function authMiddleware(req, res, next) {
   const token = req.headers["authorization"];
   if (token) {
@@ -120,12 +122,12 @@ async function authMiddleware(req, res, next) {
   res.status(401).send("Unauthorized");
 }
 
-// --- API: get user info ---
+// API
 app.get("/api/user", authMiddleware, (req, res) => {
   res.json(req.user);
 });
 
-// --- Logout ---
+// Logout
 app.get("/logout", async (req, res) => {
   const token = req.query.token;
   if (token) {
@@ -134,7 +136,7 @@ app.get("/logout", async (req, res) => {
   res.redirect("/");
 });
 
-// --- Serve static files ---
+// Static files
 app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;

@@ -19,8 +19,9 @@ async function loadDashboard() {
   }
 
   const user = await res.json();
+  console.log("Frontend received user:", user); // Debug log
 
-  if (!user || !user.username) {
+  if (!user || !user.username || !user.discriminator) {
     alert("User data missing. Please log in again.");
     window.location.href = "/";
     return;
@@ -30,7 +31,7 @@ async function loadDashboard() {
 
   document.getElementById("username").textContent = `${user.username}#${user.discriminator}`;
   document.getElementById("displayName").textContent = user.username;
-  document.getElementById("planBadge").textContent = user.plan;
+  document.getElementById("planBadge").textContent = user.plan || "free";
 
   document.getElementById("logoutBtn").onclick = () => {
     localStorage.removeItem("sessionToken");
