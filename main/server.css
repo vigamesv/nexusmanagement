@@ -5,11 +5,10 @@ body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  text-align: center;
 }
 
-/* Header & Footer */
 header, footer {
+  text-align: center;
   padding: 20px;
   background: #111;
   border-bottom: 2px solid #8000ff;
@@ -24,11 +23,62 @@ footer {
   font-size: 14px;
 }
 
-/* Centered container */
+/* Layout */
 .dashboard-container {
-  max-width: 800px;
+  display: flex;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #1c1c24;
+  border-radius: 8px;
+  padding: 20px;
+  margin-right: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 15px;
+  color: #8000ff;
+}
+
+.folder-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.folder-list li {
+  margin: 10px 0;
+}
+
+.folder-list a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #2a2a33;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.folder-list a:hover {
+  background: #8000ff;
+  color: #fff;
+}
+
+.folder-list .locked a {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  text-align: center;
 }
 
 /* Cards */
@@ -45,7 +95,7 @@ footer {
   box-shadow: 0 0 10px rgba(128, 0, 255, 0.4);
 }
 
-/* Plan cards side by side */
+/* Plan section */
 .plans {
   display: flex;
   justify-content: center;
@@ -58,10 +108,6 @@ footer {
   border-radius: 8px;
   padding: 20px;
   width: 200px;
-}
-
-.plan-card.free {
-  border: 2px solid #555;
 }
 
 .plan-card.premium {
@@ -112,13 +158,35 @@ footer {
   color: #aaa;
   font-size: 12px;
 }
-
-/* Tool cards */
-.tool-card {
-  margin: 15px auto;
-  max-width: 600px;
+/* Panels */
+.panel {
+  display: none;
 }
 
-.tool-card.locked {
-  opacity: 0.6;
+.panel.active {
+  display: block;
+}
+
+/* Sidebar stays the same as before */
+.sidebar {
+  width: 220px;
+  background: #1c1c24;
+  border-radius: 8px;
+  padding: 20px;
+  margin-right: 20px;
+}
+
+.folder-list a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #2a2a33;
+  color: #ddd;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.folder-list a:hover {
+  background: #8000ff;
+  color: #fff;
 }

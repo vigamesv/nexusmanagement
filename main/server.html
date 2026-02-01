@@ -12,46 +12,60 @@
   </header>
 
   <main class="dashboard-container">
-    <!-- Plan Section -->
-    <section class="plans">
-      <div class="plan-card free">
-        <h2>Free Plan</h2>
-        <p>Basic features included</p>
-      </div>
-      <div class="plan-card premium">
-        <h2>Premium Plan</h2>
-        <p>Premium needed for live stats</p>
-        <button class="primary-btn">Upgrade to Premium</button>
-      </div>
-    </section>
+    <!-- Sidebar with features -->
+    <aside class="sidebar">
+      <h2>Features</h2>
+      <ul class="folder-list">
+        <li><a href="#" onclick="showPanel('overview')">Overview</a></li>
+        <li><a href="#" onclick="showPanel('addStaff')">Add Staff</a></li>
+        <li><a href="#" onclick="showPanel('infractions')">Manage Infractions</a></li>
+        <li class="locked"><a href="#" onclick="showPanel('liveStats')">Live Stats (Premium)</a></li>
+      </ul>
+    </aside>
 
-    <!-- Server Limit -->
-    <section class="server-limit card">
-      <h2>Server Limit</h2>
-      <p>Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
-      <div class="progress-bar">
-        <div class="progress" style="width: 100%;"></div>
-      </div>
-      <p class="upgrade-note">Upgrade to Premium for unlimited servers</p>
-    </section>
+    <!-- Main content area -->
+    <section class="main-content">
+      <!-- Panels -->
+      <div id="overview" class="panel active">
+        <div class="plans">
+          <button class="primary-btn">Free Plan</button>
+          <div class="plan-card premium">
+            <p>Premium needed for live stats</p>
+          </div>
+        </div>
 
-    <!-- Tools -->
-    <section class="tools">
-      <h2>Available Tools</h2>
-      <div class="tool-card card">
-        <h3>Add Staff</h3>
-        <p>Add new staff members to your server with basic role assignment.</p>
-        <button class="primary-btn">Add Staff</button>
+        <div class="server-limit card">
+          <h2>Server Limit</h2>
+          <p>Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
+          <div class="progress-bar">
+            <div class="progress" style="width: 100%;"></div>
+          </div>
+          <p class="upgrade-note">Upgrade to Premium for unlimited servers</p>
+        </div>
       </div>
-      <div class="tool-card card">
-        <h3>Manage Infractions</h3>
-        <p>Basic infraction management with warning and ban tracking.</p>
-        <button class="primary-btn">Manage Infractions</button>
+
+      <div id="addStaff" class="panel">
+        <div class="tool-card card">
+          <h2>Add Staff</h2>
+          <p>Add new staff members to your server with basic role assignment.</p>
+          <button class="primary-btn">Add Staff</button>
+        </div>
       </div>
-      <div class="tool-card card locked">
-        <h3>Live Stats</h3>
-        <p>Premium feature: real-time server statistics and analytics.</p>
-        <button class="secondary-btn" disabled>Locked</button>
+
+      <div id="infractions" class="panel">
+        <div class="tool-card card">
+          <h2>Manage Infractions</h2>
+          <p>Basic infraction management with warning and ban tracking.</p>
+          <button class="primary-btn">Manage Infractions</button>
+        </div>
+      </div>
+
+      <div id="liveStats" class="panel">
+        <div class="tool-card card locked">
+          <h2>Live Stats</h2>
+          <p>Premium feature: real-time server statistics and analytics.</p>
+          <button class="secondary-btn" disabled>Locked</button>
+        </div>
       </div>
     </section>
   </main>
@@ -59,5 +73,14 @@
   <footer>
     <p>&copy; 2026 Nexus Management</p>
   </footer>
+
+  <script>
+    function showPanel(panelId) {
+      // Hide all panels
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      // Show selected panel
+      document.getElementById(panelId).classList.add('active');
+    }
+  </script>
 </body>
 </html>
