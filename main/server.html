@@ -13,14 +13,14 @@
 
   <main class="dashboard-container">
     <!-- Free Plan -->
-    <section class="plan-section card">
+    <section class="plan-section card animate">
       <h2>Free Plan</h2>
       <p>Includes staff tools, infraction management, and live stats (API key required).</p>
       <button class="primary-btn">Current Plan</button>
     </section>
 
     <!-- Server Limit -->
-    <section class="server-limit card">
+    <section class="server-limit card animate">
       <h2>Server Limit</h2>
       <p class="big-text">Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
       <div class="progress-bar">
@@ -28,26 +28,25 @@
       </div>
     </section>
 
-    <!-- Features listed directly -->
+    <!-- Features -->
     <section class="features">
       <h2>Available Tools</h2>
 
-      <div class="feature-card card">
+      <div class="feature-card card animate">
         <h3>Add Staff</h3>
         <p>Add new staff members to your server with role assignment.</p>
         <button class="primary-btn">Add Staff</button>
       </div>
 
-      <div class="feature-card card">
+      <div class="feature-card card animate">
         <h3>Manage Infractions</h3>
         <p>Track warnings and bans with basic tools.</p>
         <button class="primary-btn">Manage Infractions</button>
       </div>
 
-      <div class="feature-card card">
-        <h3>Live Stats</h3>
+      <div class="feature-card card animate">
+        <h3>Live Stats <span class="warning-tag">⚠️ ER:LC SERVER API KEY REQUIRED</span></h3>
         <p>View real-time server statistics and analytics.</p>
-        <p class="warning">⚠️ ER:LC SERVER API KEY REQUIRED</p>
         <button class="primary-btn">View Stats</button>
       </div>
     </section>
@@ -56,5 +55,19 @@
   <footer>
     <p>&copy; 2026 Nexus Management</p>
   </footer>
+
+  <script>
+    // Scroll reveal animation
+    const animatedElements = document.querySelectorAll('.animate');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.2 });
+
+    animatedElements.forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>

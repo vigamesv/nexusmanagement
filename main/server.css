@@ -1,9 +1,38 @@
-/* General layout */
+/* Scrollable layout */
+body {
+  background: linear-gradient(135deg, #0a0a0f, #1a0f2e);
+  color: #eee;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+}
+
+header, footer {
+  text-align: center;
+  padding: 30px;
+  background: #111;
+  border-bottom: 3px solid #8000ff;
+}
+
+footer {
+  border-top: 3px solid #8000ff;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #aaa;
+}
+
 .dashboard-container {
   max-width: 1000px;
-  margin: 40px auto;
-  padding: 20px;
-  text-align: center;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
 /* Cards */
@@ -11,14 +40,16 @@
   background: #1c1c24;
   border-radius: 12px;
   padding: 40px;
-  margin: 30px auto;
+  margin: 40px auto;
   box-shadow: 0 0 25px rgba(128,0,255,0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.6s ease;
 }
 
-.card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 35px rgba(128,0,255,0.6);
+.card.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Plan section */
@@ -45,15 +76,12 @@
   margin-bottom: 10px;
 }
 
-.feature-card p {
-  font-size: 1.1rem;
-}
-
 /* Warning tag */
-.warning {
-  color: #ff4444;
+.warning-tag {
+  color: #ff3333;
   font-weight: bold;
-  margin-top: 10px;
+  font-size: 1rem;
+  margin-left: 10px;
 }
 
 /* Buttons */
