@@ -2,49 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Server Dashboard - Nexus Management</title>
+  <title>ER:LC Dashboard - Nexus Management</title>
   <link rel="stylesheet" href="server.css">
 </head>
 <body>
   <header>
-    <h1 id="serverName">Server Dashboard</h1>
-    <p class="subtitle">Manage your ER:LC server with powerful tools</p>
+    <h1>ER:LC Dashboard</h1>
+    <p class="subtitle">Manage your Emergency Response: Liberty County server with powerful tools</p>
   </header>
 
-  <main>
-    <section class="server-overview card">
-      <h2>Overview</h2>
-      <p>Plan: <span id="planBadge"></span></p>
-      <p>Staff Count: <span id="staffCount"></span></p>
-      <p>Active Infractions: <span id="activeInfractions"></span></p>
+  <main class="dashboard-container">
+    <!-- Plan Section -->
+    <section class="plans">
+      <div class="plan-card free">
+        <h2>Free Plan</h2>
+        <p>Basic features included</p>
+      </div>
+      <div class="plan-card premium">
+        <h2>Premium Plan</h2>
+        <p>Premium needed for live stats</p>
+        <button class="primary-btn">Upgrade to Premium</button>
+      </div>
     </section>
 
+    <!-- Server Limit -->
+    <section class="server-limit card">
+      <h2>Server Limit</h2>
+      <p>Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
+      <div class="progress-bar">
+        <div class="progress" style="width: 100%;"></div>
+      </div>
+      <p class="upgrade-note">Upgrade to Premium for unlimited servers</p>
+    </section>
+
+    <!-- Tools -->
     <section class="tools">
       <h2>Available Tools</h2>
       <div class="tool-card card">
         <h3>Add Staff</h3>
-        <button class="primary-btn" onclick="addStaff()">Add Staff</button>
+        <p>Add new staff members to your server with basic role assignment.</p>
+        <button class="primary-btn">Add Staff</button>
       </div>
       <div class="tool-card card">
         <h3>Manage Infractions</h3>
-        <button class="primary-btn" onclick="manageInfractions()">Manage Infractions</button>
+        <p>Basic infraction management with warning and ban tracking.</p>
+        <button class="primary-btn">Manage Infractions</button>
       </div>
       <div class="tool-card card locked">
         <h3>Live Stats</h3>
-        <button class="secondary-btn" disabled>Locked (Premium)</button>
+        <p>Premium feature: real-time server statistics and analytics.</p>
+        <button class="secondary-btn" disabled>Locked</button>
       </div>
-    </section>
-
-    <section class="logs card">
-      <h2>Recent Logs</h2>
-      <div id="logsList"></div>
     </section>
   </main>
 
   <footer>
     <p>&copy; 2026 Nexus Management</p>
   </footer>
-
-  <script src="server.js"></script>
 </body>
 </html>
