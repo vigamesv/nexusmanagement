@@ -14,7 +14,7 @@ async function loadServerDashboard() {
 
   //if (!res.ok) {
   //  alert("Error loading server.");
-  //  window.location.href = "/servers.html";
+  //  window.location.href = "/main/servers.html";
   //  return;
   //}
 
