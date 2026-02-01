@@ -61,8 +61,8 @@ app.get("/callback", async (req, res) => {
     // Always save fresh Discord data
     const updatedUser = {
       id: userData.id,
-      username: userData.username || existingUser?.username || "Unknown",
-      global_name: userData.global_name || existingUser?.global_name || "Unknown",
+      username: userData.username || existingUser?.username || null,
+      global_name: userData.global_name || existingUser?.global_name || null,
       discriminator: userData.discriminator || existingUser?.discriminator || null,
       plan,
       infractions: existingUser?.infractions || 0,
@@ -72,7 +72,7 @@ app.get("/callback", async (req, res) => {
     await db.set(userData.id, updatedUser);
 
     if (!existingUser) {
-      // brand new → go to signup to set password
+      // brand new → go to signup
       return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
     } else if (!existingUser.hashedPassword) {
       // existing but no password yet → signup
@@ -150,19 +150,6 @@ app.get("/logout", async (req, res) => {
 
 // Static files
 app.use(express.static(__dirname));
-
-// Reset a user's DB entry (for debugging)
-app.get("/reset-user/:id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    await db.delete(id);
-    res.send(`Deleted DB entry for user ${id}. Log in again to refresh data.`);
-  } catch (err) {
-    console.error("Reset error:", err);
-    res.status(500).send("Error resetting user.");
-  }
-});
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
