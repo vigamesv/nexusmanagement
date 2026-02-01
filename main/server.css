@@ -199,7 +199,7 @@ footer {
 }
 /* Modal overlay */
 .modal {
-  display: none;
+  display: none;                /* hidden by default */
   position: fixed;
   z-index: 2000;
   left: 0;
@@ -208,7 +208,8 @@ footer {
   height: 100%;
   background-color: rgba(0,0,0,0.7);
 
-  /* Centering with flexbox */
+  /* Flexbox centering */
+  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -225,6 +226,7 @@ footer {
   text-align: center;
   position: relative;
 }
+
 
 /* Close button */
 .close-btn {
