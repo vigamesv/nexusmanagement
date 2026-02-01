@@ -21,17 +21,16 @@ async function loadDashboard() {
   const user = await res.json();
   console.log("Frontend received user:", user); // Debug log
 
-  if (!user || !user.username || !user.discriminator) {
-    alert("User data missing. Please log in again.");
-    window.location.href = "/";
-    return;
-  }
+  // Use safe defaults instead of failing
+  const username = user.username || "Unknown";
+  const discriminator = user.discriminator || "0000";
+  const plan = user.plan || "free";
 
   localStorage.setItem("sessionToken", token);
 
-  document.getElementById("username").textContent = `${user.username}#${user.discriminator}`;
-  document.getElementById("displayName").textContent = user.username;
-  document.getElementById("planBadge").textContent = user.plan || "free";
+  document.getElementById("username").textContent = `${username}#${discriminator}`;
+  document.getElementById("displayName").textContent = username;
+  document.getElementById("planBadge").textContent = plan;
 
   document.getElementById("logoutBtn").onclick = () => {
     localStorage.removeItem("sessionToken");

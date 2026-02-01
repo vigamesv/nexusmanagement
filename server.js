@@ -58,28 +58,24 @@ app.get("/callback", async (req, res) => {
 
     let existingUser = await db.get(userData.id);
 
-    if (!existingUser) {
-      // New user → create record and log them in directly
-      await db.set(userData.id, {
-        id: userData.id,
-        username: userData.username || "Unknown",
-        discriminator: userData.discriminator || "0000",
-        plan,
-        infractions: 0,
-        promotions: 0
-      });
+    // Always overwrite with fresh Discord data
+    await db.set(userData.id, {
+      id: userData.id,
+      username: userData.username || "Unknown",
+      discriminator: userData.discriminator || "0000",
+      plan,
+      infractions: existingUser?.infractions || 0,
+      promotions: existingUser?.promotions || 0,
+      hashedPassword: existingUser?.hashedPassword || null
+    });
 
+    if (!existingUser) {
+      // New user → log them in directly
       const sessionToken = Math.random().toString(36).substring(2);
       await saveSession(sessionToken, userData.id);
-
       return res.redirect(`/dashboard/user.html?token=${sessionToken}`);
     } else {
-      // Existing user → refresh username/discriminator
-      existingUser.username = userData.username || "Unknown";
-      existingUser.discriminator = userData.discriminator || "0000";
-      existingUser.plan = plan;
-      await db.set(userData.id, existingUser);
-
+      // Existing user → require password
       return res.redirect(`/dashboard/login-pass.html?id=${userData.id}`);
     }
   } catch (err) {
