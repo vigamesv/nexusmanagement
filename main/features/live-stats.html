@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Live Stats - ER:LC Dashboard</title>
-  <!-- External CSS -->
   <link rel="stylesheet" href="/main/features/css/features.css">
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -16,30 +14,31 @@
   </header>
 
   <main class="feature-container">
-    <section class="feature-card animate">
+    <section class="feature-card visible">
       <h2><i class="fa-solid fa-chart-line"></i> Live Stats</h2>
-      <p>Monitor live players and team activity in real-time.</p>
+      <p>Monitor live players and staff activity in real-time.</p>
 
-      <!-- Overview Stats -->
-      <div class="stats-grid">
-        <div class="stat-box">
-          <h3><i class="fa-solid fa-users"></i> Total Players</h3>
-          <p class="stat-value" data-target="35" data-limit="40"><span class="spinner"></span></p>
+      <!-- Two-column layout -->
+      <div class="stats-columns">
+        
+        <!-- Team Players -->
+        <div class="stats-column">
+          <h2>Team Players</h2>
+          <div class="stat-box"><h3><i class="fa-solid fa-truck"></i> DOT</h3><p class="stat-value" data-target="4">0</p></div>
+          <div class="stat-box"><h3><i class="fa-solid fa-fire-extinguisher"></i> Fire Department</h3><p class="stat-value" data-target="8">0</p></div>
+          <div class="stat-box"><h3><i class="fa-solid fa-star"></i> Sheriff</h3><p class="stat-value" data-target="6">0</p></div>
+          <div class="stat-box"><h3><i class="fa-solid fa-shield-halved"></i> Police</h3><p class="stat-value" data-target="15">0</p></div>
+          <div class="stat-box"><h3><i class="fa-solid fa-user"></i> Civilian</h3><p class="stat-value" data-target="24">0</p></div>
         </div>
-        <div class="stat-box">
-          <h3><i class="fa-solid fa-list"></i> Queue</h3>
-          <p class="stat-value" data-target="3"><span class="spinner"></span></p>
-        </div>
-      </div>
 
-      <!-- Team Players Breakdown -->
-      <h2 style="margin-top:30px;"><i class="fa-solid fa-users"></i> Team Players</h2>
-      <div class="stats-grid">
-        <div class="stat-box"><h3><i class="fa-solid fa-truck"></i> DOT</h3><p class="stat-value" data-target="4"><span class="spinner"></span></p></div>
-        <div class="stat-box"><h3><i class="fa-solid fa-fire-extinguisher"></i> Fire Department</h3><p class="stat-value" data-target="8"><span class="spinner"></span></p></div>
-        <div class="stat-box"><h3><i class="fa-solid fa-star"></i> Sheriff</h3><p class="stat-value" data-target="6"><span class="spinner"></span></p></div>
-        <div class="stat-box"><h3><i class="fa-solid fa-shield-halved"></i> Police</h3><p class="stat-value" data-target="15"><span class="spinner"></span></p></div>
-        <div class="stat-box"><h3><i class="fa-solid fa-user"></i> Civilian</h3><p class="stat-value" data-target="24"><span class="spinner"></span></p></div>
+        <!-- Active Staff -->
+        <div class="stats-column">
+          <h2>Active Staff</h2>
+          <div class="stat-box"><h3><i class="fa-solid fa-gavel"></i> Moderators</h3><p class="stat-value" data-target="2">0</p></div>
+          <div class="stat-box"><h3><i class="fa-solid fa-user-tie"></i> Admins</h3><p class="stat-value" data-target="1">0</p></div>
+          <div class="stat-box"><h3><i class="fa-solid fa-crown"></i> Co-Owners</h3><p class="stat-value" data-target="1">0</p></div>
+        </div>
+
       </div>
     </section>
   </main>
@@ -54,45 +53,29 @@
   </footer>
 
   <script>
-    // Reveal animation
-    const animatedElements = document.querySelectorAll('.animate');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          animateCounters();
-        }
-      });
-    }, { threshold: 0.2 });
-
-    animatedElements.forEach(el => observer.observe(el));
-
-    // Counter animation
+    // Simple counting animation
     function animateCounters() {
       const counters = document.querySelectorAll('.stat-value');
       counters.forEach(counter => {
         const target = +counter.getAttribute('data-target');
-        const limit = counter.getAttribute('data-limit'); // only used for Total Players
         let count = 0;
         const increment = Math.max(1, target / 100);
 
         const update = () => {
           count += increment;
           if (count < target) {
-            counter.textContent = Math.floor(count) + (limit ? "/" + limit : "");
+            counter.textContent = Math.floor(count);
             requestAnimationFrame(update);
           } else {
-            counter.textContent = target + (limit ? "/" + limit : "");
-            // Glow effects
-            if (target > 0) {
-              counter.classList.add("active"); // optional, but now just white
-            }
-            }
+            counter.textContent = target;
           }
         };
         update();
       });
     }
+
+    // Run animation on load
+    window.onload = animateCounters;
   </script>
 </body>
 </html>
