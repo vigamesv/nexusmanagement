@@ -217,3 +217,10 @@ h2 {
   transform: translateX(-50%) scale(1.05);
 }
 
+/* Log Entries */
+.log-entry {
+  font-size: 0.95rem;
+  color: #ddd;
+  margin: 6px 0;
+  text-align: left;
+}
