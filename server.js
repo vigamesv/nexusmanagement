@@ -31,6 +31,7 @@ app.get("/callback", async (req, res) => {
   if (!code) return res.status(400).send("No code provided");
 
   try {
+    // Exchange code for token
     const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -49,6 +50,7 @@ app.get("/callback", async (req, res) => {
       return res.status(400).send("Failed to get access token: " + JSON.stringify(tokenData));
     }
 
+    // Get user info from Discord
     const userResponse = await fetch("https://discord.com/api/users/@me", {
       headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
@@ -58,7 +60,7 @@ app.get("/callback", async (req, res) => {
 
     let existingUser = await db.get(userData.id);
 
-    // Always save fresh Discord data
+    // Save/update DB record
     const updatedUser = {
       id: userData.id,
       username: userData.username || existingUser?.username || null,
@@ -71,14 +73,15 @@ app.get("/callback", async (req, res) => {
     };
     await db.set(userData.id, updatedUser);
 
+    // Decide where to redirect
     if (!existingUser) {
-      // brand new → go to signup
+      // brand new → signup
       return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
     } else if (!existingUser.hashedPassword) {
       // existing but no password yet → signup
       return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
     } else {
-      // existing with password → login
+      // existing with password → login-pass
       return res.redirect(`/dashboard/login-pass.html?id=${userData.id}`);
     }
   } catch (err) {
@@ -86,6 +89,7 @@ app.get("/callback", async (req, res) => {
     res.status(500).send("Error during Discord login");
   }
 });
+
 
 // Signup (set password)
 app.post("/signup", async (req, res) => {
