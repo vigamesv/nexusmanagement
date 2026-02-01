@@ -37,4 +37,25 @@ function manageInfractions() {
   alert("Manage Infractions tool coming soon!");
 }
 
+function authMiddleware(req, res, next) {
+  // Check environment variable
+  if (process.env.DISABLE_AUTH === "true") {
+    // Bypass authentication for testing
+    req.user = { id: "test-user" }; // fake user object
+    return next();
+  }
+
+  // Normal authentication flow
+  const token = req.headers.authorization;
+  if (!token) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  // TODO: verify token properly here
+  // Example: decode JWT or check session store
+  req.user = { id: "real-user-id" }; 
+  next();
+}
+
+
 loadServerDashboard();
