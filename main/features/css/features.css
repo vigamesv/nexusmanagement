@@ -1,0 +1,129 @@
+/* General page setup */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: #eee;
+  background: linear-gradient(180deg, #0a0a0f 0%, #1a0f2e 50%, #0a0a0f 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header & Footer */
+header, footer {
+  text-align: center;
+  width: 100%;
+  padding: 25px;
+  background: #111;
+  border-bottom: 3px solid #8000ff;
+}
+
+footer {
+  border-top: 3px solid #8000ff;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.nav-tabs {
+  margin-top: 10px;
+  color: #aaa;
+}
+
+/* Container */
+.feature-container {
+  max-width: 1000px;
+  width: 100%;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Feature card */
+.feature-card {
+  background: #1c1c24;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px auto;
+  box-shadow: 0 0 25px rgba(128,0,255,0.25);
+  width: 95%;
+  max-width: 850px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.6s ease;
+}
+
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Section headers */
+h2 {
+  color: #fff;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #8000ff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Feature description */
+.feature-card p {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin: 10px 0 20px;
+}
+
+/* API Key Required tag */
+.warning-tag {
+  display: inline-block;
+  margin-top: 10px;
+  color: #ff4444;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: #220000;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Buttons */
+.primary-btn {
+  background: #8000ff;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #9a33ff;
+  transform: scale(1.05);
+}
+
+/* Disabled button (Premium) */
+.disabled-btn {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Premium glow */
+.premium-card {
+  opacity: 0.85;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+  border: 2px dashed #ffd700;
+}
+
+/* Grid layout for multiple feature cards */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
