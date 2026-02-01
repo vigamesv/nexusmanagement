@@ -170,3 +170,30 @@ h1 {
   color: #aaa;
   margin-top: 10px;
 }
+.plans {
+  display: flex;
+  justify-content: center;
+  margin: 40px auto;
+}
+
+.plan-card {
+  background: #1c1c24;
+  border-radius: 12px;
+  padding: 30px;
+  width: 300px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plan-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(128,0,255,0.5);
+}
+
+.plan-card.free {
+  border: 2px solid #00ffcc;
+}
+
+.plan-card.free h2 {
+  color: #00ffcc;
+}

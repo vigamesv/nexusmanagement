@@ -19,7 +19,7 @@
         <li><a href="#" onclick="showPanel('overview')">Overview</a></li>
         <li><a href="#" onclick="showPanel('addStaff')">Add Staff</a></li>
         <li><a href="#" onclick="showPanel('infractions')">Manage Infractions</a></li>
-        <li class="locked"><a href="#" onclick="showPanel('liveStats')">Live Stats (Premium)</a></li>
+        <li class="locked"><a href="#" onclick="showPanel('liveStats')">Live Stats</a></li>
       </ul>
     </aside>
 
@@ -27,45 +27,68 @@
     <section class="main-content">
       <!-- Panels -->
       <div id="overview" class="panel active">
+        <!-- Free Plan only -->
         <div class="plans">
-          <button class="primary-btn big-btn">Free Plan</button>
-          <div class="plan-card premium">
-            <p class="highlight">Premium needed for live stats</p>
-            <button class="primary-btn big-btn">Upgrade to Premium</button>
+          <div class="plan-card free">
+            <h2>Free Plan</h2>
+            <p>Includes staff tools and infraction management.</p>
+            <button class="primary-btn">Current Plan</button>
           </div>
         </div>
 
-        <div class="server-limit card large-card">
-          <h2>Server Limit</h2>
-          <p class="big-text">Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
-          <div class="progress-bar">
-            <div class="progress" style="width: 100%;"></div>
+        <!-- Grid layout for server limit + tools -->
+        <div class="grid-layout">
+          <div class="server-limit card">
+            <h2>Server Limit</h2>
+            <p class="big-text">Active servers: <span id="activeServers">1</span> / <span id="maxServers">1</span></p>
+            <div class="progress-bar">
+              <div class="progress" style="width: 100%;"></div>
+            </div>
           </div>
-          <p class="upgrade-note">Upgrade to Premium for unlimited servers</p>
+
+          <div class="tools card">
+            <h2>Available Tools</h2>
+            <div class="tool-card">
+              <h3>Add Staff</h3>
+              <p>Add new staff members with role assignment.</p>
+              <button class="primary-btn">Add Staff</button>
+            </div>
+            <div class="tool-card">
+              <h3>Manage Infractions</h3>
+              <p>Track warnings and bans with basic tools.</p>
+              <button class="primary-btn">Manage Infractions</button>
+            </div>
+            <div class="tool-card locked">
+              <h3>Live Stats</h3>
+              <p>Feature not available at launch.</p>
+              <button class="secondary-btn" disabled>Locked</button>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- Other panels -->
       <div id="addStaff" class="panel">
         <div class="tool-card card large-card">
           <h2>Add Staff</h2>
-          <p class="big-text">Add new staff members to your server with role assignment.</p>
-          <button class="primary-btn big-btn">Add Staff</button>
+          <p>Add new staff members to your server with role assignment.</p>
+          <button class="primary-btn">Add Staff</button>
         </div>
       </div>
 
       <div id="infractions" class="panel">
         <div class="tool-card card large-card">
           <h2>Manage Infractions</h2>
-          <p class="big-text">Manage warnings and bans with tracking tools.</p>
-          <button class="primary-btn big-btn">Manage Infractions</button>
+          <p>Manage warnings and bans with tracking tools.</p>
+          <button class="primary-btn">Manage Infractions</button>
         </div>
       </div>
 
       <div id="liveStats" class="panel">
         <div class="tool-card card large-card locked">
           <h2>Live Stats</h2>
-          <p class="big-text">Premium feature: real-time server statistics and analytics.</p>
-          <button class="secondary-btn big-btn" disabled>Locked</button>
+          <p>Feature not available at launch.</p>
+          <button class="secondary-btn" disabled>Locked</button>
         </div>
       </div>
     </section>
