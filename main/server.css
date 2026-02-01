@@ -1,11 +1,10 @@
-/* Scrollable layout */
+/* Global */
 body {
   background: linear-gradient(135deg, #0a0a0f, #1a0f2e);
   color: #eee;
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  overflow-y: scroll;
 }
 
 header, footer {
@@ -30,7 +29,7 @@ h1 {
 }
 
 .dashboard-container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 40px 20px;
 }
@@ -39,17 +38,9 @@ h1 {
 .card {
   background: #1c1c24;
   border-radius: 12px;
-  padding: 40px;
-  margin: 40px auto;
+  padding: 30px;
+  margin: 30px auto;
   box-shadow: 0 0 25px rgba(128,0,255,0.3);
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.6s ease;
-}
-
-.card.visible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* Plan section */
@@ -61,46 +52,7 @@ h1 {
   color: #00ffcc;
 }
 
-/* Features */
-.features {
-  margin-top: 40px;
-}
-
-.feature-card {
-  text-align: left;
-  max-width: 800px;
-}
-
-.feature-card h3 {
-  font-size: 1.6rem;
-  margin-bottom: 10px;
-}
-
-/* Warning tag */
-.warning-tag {
-  color: #ff3333;
-  font-weight: bold;
-  font-size: 1rem;
-  margin-left: 10px;
-}
-
-/* Buttons */
-.primary-btn {
-  background: #8000ff;
-  color: #fff;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: background 0.2s ease;
-}
-
-.primary-btn:hover {
-  background: #9a33ff;
-}
-
-/* Progress bar */
+/* Server Limit */
 .progress-bar {
   background: #333;
   border-radius: 10px;
@@ -117,4 +69,70 @@ h1 {
 
 .big-text {
   font-size: 1.2rem;
+}
+
+/* Live Stats */
+.live-stats .stats-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.warning-tag {
+  color: #ff3333;
+  font-weight: bold;
+  font-size: 1rem;
+  background: #220000;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  text-align: center;
+}
+
+.stat-block h3 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Management Tools */
+.management-tools h2 {
+  margin-bottom: 20px;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  text-align: center;
+}
+
+.tool-block h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+.primary-btn {
+  background: #8000ff;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #9a33ff;
 }
