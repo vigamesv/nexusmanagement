@@ -87,10 +87,12 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 25px;
-  justify-content: center;
+  justify-content: center;   /* centers the grid horizontally */
+  align-items: start;        /* aligns boxes neatly */
   margin: 20px auto;
-  max-width: 900px;
+  max-width: 900px;          /* keeps grid centered, not full width */
 }
+
 
 .stat-box {
   background: #222;
