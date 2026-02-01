@@ -58,31 +58,31 @@ app.get("/callback", async (req, res) => {
 
     console.log("Discord userData:", userData);
 
-    // Check if user exists
+    // Fetch existing user if any
     let existingUser = await db.get(userData.id);
 
-    // Save/update record first
+    // Save/update record with actual Discord values
     const updatedUser = {
       id: userData.id,
-      username: userData.username || existingUser?.username || null,
-      global_name: userData.global_name || existingUser?.global_name || null,
-      discriminator: userData.discriminator || existingUser?.discriminator || null,
+      username: userData.username ?? existingUser?.username ?? null,
+      global_name: userData.global_name ?? existingUser?.global_name ?? null,
+      discriminator: userData.discriminator ?? existingUser?.discriminator ?? null,
       plan,
-      infractions: existingUser?.infractions || 0,
-      promotions: existingUser?.promotions || 0,
-      hashedPassword: existingUser?.hashedPassword || null
+      infractions: existingUser?.infractions ?? 0,
+      promotions: existingUser?.promotions ?? 0,
+      hashedPassword: existingUser?.hashedPassword ?? null
     };
     await db.set(userData.id, updatedUser);
 
+    // Re-fetch after saving to get latest record
+    existingUser = await db.get(userData.id);
+
     // Redirect logic
-    if (!existingUser) {
-      // brand new → signup
-      return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
-    } else if (!existingUser.hashedPassword) {
-      // existing but no password yet → signup
+    if (!existingUser.hashedPassword) {
+      // No password yet → signup
       return res.redirect(`/dashboard/signup.html?id=${userData.id}`);
     } else {
-      // existing with password → login-pass
+      // Has password → login-pass
       return res.redirect(`/dashboard/login-pass.html?id=${userData.id}`);
     }
   } catch (err) {
@@ -90,6 +90,7 @@ app.get("/callback", async (req, res) => {
     res.status(500).send("Error during Discord login");
   }
 });
+
 
 // Signup (set password)
 app.post("/signup", async (req, res) => {
