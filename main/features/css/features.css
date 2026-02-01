@@ -221,8 +221,10 @@ h2 {
   margin: 6px 0;
   text-align: left;
 }
+
 /* Form Grid */
 .form-grid {
+  display: flex;
   flex-direction: column;
   gap: 15px;
   margin-top: 20px;
@@ -242,17 +244,22 @@ h2 {
   color: #fff;
 }
 
-/* Announcement Cards */
-#announcementList .stat-box {
-  background: #1c1c24;   /* dark card background */
-  color: #fff;           /* white text */
-  padding: 15px;
-  border-radius: 8px;
-  margin: 10px 0;
-  box-shadow: 0 0 10px rgba(128,0,255,0.4); /* subtle glow */
+/* Announcement List */
+.announcement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
 }
 
-
+/* Announcement Cards */
+.announcement-list .stat-box {
+  background: #1c1c24;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(128,0,255,0.4);
+}
 
 /* Actions for announcements */
 .announcement-actions {
