@@ -339,7 +339,7 @@ h2 {
   color: #fff !important;
   text-shadow: none !important;
 }
-/* Big Box */
+/* Big Rectangular Box */
 .big-box {
   background: #1c1c24;
   padding: 20px;
@@ -348,21 +348,37 @@ h2 {
   color: #fff;
 }
 
-/* Overview section (top row) */
-.overview-grid {
+/* Top Row Overview */
+.overview-row {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   margin-bottom: 25px;
 }
 
-.overview-grid .stat-box {
+.overview-box {
   flex: 1;
+  background: #1c1c24;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
   text-align: center;
+  box-shadow: 0 0 8px rgba(255,255,255,0.2);
 }
 
-/* Two-column layout */
-.stats-columns {
+.overview-box h3 {
+  font-size: 1em;
+  margin-bottom: 8px;
+}
+
+.overview-box .stat-value {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Columns Section */
+.columns-row {
   display: flex;
   justify-content: space-between;
   gap: 30px;
@@ -378,7 +394,7 @@ h2 {
   text-align: center;
 }
 
-/* Stat boxes */
+/* Stat Boxes */
 .stat-box {
   background: #1c1c24;
   color: #fff;
