@@ -1,0 +1,223 @@
+/* Global Theme */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: #eee;
+  background: linear-gradient(180deg, #0a0a0f 0%, #1a0f2e 50%, #0a0a0f 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header, footer {
+  text-align: center;
+  width: 100%;
+  padding: 30px;
+  background: #111;
+  border-bottom: 3px solid #8000ff;
+}
+
+footer {
+  border-top: 3px solid #8000ff;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.subtitle {
+  color: #aaa;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+.feature-container {
+  max-width: 1000px;
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feature-card {
+  background: #1c1c24;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px auto;
+  box-shadow: 0 0 25px rgba(128,0,255,0.25);
+  width: 95%;
+  max-width: 850px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.6s ease;
+}
+
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+h2 {
+  color: #fff;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #8000ff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Warning Banner */
+.warning-banner {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 15px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Session Panel */
+.session-panel {
+  background: #1c1c24;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 0 20px rgba(128,0,255,0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+}
+
+/* Status Badge */
+.status-badge {
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-align: center;
+  width: fit-content;
+}
+
+.status-badge.active {
+  background: #00aa55;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(0,255,136,0.8);
+}
+
+.status-badge.inactive {
+  background: #aa2222;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255,68,68,0.8);
+}
+
+/* Metrics Row */
+.session-metrics {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  gap: 30px;
+}
+
+.metric-box {
+  background: #2a2a34;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  flex: 1;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.metric-box h3 {
+  color: #9a9aff;
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Action Buttons */
+.session-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+}
+
+.session-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.session-btn i {
+  margin-right: 8px;
+}
+
+/* Button Colors */
+.session-btn.start {
+  background: #00aa55;
+  color: #fff;
+}
+.session-btn.start:hover {
+  background: #00cc66;
+  transform: scale(1.05);
+}
+
+.session-btn.end {
+  background: #fff;
+  color: #cc0000;
+}
+.session-btn.end:hover {
+  background: #f2f2f2;
+  transform: scale(1.05);
+}
+
+.session-btn.boost {
+  background: #8000ff;
+  color: #fff;
+}
+.session-btn.boost:hover {
+  background: #9a33ff;
+  transform: scale(1.05);
+}
+
+.session-btn.low {
+  background: #aa7733;
+  color: #fff;
+}
+.session-btn.low:hover {
+  background: #cc8844;
+  transform: scale(1.05);
+}
+
+/* Fixed Return Button */
+.return-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #8000ff;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 0 15px rgba(128,0,255,0.5);
+  transition: background 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+}
+
+.return-btn:hover {
+  background: #9a33ff;
+  transform: translateX(-50%) scale(1.05);
+}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Sessions Management - Nexus Dashboard</title>
-  <link rel="stylesheet" href="/main/features/css/features.css">
+  <link rel="stylesheet" href="/main/features/css/sessions.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -20,6 +20,9 @@
 
       <!-- Session Control Panel -->
       <div class="session-panel">
+        <!-- Status Badge -->
+        <div id="sessionStatus" class="status-badge inactive">No Session Active</div>
+
         <!-- Metrics -->
         <div class="session-metrics">
           <div class="metric-box">
@@ -34,10 +37,11 @@
 
         <!-- Action Buttons -->
         <div class="session-actions">
-          <button class="session-btn start"><i class="fa-solid fa-play"></i> Start</button>
+          <button id="sessionToggle" class="session-btn start">
+            <i class="fa-solid fa-play"></i> Start
+          </button>
           <button class="session-btn boost"><i class="fa-solid fa-bolt"></i> Boost</button>
           <button class="session-btn low"><i class="fa-solid fa-user-slash"></i> Low Players</button>
-          <button class="session-btn end"><i class="fa-solid fa-stop"></i> End</button>
         </div>
       </div>
     </section>
@@ -51,5 +55,33 @@
   <footer>
     <p>&copy; 2026 Nexus Management</p>
   </footer>
+
+  <script>
+    const sessionToggle = document.getElementById("sessionToggle");
+    const sessionStatus = document.getElementById("sessionStatus");
+    let sessionActive = false;
+
+    sessionToggle.addEventListener("click", () => {
+      if (!sessionActive) {
+        // Start session
+        sessionActive = true;
+        sessionToggle.classList.remove("start");
+        sessionToggle.classList.add("end");
+        sessionToggle.innerHTML = '<i class="fa-solid fa-stop"></i> End';
+        sessionStatus.textContent = "Session Active";
+        sessionStatus.classList.remove("inactive");
+        sessionStatus.classList.add("active");
+      } else {
+        // End session
+        sessionActive = false;
+        sessionToggle.classList.remove("end");
+        sessionToggle.classList.add("start");
+        sessionToggle.innerHTML = '<i class="fa-solid fa-play"></i> Start';
+        sessionStatus.textContent = "No Session Active";
+        sessionStatus.classList.remove("active");
+        sessionStatus.classList.add("inactive");
+      }
+    });
+  </script>
 </body>
 </html>
