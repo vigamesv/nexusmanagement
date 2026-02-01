@@ -316,3 +316,26 @@ h2 {
   margin-top: 10px;
 }
 
+/* General text */
+.feature-card h2,
+.feature-card h3,
+.feature-card p,
+.stat-value {
+  color: #fff !important;   /* force all text white */
+}
+
+/* Stat boxes */
+.stat-box {
+  background: #1c1c24;      /* keep dark background */
+  color: #fff;              /* white text inside */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.3); /* subtle white glow */
+}
+
+/* Remove colored glows */
+.stat-value.active,
+.stat-value.queue-active {
+  color: #fff !important;
+  text-shadow: none !important;
+}

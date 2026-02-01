@@ -85,11 +85,8 @@
             counter.textContent = target + (limit ? "/" + limit : "");
             // Glow effects
             if (target > 0) {
-              if (counter.parentElement.querySelector('h3').textContent.includes("Queue")) {
-                counter.classList.add("queue-active");
-              } else {
-                counter.classList.add("active");
-              }
+              counter.classList.add("active"); // optional, but now just white
+            }
             }
           }
         };
