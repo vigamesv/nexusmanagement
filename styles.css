@@ -213,6 +213,17 @@ footer { text-align: center; padding: 1rem; background: #1a1a1a; color: #aaa; }
 .login-form .form-group input::placeholder {
   color: #888;
 }
+/* Override hero layout for auth pages */
+.hero .hero-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.hero {
+  flex-direction: column; /* stack content vertically */
+  justify-content: flex-start; /* align from top */
+  padding-top: 5rem; /* space below navbar */
+}
 
 
 /* Responsive */
