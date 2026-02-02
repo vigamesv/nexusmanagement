@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Login - Nexus Dashboard</title>
-  <link rel="stylesheet" href="/styles.css"> <!-- reuse homepage styles -->
+  <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -21,13 +21,13 @@
     <div class="hero-content fade-in">
       <h1>Login to Your Account</h1>
       <p class="tagline">Access your Nexus Dashboard</p>
-      <p class="subtext">Enter your Roblox username and password to continue.</p>
+      <p class="subtext">Use your Nexus username and password.</p>
 
       <div class="plan-card reveal" style="max-width:400px; margin-top:1.5rem;">
         <form id="loginForm" class="login-form">
           <div class="form-group">
-            <label for="roblox_user"><i class="fa-solid fa-user"></i> Roblox Username</label>
-            <input type="text" id="roblox_user" name="roblox_user" placeholder="Enter Roblox username" required>
+            <label for="username"><i class="fa-solid fa-user"></i> Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
           </div>
 
           <div class="form-group">
@@ -51,13 +51,13 @@
   <script>
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const roblox_user = document.getElementById("roblox_user").value;
+      const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
 
       const res = await fetch("/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roblox_user, password })
+        body: JSON.stringify({ roblox_user: username, password })
       });
 
       const data = await res.json();
