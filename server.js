@@ -114,6 +114,12 @@ app.get("/api/user/:accountID", async (req, res) => {
   }
 });
 
+// ✅ Logout
+app.get("/auth/logout", (req, res) => {
+  // If you add sessions later, clear them here
+  res.redirect("/");
+});
+
 app.listen(3000, () => {
   console.log("Backend running on port 3000");
 });
