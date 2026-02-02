@@ -66,8 +66,12 @@
 
     async function loadUser() {
       const accountID = getQueryParam("ID");
+      const usernameEl = document.getElementById("username");
+      const accountIDEl = document.getElementById("accountID");
+
       if (!accountID) {
-        document.getElementById("username").textContent = "No account ID provided.";
+        usernameEl.textContent = "⚠️ No account ID provided in URL.";
+        accountIDEl.textContent = "";
         return;
       }
 
@@ -76,19 +80,21 @@
         const data = await res.json();
 
         if (data.error) {
-          document.getElementById("username").textContent = "Error loading user.";
-          document.getElementById("accountID").textContent = "";
+          usernameEl.textContent = "❌ Error loading user.";
+          accountIDEl.textContent = "";
         } else {
-          document.getElementById("username").textContent = `Username: ${data.username}`;
-          document.getElementById("accountID").textContent = `Account ID: ${data.account_id}`;
+          usernameEl.textContent = `Username: ${data.username}`;
+          accountIDEl.textContent = `Account ID: ${data.account_id}`;
         }
       } catch (err) {
         console.error(err);
-        document.getElementById("username").textContent = "Failed to fetch user data.";
+        usernameEl.textContent = "❌ Failed to fetch user data.";
+        accountIDEl.textContent = "";
       }
     }
 
     loadUser();
   </script>
+
 </body>
 </html>
