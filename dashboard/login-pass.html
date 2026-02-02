@@ -21,7 +21,7 @@
     <div class="hero-content fade-in">
       <h1>Login to Your Account</h1>
       <p class="tagline">Access your Nexus Dashboard</p>
-      <p class="subtext">Use your Nexus username and password.</p>
+      <p class="subtext">Enter your username and password to continue.</p>
 
       <div class="plan-card reveal" style="max-width:400px; margin-top:1.5rem;">
         <form id="loginForm" class="login-form">
@@ -32,7 +32,7 @@
 
           <div class="form-group">
             <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter password" required>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
           </div>
 
           <button type="submit" class="explore-btn" style="width:100%;">
@@ -57,7 +57,7 @@
       const res = await fetch("/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roblox_user: username, password })
+        body: JSON.stringify({ username, password })
       });
 
       const data = await res.json();
