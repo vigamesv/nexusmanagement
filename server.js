@@ -7,30 +7,30 @@ const path = require("path");
 const app = express();
 app.use(bodyParser.json());
 
-// Serve static files (homepage, CSS, JS, dashboard pages)
+// Serve static files
 app.use(express.static(path.join(__dirname)));
 app.use("/dashboard", express.static(path.join(__dirname, "dashboard")));
 
 // PostgreSQL connection
 const pool = new Pool({
-  connectionString: "postgresql://postgres:password@helium/heliumdb?sslmode=disable"
+  connectionString: "postgresql://postgres:password@localhost:5432/yourdb"
 });
 
-// Utility: generate account ID from username
+// Utility: generate account ID
 function generateAccountID(username) {
   const date = new Date();
-  const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
-  const timeStr = date.toTimeString().split(" ")[0]; // HH:MM:SS
+  const dateStr = date.toISOString().split("T")[0];
+  const timeStr = date.toTimeString().split(" ")[0];
   const last4 = username.slice(-4);
   return `${dateStr}-${timeStr}-${last4}`;
 }
 
-// ✅ Homepage route
+// Homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// ✅ Signup (username + password)
+// Signup
 app.post("/auth/signup", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -45,7 +45,7 @@ app.post("/auth/signup", async (req, res) => {
       `INSERT INTO users (username, account_password, account_id, owned_server_ids, server_ids)
        VALUES ($1, $2, $3, $4, $5)
        ON CONFLICT (username) DO NOTHING`,
-      [username, hashedPassword, accountID, [], []]
+      [username, hashedPassword, accountID, '{}', '{}']
     );
 
     res.json({
@@ -54,12 +54,12 @@ app.post("/auth/signup", async (req, res) => {
       redirectURL: `/dashboard/user.html?ID=${accountID}`
     });
   } catch (err) {
-    console.error(err);
+    console.error("Signup DB error:", err.message);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-// ✅ Login
+// Login
 app.post("/auth/login", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -89,12 +89,12 @@ app.post("/auth/login", async (req, res) => {
       redirectURL: `/dashboard/user.html?ID=${user.account_id}`
     });
   } catch (err) {
-    console.error(err);
+    console.error("Login DB error:", err.message);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-// ✅ Fetch user info
+// Fetch user info
 app.get("/api/user/:accountID", async (req, res) => {
   const { accountID } = req.params;
   try {
@@ -109,14 +109,13 @@ app.get("/api/user/:accountID", async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error(err);
+    console.error("User fetch DB error:", err.message);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-// ✅ Logout
+// Logout
 app.get("/auth/logout", (req, res) => {
-  // If you add sessions later, clear them here
   res.redirect("/");
 });
 

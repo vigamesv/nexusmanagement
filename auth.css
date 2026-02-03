@@ -1,0 +1,43 @@
+body {
+  background: #0b0b0b;
+  color: #e0e0e0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding-top: 70px;
+}
+
+.navbar {
+  position: fixed; top: 0; width: 100%;
+  background: #1a1a1a; padding: 1rem 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.logo { color: #a020f0; font-weight: bold; }
+
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  background: linear-gradient(135deg, #2a003f, #0b0b0b, #3d0066);
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.plan-card {
+  background: #1a1a1a; padding: 2rem; border-radius: 12px;
+  border: 1px solid rgba(160,32,240,0.4);
+  box-shadow: 0 0 15px rgba(160,32,240,0.2);
+  transition: transform 0.3s ease;
+}
+
+.plan-card:hover { transform: translateY(-8px); }
+
+.explore-btn, .login-btn, .select-btn {
+  background: #a020f0; color: #fff;
+  border: none; padding: 0.8rem 1.5rem;
+  border-radius: 6px; cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.explore-btn:hover, .login-btn:hover, .select-btn:hover {
+  background: #7a0fcf; transform: scale(1.05);
+}
