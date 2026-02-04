@@ -13,7 +13,7 @@ app.use("/dashboard", express.static(path.join(__dirname, "dashboard")));
 
 // PostgreSQL connection
 const pool = new Pool({
-  connectionString: "postgresql://postgres:password@localhost:5432/yourdb"
+  connectionString: "postgresql://neondb_owner:npg_0C7wWNVpPbKI@ep-soft-butterfly-a5vznin4.us-east-2.aws.neon.tech/neondb?sslmode=require"
 });
 
 // Utility: generate account ID
