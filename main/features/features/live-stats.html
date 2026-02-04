@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Stats - Nexus Dashboard</title>
+  <link rel="stylesheet" href="/main/features/css/features.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>Live Stats</h1>
+    <p class="subtitle">Real-time ER:LC Server Data</p>
+    <div class="warning-banner">API KEY REQUIRED</div>
+  </header>
+
+  <main class="feature-container">
+    <section class="feature-card visible">
+      <h2><i class="fa-solid fa-chart-line"></i> Live Stats</h2>
+      <p>Monitor live players and staff activity in real-time.</p>
+
+      <!-- One Big Rectangular Box -->
+      <div class="stats-rectangle">
+
+        <!-- Top Row -->
+        <div class="overview-row">
+          <div class="overview-box">
+            <h3><i class="fa-solid fa-users"></i> Total Active Players</h3>
+            <p class="stat-value" data-target="35">0</p>
+          </div>
+          <div class="overview-box">
+            <h3><i class="fa-solid fa-list"></i> Total Queue</h3>
+            <p class="stat-value" data-target="3">0</p>
+          </div>
+        </div>
+
+        <!-- Columns -->
+        <div class="columns-row">
+          <!-- Team Players -->
+          <div class="stats-column">
+            <h2>Team Players</h2>
+            <div class="stat-box"><h3>DOT</h3><p class="stat-value" data-target="4">0</p></div>
+            <div class="stat-box"><h3>Fire Department</h3><p class="stat-value" data-target="8">0</p></div>
+            <div class="stat-box"><h3>Sheriff</h3><p class="stat-value" data-target="6">0</p></div>
+            <div class="stat-box"><h3>Police</h3><p class="stat-value" data-target="15">0</p></div>
+            <div class="stat-box"><h3>Civilian</h3><p class="stat-value" data-target="24">0</p></div>
+          </div>
+
+          <!-- Active Staff -->
+          <div class="stats-column">
+            <h2>Active Staff</h2>
+            <div class="stat-box"><h3>Moderators</h3><p class="stat-value" data-target="2">0</p></div>
+            <div class="stat-box"><h3>Admins</h3><p class="stat-value" data-target="1">0</p></div>
+            <div class="stat-box"><h3>Co-Owners</h3><p class="stat-value" data-target="1">0</p></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Fixed Return Button -->
+  <button class="return-btn" onclick="location.href='/main/server.html'">
+    <i class="fa-solid fa-arrow-left"></i> Return
+  </button>
+
+  <footer>
+    <p>&copy; 2026 Nexus Management</p>
+  </footer>
+
+  <script>
+    // Counting animation
+    function animateCounters() {
+      const counters = document.querySelectorAll('.stat-value');
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        let count = 0;
+        const increment = Math.max(1, target / 100);
+
+        const update = () => {
+          count += increment;
+          if (count < target) {
+            counter.textContent = Math.floor(count);
+            requestAnimationFrame(update);
+          } else {
+            counter.textContent = target;
+          }
+        };
+        update();
+      });
+    }
+    window.onload = animateCounters;
+  </script>
+</body>
+</html>

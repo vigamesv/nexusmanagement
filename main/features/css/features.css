@@ -1,0 +1,458 @@
+/* Global Theme */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: #eee;
+  background: linear-gradient(180deg, #0a0a0f 0%, #1a0f2e 50%, #0a0a0f 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header & Footer */
+header, footer {
+  text-align: center;
+  width: 100%;
+  padding: 30px;
+  background: #111;
+  border-bottom: 3px solid #8000ff;
+}
+
+footer {
+  border-top: 3px solid #8000ff;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.subtitle {
+  color: #aaa;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+/* Container */
+.feature-container {
+  max-width: 1000px;
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Feature Card */
+.feature-card {
+  background: #1c1c24;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px auto;
+  box-shadow: 0 0 25px rgba(128,0,255,0.25);
+  width: 95%;
+  max-width: 850px;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.6s ease;
+}
+
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Section Headers */
+h2 {
+  color: #fff;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #8000ff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Warning Tag */
+.warning-tag {
+  display: inline-block;
+  margin-top: 10px;
+  color: #ff4444;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: #220000;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  justify-content: center;   /* centers the grid horizontally */
+  align-items: start;        /* aligns boxes neatly */
+  margin: 20px auto;
+  max-width: 900px;          /* keeps grid centered, not full width */
+}
+
+
+.stat-box {
+  background: #222;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 0 15px rgba(128,0,255,0.25);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.stat-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(128,0,255,0.5);
+}
+
+.stat-box h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #9a9aff;
+}
+
+.stat-box i {
+  margin-right: 6px;
+  color: #8000ff;
+}
+
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Glow Effects */
+.stat-value.active {
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0,255,136,0.8);
+}
+
+.stat-value.queue-active {
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255,68,68,0.8);
+}
+
+/* Spinner */
+.spinner {
+  border: 4px solid #333;
+  border-top: 4px solid #ff3333;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Buttons (if needed for features) */
+.primary-btn {
+  background: #8000ff;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #9a33ff;
+  transform: scale(1.05);
+}
+
+.disabled-btn {
+  background: #555;
+  cursor: not-allowed;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* Warning Banner - plain text only */
+.warning-banner {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 15px;
+  width: 100%;
+  text-align: center;
+}
+
+
+
+/* Fixed Return Button */
+.return-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #8000ff;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 0 15px rgba(128,0,255,0.5);
+  transition: background 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+}
+
+.return-btn:hover {
+  background: #9a33ff;
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* Log Entries */
+.log-entry {
+  font-size: 0.95rem;
+  color: #ddd;
+  margin: 6px 0;
+  text-align: left;
+}
+
+/* Form Grid */
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.form-grid label {
+  font-weight: bold;
+  text-align: left;
+}
+
+.form-grid input,
+.form-grid select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #222;
+  color: #fff;
+}
+
+/* Announcement List */
+.announcement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Announcement Cards */
+.announcement-list .stat-box {
+  background: #1c1c24;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(128,0,255,0.4);
+}
+
+/* Actions for announcements */
+.announcement-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.secondary-btn {
+  background: #444;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  background: #666;
+}
+
+.danger-btn {
+  background: #aa2222;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.danger-btn:hover {
+  background: #cc3333;
+}
+/* Infractions List */
+.infractions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.infractions-list .stat-box {
+  background: #1c1c24;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(128,0,255,0.4);
+}
+
+/* Reuse announcement-actions styling */
+.announcement-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+/* General text */
+.feature-card h2,
+.feature-card h3,
+.feature-card p,
+.stat-value {
+  color: #fff !important;   /* force all text white */
+}
+
+/* Stat boxes */
+.stat-box {
+  background: #1c1c24;      /* keep dark background */
+  color: #fff;              /* white text inside */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.3); /* subtle white glow */
+}
+
+/* Remove colored glows */
+.stat-value.active,
+.stat-value.queue-active {
+  color: #fff !important;
+  text-shadow: none !important;
+}
+/* Big Rectangular Stats Box */
+.stats-rectangle {
+  background: #1c1c24;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(128,0,255,0.6); /* glowing border outline */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  max-width: 1000px;   /* fixed width for rectangle */
+  margin: 0 auto;      /* center horizontally */
+}
+
+/* Top Row Overview */
+.overview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.overview-box {
+  flex: 1;
+  background: #2a2a34;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(255,255,255,0.2);
+}
+
+.overview-box h3 {
+  font-size: 1em;
+  margin-bottom: 8px;
+}
+
+.overview-box .stat-value {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* Columns Section */
+.columns-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.stats-column {
+  flex: 1;
+}
+
+.stats-column h2 {
+  color: #fff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Stat Boxes inside columns */
+.stat-box {
+  background: #2a2a34;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+.stat-value {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+/* Promotions List */
+.promotions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.promotions-list .stat-box {
+  background: #1c1c24;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(128,0,255,0.4);
+}
+
+/* Reuse announcement-actions styling */
+.announcement-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+/* Permissions Table */
+.permissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  color: #fff;
+}
+
+.permissions-table th,
+.permissions-table td {
+  border: 1px solid #555;
+  padding: 10px;
+  text-align: center;
+}
+
+.permissions-table th {
+  background: #2a2a34;
+}
+
+.permissions-table td {
+  background: #1c1c24;
+}
