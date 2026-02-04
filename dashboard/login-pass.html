@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Nexus Dashboard</title>
+  <link rel="stylesheet" href="/dashboard/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#plans">Plans</a></li>
+    </ul>
+  </nav>
+
+  <!-- Login Section -->
+  <section class="hero">
+    <div class="hero-content fade-in">
+      <h1>Login to Your Account</h1>
+      <p class="tagline">Access your Nexus Dashboard</p>
+      <p class="subtext">Enter your username and password to continue.</p>
+
+      <div class="plan-card reveal" style="max-width:400px; margin-top:1.5rem;">
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <label for="username"><i class="fa-solid fa-user"></i> Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          </div>
+
+          <button type="submit" class="explore-btn" style="width:100%;">
+            <i class="fa-solid fa-right-to-bracket"></i> Log In
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
+  </footer>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (data.redirectURL) {
+        window.location.href = data.redirectURL;
+      } else {
+        alert(data.error || "Login failed");
+      }
+    });
+  </script>
+</body>
+</html>

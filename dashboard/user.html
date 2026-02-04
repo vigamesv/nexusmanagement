@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard - Nexus Management</title>
+  <link rel="stylesheet" href="/dashboard/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#plans">Plans</a></li>
+      <li><a href="/dashboard/login-pass.html">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Dashboard Section -->
+  <section class="plans">
+    <h2 class="reveal">Welcome to Your Dashboard</h2>
+    <p class="intro-text reveal">Manage your staff tools and explore features below.</p>
+
+    <div class="plans-grid">
+      <!-- User Info Card -->
+      <div class="plan-card reveal">
+        <h3><i class="fa-solid fa-user"></i> Account Info</h3>
+        <p id="username">Loading username...</p>
+        <p id="accountID" class="subtext">Loading account ID...</p>
+        <p class="plan-desc">⚠️ Never share your Account ID — it allows access to your account.</p>
+      </div>
+
+      <!-- Navigation Card -->
+      <div class="plan-card reveal">
+        <h3><i class="fa-solid fa-bars"></i> Navigation</h3>
+        <p class="plan-desc">Quickly access your management tools.</p>
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+          <button class="explore-btn" onclick="location.href='/main/servers.html'">
+            <i class="fa-solid fa-server"></i> Servers
+          </button>
+          <button class="explore-btn" onclick="location.href='/main/features/logs.html'">
+            <i class="fa-solid fa-book"></i> Logs
+          </button>
+          <button class="explore-btn" onclick="location.href='/main/features/permissions.html'">
+            <i class="fa-solid fa-lock"></i> Permissions
+          </button>
+          <button class="explore-btn" onclick="location.href='/main/features/sessions.html'">
+            <i class="fa-solid fa-calendar-check"></i> Sessions
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
+  </footer>
+
+  <script>
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    async function loadUser() {
+      const accountID = getQueryParam("ID");
+      const usernameEl = document.getElementById("username");
+      const accountIDEl = document.getElementById("accountID");
+
+      if (!accountID) {
+        usernameEl.textContent = "⚠️ No account ID provided in URL.";
+        accountIDEl.textContent = "";
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/user/${accountID}`);
+        const data = await res.json();
+
+        if (data.error) {
+          usernameEl.textContent = "❌ Error loading user.";
+          accountIDEl.textContent = "";
+        } else {
+          usernameEl.textContent = `Username: ${data.username}`;
+          accountIDEl.textContent = `Account ID: ${data.account_id}`;
+        }
+      } catch (err) {
+        console.error(err);
+        usernameEl.textContent = "❌ Failed to fetch user data.";
+        accountIDEl.textContent = "";
+      }
+    }
+
+    loadUser();
+  </script>
+
+</body>
+</html>
