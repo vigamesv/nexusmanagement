@@ -99,6 +99,103 @@ body {
   transform: scale(1.02);
 }
 
+/* Affiliates Section */
+.affiliates {
+  padding: 4rem 2rem;
+  background: #0b0b0b;
+  text-align: center;
+}
+
+.affiliates h2 {
+  color: #a020f0;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.affiliates .intro-text {
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  color: #ccc;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.affiliates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.affiliate-card {
+  background: #1a1a1a;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(160,32,240,0.3);
+  box-shadow: 0 0 15px rgba(160,32,240,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.affiliate-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(160,32,240,0.5);
+}
+
+.affiliate-logo {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+  border: 2px solid rgba(160,32,240,0.4);
+}
+
+.affiliate-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.affiliate-card h3 {
+  color: #a020f0;
+  margin-bottom: 0.8rem;
+  font-size: 1.4rem;
+}
+
+.affiliate-card .affiliate-desc {
+  color: #bbb;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.affiliate-link {
+  display: inline-block;
+  background: #a020f0;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.affiliate-link:hover {
+  background: #7a0fcf;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(160,32,240,0.6);
+}
+
+
 /* Shared button style */
 .select-btn,
 .explore-btn {
@@ -138,6 +235,103 @@ footer { text-align: center; padding: 1rem; background: #1a1a1a; color: #aaa; }
 .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
 .reveal.active { opacity: 1; transform: translateY(0); }
 .clicked { transform: scale(0.95); }
+
+/* Staggered animations for affiliate cards */
+.stagger-1 { transition-delay: 0.1s; }
+.stagger-2 { transition-delay: 0.2s; }
+.stagger-3 { transition-delay: 0.3s; }
+
+/* Floating animation for hero content */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.hero-content {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse animation for buttons */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(160, 32, 240, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(160, 32, 240, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(160, 32, 240, 0); }
+}
+
+.explore-btn:hover,
+.select-btn:hover,
+.affiliate-link:hover {
+  animation: pulse 1.5s infinite;
+}
+
+/* Glow animation for premium card */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 30px rgba(160,32,240,0.7); }
+  50% { box-shadow: 0 0 40px rgba(160,32,240,1); }
+}
+
+.plan-card.premium {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Rotate animation for affiliate logos on hover */
+.affiliate-logo {
+  transition: transform 0.5s ease;
+}
+
+.affiliate-card:hover .affiliate-logo {
+  transform: rotate(360deg);
+}
+
+/* Gradient text animation for headings */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero h1 {
+  background: linear-gradient(90deg, #a020f0, #ff00ff, #a020f0);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Shimmer effect for plan cards */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.plan-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(160,32,240,0.2), transparent);
+  animation: shimmer 3s infinite;
+  pointer-events: none;
+}
+
+.plan-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Scale up animation for cards on hover */
+.plan-card,
+.affiliate-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.plan-card:hover,
+.affiliate-card:hover {
+  filter: brightness(1.1);
+}
 
 .hero-buttons {
   display: flex;
