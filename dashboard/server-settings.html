@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Settings - Nexus Management</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/dashboard/dashboard.css">
+    <link rel="stylesheet" href="/main/servers.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Nexus Management</div>
+        <ul class="nav-links">
+            <li><a href="/dashboard/user.html" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+            <li><a href="/main/servers.html" id="serversLink"><i class="fa-solid fa-server"></i> Servers</a></li>
+            <li><a href="/auth/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="servers-hero">
+        <div class="hero-content fade-in">
+            <h1><i class="fa-solid fa-cog"></i> Server Settings</h1>
+            <p class="tagline" id="serverName">Loading...</p>
+            <p class="subtext">Configure your server's ER:LC API integration</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="servers-content">
+        <div class="servers-container">
+
+            <!-- API Configuration Card -->
+            <div class="dashboard-card reveal">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-key"></i> ER:LC API Configuration</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-desc">
+                        Connect your server to the ER:LC API to enable live stats, player management, and automated features.
+                        <br><a href="https://policeroleplay.community/settings/api" target="_blank" style="color: #a020f0;">Get Your API Key <i class="fa-solid fa-external-link"></i></a>
+                    </p>
+
+                    <form id="apiForm">
+                        <div class="form-group">
+                            <label for="apiKey"><i class="fa-solid fa-key"></i> API Key</label>
+                            <input type="password" id="apiKey" placeholder="Enter your ER:LC API key" required>
+                            <small style="color: #999; display: block; margin-top: 0.5rem;">
+                                Get your API key from your <a href="https://policeroleplay.community/settings/api" target="_blank" style="color: #a020f0;">PRC account settings</a>
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serverId"><i class="fa-solid fa-server"></i> Server ID (Optional)</label>
+                            <input type="text" id="serverId" placeholder="Enter your server ID for filtering">
+                            <small style="color: #999; display: block; margin-top: 0.5rem;">
+                                Leave blank to access all servers linked to your API key
+                            </small>
+                        </div>
+
+                        <div class="api-status" id="apiStatus" style="display: none;">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>API Connected Successfully</span>
+                        </div>
+
+                        <div class="button-group" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="submit" class="primary-btn" style="flex: 1;">
+                                <i class="fa-solid fa-check"></i> Save & Test Connection
+                            </button>
+                            <button type="button" class="secondary-btn" onclick="testConnection()" style="flex: 1;">
+                                <i class="fa-solid fa-signal"></i> Test Connection
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Server Info Card (shown when API is connected) -->
+            <div class="dashboard-card reveal" id="serverInfoCard" style="display: none;">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-info-circle"></i> Server Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="server-details">
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fa-solid fa-server"></i> Server Name:</span>
+                            <span class="detail-value" id="infoServerName">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fa-solid fa-users"></i> Current Players:</span>
+                            <span class="detail-value" id="infoPlayers">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fa-solid fa-crown"></i> Owner:</span>
+                            <span class="detail-value" id="infoOwner">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fa-solid fa-map"></i> Map:</span>
+                            <span class="detail-value" id="infoMap">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label"><i class="fa-solid fa-clock"></i> Join Code Expires:</span>
+                            <span class="detail-value" id="infoExpires">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dashboard-card reveal">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <button class="feature-btn" onclick="goToFeature('auto-announcements')">
+                            <i class="fa-solid fa-bullhorn"></i> Auto Announcements
+                        </button>
+                        <button class="feature-btn" onclick="goToFeature('live-stats')">
+                            <i class="fa-solid fa-chart-line"></i> Live Stats
+                        </button>
+                        <button class="feature-btn" onclick="goToFeature('logs')">
+                            <i class="fa-solid fa-database"></i> View Logs
+                        </button>
+                        <button class="feature-btn" onclick="goToServerDashboard()">
+                            <i class="fa-solid fa-gauge-high"></i> Server Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
+    </footer>
+
+    <script src="server-settings.js"></script>
+</body>
+</html>
