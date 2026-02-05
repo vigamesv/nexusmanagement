@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard - Nexus Management</title>
-  <link rel="stylesheet" href="/dashboard/auth.css">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -13,43 +15,82 @@
     <ul class="nav-links">
       <li><a href="/">Home</a></li>
       <li><a href="/#plans">Plans</a></li>
-      <li><a href="/dashboard/login-pass.html">Logout</a></li>
+      <li><a href="/auth/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
     </ul>
   </nav>
 
-  <!-- Dashboard Section -->
-  <section class="plans">
-    <h2 class="reveal">Welcome to Your Dashboard</h2>
-    <p class="intro-text reveal">Manage your staff tools and explore features below.</p>
+  <!-- Dashboard Hero -->
+  <section class="dashboard-hero">
+    <div class="hero-content fade-in">
+      <h1><i class="fa-solid fa-gauge-high"></i> Dashboard</h1>
+      <p class="tagline">Welcome back, <span id="display-username">User</span></p>
+      <p class="subtext">Manage your ER:LC staff tools and community from one place.</p>
+    </div>
+  </section>
 
-    <div class="plans-grid">
-      <!-- User Info Card -->
-      <div class="plan-card reveal">
-        <h3><i class="fa-solid fa-user"></i> Account Info</h3>
-        <p id="username">Loading username...</p>
-        <p id="accountID" class="subtext">Loading account ID...</p>
-        <p class="plan-desc">⚠️ Never share your Account ID — it allows access to your account.</p>
+  <!-- Dashboard Main Content -->
+  <section class="dashboard-content">
+    <div class="dashboard-grid">
+      
+      <!-- Account Info Card -->
+      <div class="dashboard-card account-card reveal">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-user-circle"></i> Account Information</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label"><i class="fa-solid fa-user"></i> Username:</span>
+            <span class="info-value" id="username">Loading...</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><i class="fa-solid fa-id-card"></i> Account ID:</span>
+            <span class="info-value account-id" id="accountID">Loading...</span>
+            <button class="copy-btn" onclick="copyAccountID()" title="Copy Account ID">
+              <i class="fa-solid fa-copy"></i>
+            </button>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><i class="fa-solid fa-calendar"></i> Member Since:</span>
+            <span class="info-value" id="memberSince">Loading...</span>
+          </div>
+        </div>
+        <div class="card-footer warning">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Never share your Account ID — it grants access to your account.</span>
+        </div>
       </div>
 
-      <!-- Navigation Card -->
-      <div class="plan-card reveal">
-        <h3><i class="fa-solid fa-bars"></i> Navigation</h3>
-        <p class="plan-desc">Quickly access your management tools.</p>
-        <div style="display:flex; flex-direction:column; gap:1rem;">
-          <button class="explore-btn" onclick="location.href='/main/servers.html'">
-            <i class="fa-solid fa-server"></i> Servers
-          </button>
-          <button class="explore-btn" onclick="location.href='/main/features/logs.html'">
-            <i class="fa-solid fa-book"></i> Logs
-          </button>
-          <button class="explore-btn" onclick="location.href='/main/features/permissions.html'">
-            <i class="fa-solid fa-lock"></i> Permissions
-          </button>
-          <button class="explore-btn" onclick="location.href='/main/features/sessions.html'">
-            <i class="fa-solid fa-calendar-check"></i> Sessions
+      <!-- Quick Stats Card -->
+      <div class="dashboard-card stats-card reveal">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-chart-line"></i> Quick Stats</h3>
+        </div>
+        <div class="card-body stats-grid">
+          <div class="stat-item stat-single">
+            <div class="stat-icon">
+              <i class="fa-solid fa-server"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">0</span>
+              <span class="stat-label">Active Servers</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Server Management Card -->
+      <div class="dashboard-card feature-card reveal">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-server"></i> Server Management</h3>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Create and manage your ER:LC community servers.</p>
+          <button class="feature-btn" onclick="location.href='/main/servers.html'">
+            <i class="fa-solid fa-plus-circle"></i> Manage Servers
           </button>
         </div>
       </div>
+
     </div>
   </section>
 
@@ -68,10 +109,14 @@
       const accountID = getQueryParam("ID");
       const usernameEl = document.getElementById("username");
       const accountIDEl = document.getElementById("accountID");
+      const displayUsernameEl = document.getElementById("display-username");
+      const memberSinceEl = document.getElementById("memberSince");
 
       if (!accountID) {
-        usernameEl.textContent = "⚠️ No account ID provided in URL.";
-        accountIDEl.textContent = "";
+        usernameEl.textContent = "No account ID provided";
+        accountIDEl.textContent = "---";
+        displayUsernameEl.textContent = "Guest";
+        memberSinceEl.textContent = "---";
         return;
       }
 
@@ -79,22 +124,80 @@
         const res = await fetch(`/api/user/${accountID}`);
         const data = await res.json();
 
-        if (data.error) {
-          usernameEl.textContent = "❌ Error loading user.";
-          accountIDEl.textContent = "";
+        if (data.error || !data.success) {
+          usernameEl.textContent = "Error loading user";
+          accountIDEl.textContent = "---";
+          displayUsernameEl.textContent = "Unknown";
+          memberSinceEl.textContent = "---";
         } else {
-          usernameEl.textContent = `Username: ${data.username}`;
-          accountIDEl.textContent = `Account ID: ${data.account_id}`;
+          const user = data.user;
+          usernameEl.textContent = user.username;
+          accountIDEl.textContent = user.account_id;
+          displayUsernameEl.textContent = user.username;
+          
+          // Format date
+          if (user.created_at) {
+            const date = new Date(user.created_at);
+            memberSinceEl.textContent = date.toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            });
+          } else {
+            memberSinceEl.textContent = "Recently";
+          }
         }
       } catch (err) {
         console.error(err);
-        usernameEl.textContent = "❌ Failed to fetch user data.";
-        accountIDEl.textContent = "";
+        usernameEl.textContent = "Failed to fetch user data";
+        accountIDEl.textContent = "---";
+        displayUsernameEl.textContent = "Error";
+        memberSinceEl.textContent = "---";
       }
     }
 
-    loadUser();
-  </script>
+    function copyAccountID() {
+      const accountID = document.getElementById("accountID").textContent;
+      if (accountID && accountID !== "Loading..." && accountID !== "---") {
+        navigator.clipboard.writeText(accountID).then(() => {
+          const btn = document.querySelector('.copy-btn');
+          const icon = btn.querySelector('i');
+          icon.className = 'fa-solid fa-check';
+          btn.style.background = '#10b981';
+          
+          setTimeout(() => {
+            icon.className = 'fa-solid fa-copy';
+            btn.style.background = '';
+          }, 2000);
+        });
+      }
+    }
 
+    // Scroll reveal animation
+    function revealOnScroll() {
+      const reveals = document.querySelectorAll('.reveal');
+      reveals.forEach((el, index) => {
+        const rect = el.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight - 100;
+        if (isVisible) {
+          setTimeout(() => {
+            el.classList.add('active');
+          }, index * 100);
+        }
+      });
+    }
+
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', () => {
+      loadUser();
+      revealOnScroll();
+      
+      // Fade in animation
+      const fadeElements = document.querySelectorAll('.fade-in');
+      fadeElements.forEach(el => {
+        el.classList.add('active');
+      });
+    });
+  </script>
 </body>
 </html>
