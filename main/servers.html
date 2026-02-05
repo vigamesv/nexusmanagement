@@ -2,112 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ER:LC Dashboard - Nexus Management</title>
-  <link rel="stylesheet" href="server.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Servers - Nexus Management</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="stylesheet" href="servers.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <header>
-    <h1>ER:LC Dashboard</h1>
-    <p class="subtitle">Staff Management Panel</p>
-    <nav class="nav-tabs">
-      <span>Overview</span> | <span>Sessions</span>
-    </nav>
-  </header>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="/dashboard/user.html" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+      <li><a href="/main/servers.html" class="active"><i class="fa-solid fa-server"></i> Servers</a></li>
+      <li><a href="/auth/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+  </nav>
 
-  <main class="dashboard-container">
-    <!-- Feature Hub Grid -->
-    <section class="features-grid">
-      <div class="feature-block card animate">
-        <h3><i class="fa-solid fa-bullhorn"></i> Server Auto‑Announcements</h3>
-        <p>Automated SSU/Shutdown messages for your server.</p>
-        <button class="primary-btn" onclick="location.href='/main/features/auto-announcements.html'">Open</button>
+  <!-- Hero Section -->
+  <section class="servers-hero">
+    <div class="hero-content fade-in">
+      <h1><i class="fa-solid fa-server"></i> My Servers</h1>
+      <p class="tagline">Manage your ER:LC community servers</p>
+      <p class="subtext">Create, configure, and monitor your staff management systems</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="servers-content">
+    <div class="servers-container">
+      
+      <!-- Servers Overview -->
+      <div class="servers-stats reveal">
+        <div class="stat-box">
+          <div class="stat-icon owned">
+            <i class="fa-solid fa-crown"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="ownedCount">0</span>
+            <span class="stat-label">Owned Servers</span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon member">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="memberCount">0</span>
+            <span class="stat-label">Member Of</span>
+          </div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-icon total">
+            <i class="fa-solid fa-chart-simple"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="totalCount">0</span>
+            <span class="stat-label">Total Servers</span>
+          </div>
+        </div>
       </div>
 
-      <div class="feature-block card animate">
-        <h3><i class="fa-solid fa-gavel"></i> Infractions Manager</h3>
-        <p>Issue warnings, kicks, and bans with logs.</p>
-        <button class="primary-btn" onclick="location.href='/main/features/infractions.html'">Open</button>
+      <!-- Create Server Button -->
+      <div class="create-server-section reveal">
+        <button class="create-server-btn" onclick="showCreateModal()">
+          <i class="fa-solid fa-plus-circle"></i> Create New Server
+        </button>
       </div>
 
-      <div class="feature-block card animate">
-        <h3><i class="fa-solid fa-user-plus"></i> Promotions Tool</h3>
-        <p>Promote staff members with rank tracking.</p>
-        <button class="primary-btn" onclick="location.href='/main/features/promotions.html'">Open</button>
+      <!-- Owned Servers Section -->
+      <div class="server-section reveal">
+        <h2><i class="fa-solid fa-crown"></i> Servers You Own</h2>
+        <div id="ownedServers" class="servers-grid">
+          <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Loading your servers...</p>
+          </div>
+        </div>
       </div>
 
-      <div class="feature-block card animate">
-        <h3><i class="fa-solid fa-chart-line"></i> Live Stats</h3>
-        <p>View live players and staff online.</p>
-        <button class="primary-btn" onclick="location.href='/main/features/live-stats.html'">Open</button>
+      <!-- Member Servers Section -->
+      <div class="server-section reveal">
+        <h2><i class="fa-solid fa-users"></i> Servers You're In</h2>
+        <div id="memberServers" class="servers-grid">
+          <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Loading servers...</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Logs & Premium side by side -->
-      <div class="feature-block card animate">
-        <h3><i class="fa-solid fa-database"></i> Logs & History</h3>
-        <p>Track punishments, promotions, and staff activity.</p>
-        <button class="primary-btn" onclick="location.href='/main/features/logs.html'">Open</button>
-      </div>
+    </div>
+  </section>
 
-      <div class="feature-block card animate premium-link disabled">
-        <h3><i class="fa-solid fa-gem"></i> Premium Dashboard</h3>
-        <p>Exclusive advanced tools and analytics.</p>
-        <button class="primary-btn disabled-btn" disabled>Coming Soon</button>
-      </div>
-    </section>
-
-    <!-- Servers Button -->
-    <section class="servers-link card animate">
-      <h3><i class="fa-solid fa-server"></i> Servers</h3>
-      <p>Manage your connected servers.</p>
-      <button class="primary-btn" onclick="location.href='/main/servers.html'">Go to Servers</button>
-    </section>
-  </main>
-
+  <!-- Footer -->
   <footer>
-    <p>&copy; 2026 Nexus Management</p>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
 
-  <!-- API Key Modal -->
-  <div id="apiKeyModal" class="modal">
+  <!-- Create Server Modal -->
+  <div id="createModal" class="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-      <h2>Enter API Key</h2>
-      <form id="apiKeyForm">
-        <label for="serverId">Server ID:</label>
-        <input type="text" id="serverId" name="serverId" required>
-
-        <label for="apiKey">API Key:</label>
-        <input type="text" id="apiKey" name="apiKey" required>
-
-        <button type="submit" class="primary-btn">Save</button>
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-plus-circle"></i> Create New Server</h2>
+        <span class="close-btn" onclick="closeCreateModal()">&times;</span>
+      </div>
+      <form id="createServerForm">
+        <div class="form-group">
+          <label for="serverName"><i class="fa-solid fa-signature"></i> Server Name</label>
+          <input type="text" id="serverName" placeholder="e.g., Los Santos County" required>
+        </div>
+        <div class="form-group">
+          <label for="serverDescription"><i class="fa-solid fa-align-left"></i> Description (Optional)</label>
+          <textarea id="serverDescription" rows="3" placeholder="Brief description of your server..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="secondary-btn" onclick="closeCreateModal()">Cancel</button>
+          <button type="submit" class="primary-btn">
+            <i class="fa-solid fa-check"></i> Create Server
+          </button>
+        </div>
       </form>
     </div>
   </div>
 
-  <script>
-    // Show modal on page load
-    window.onload = function() {
-      document.getElementById("apiKeyModal").style.display = "block";
-    };
+  <!-- Server Details Modal -->
+  <div id="serverModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalServerName"><i class="fa-solid fa-server"></i> Server Details</h2>
+        <span class="close-btn" onclick="closeServerModal()">&times;</span>
+      </div>
+      <div class="modal-body" id="serverModalBody">
+        <div class="loading-state">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <p>Loading server details...</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="secondary-btn" onclick="closeServerModal()">Close</button>
+        <button type="button" class="primary-btn" id="manageServerBtn">
+          <i class="fa-solid fa-cog"></i> Manage Server
+        </button>
+      </div>
+    </div>
+  </div>
 
-    function closeModal() {
-      document.getElementById("apiKeyModal").style.display = "none";
-    }
-
-    // Handle form submission (frontend only)
-    document.getElementById("apiKeyForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const serverId = document.getElementById("serverId").value;
-      const apiKey = document.getElementById("apiKey").value;
-
-      // For now, just log to console (backend integration later)
-      console.log("Server ID:", serverId);
-      console.log("API Key:", apiKey);
-
-      alert("API Key saved locally. Backend integration coming soon!");
-      closeModal();
-    });
-  </script>
+  <script src="servers.js"></script>
 </body>
 </html>
