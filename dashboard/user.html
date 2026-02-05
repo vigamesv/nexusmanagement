@@ -85,7 +85,7 @@
         </div>
         <div class="card-body">
           <p class="card-desc">Create and manage your ER:LC community servers.</p>
-          <button class="feature-btn" onclick="location.href='/main/servers.html'">
+          <button class="feature-btn" id="manageServersBtn">
             <i class="fa-solid fa-plus-circle"></i> Manage Servers
           </button>
         </div>
@@ -197,6 +197,17 @@
       fadeElements.forEach(el => {
         el.classList.add('active');
       });
+
+      // Set up manage servers button with account ID
+      const manageServersBtn = document.getElementById('manageServersBtn');
+      if (manageServersBtn) {
+        const accountID = getQueryParam("ID");
+        if (accountID) {
+          manageServersBtn.onclick = function() {
+            window.location.href = `/main/servers.html?ID=${accountID}`;
+          };
+        }
+      }
     });
   </script>
 </body>

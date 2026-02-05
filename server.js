@@ -67,11 +67,10 @@ initializeDatabase();
 // Utility: generate account ID
 function generateAccountID(username) {
   const date = new Date();
-  const dateStr = date.toISOString().split("T")[0].replace(/-/g, '');
-  const timeStr = date.toTimeString().split(" ")[0].replace(/:/g, '');
-  const last4 = username.slice(-4).padStart(4, '0');
-  const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-  return `NXS-${dateStr}-${timeStr}-${last4}-${randomNum}`;
+  const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
+  const timeStr = date.toTimeString().split(" ")[0]; // HH:MM:SS
+  const last4 = username.slice(-4);
+  return `${dateStr}-${timeStr}-${last4}`;
 }
 
 // Homepage
