@@ -27,17 +27,24 @@ const pool = new Pool({
 // Test database connection on startup
 pool.connect((err, client, release) => {
   if (err) {
-    console.error('Error connecting to the database:', err.stack);
+    console.error('❌ DATABASE CONNECTION FAILED');
+    console.error('Error details:', err.stack);
+    console.error('Connection string (masked):', process.env.DATABASE_URL ? 'Exists' : 'Missing');
   } else {
-    console.log('Database connected successfully');
+    console.log('✅ Database connected successfully');
+    console.log('Database host:', client.host);
+    console.log('Database name:', client.database);
     release();
   }
 });
 
 // Create tables if they don't exist
 async function initializeDatabase() {
+  console.log('🔧 Initializing database tables...');
+  
   try {
     // Create users table
+    console.log('Creating users table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -49,8 +56,10 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    console.log('✅ Users table ready');
     
     // Create servers table
+    console.log('Creating servers table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS servers (
         id VARCHAR(255) PRIMARY KEY,
@@ -64,15 +73,29 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    console.log('✅ Servers table ready');
     
     // Create indexes
+    console.log('Creating indexes...');
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_account_id ON users(account_id)`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_servers_owner ON servers(owner_account_id)`);
+    console.log('✅ Indexes ready');
     
-    console.log('Database tables initialized successfully');
+    console.log('✅ Database tables initialized successfully');
+    
+    // Verify tables exist
+    const result = await pool.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+    `);
+    console.log('📋 Tables in database:', result.rows.map(r => r.table_name).join(', '));
+    
   } catch (err) {
-    console.error('Error initializing database:', err.message);
+    console.error('❌ Error initializing database');
+    console.error('Error message:', err.message);
+    console.error('Error code:', err.code);
     console.error('Full error:', err);
   }
 }
@@ -97,6 +120,51 @@ app.get("/", (req, res) => {
 // Health check endpoint for Render
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// Database status endpoint for debugging
+app.get("/api/db-status", async (req, res) => {
+  try {
+    // Test connection
+    const client = await pool.connect();
+    
+    // Check tables
+    const tablesResult = await client.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+    `);
+    
+    // Check users table structure
+    let usersColumns = [];
+    try {
+      const usersResult = await client.query(`
+        SELECT column_name, data_type 
+        FROM information_schema.columns 
+        WHERE table_name = 'users'
+      `);
+      usersColumns = usersResult.rows;
+    } catch (e) {
+      usersColumns = ['Table does not exist'];
+    }
+    
+    client.release();
+    
+    res.json({
+      status: 'connected',
+      database: client.database,
+      tables: tablesResult.rows.map(r => r.table_name),
+      usersTableColumns: usersColumns,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      error: error.message,
+      code: error.code,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Signup
