@@ -55,10 +55,7 @@ async function loadServerData() {
     }
   } catch (error) {
     console.error('Error loading server:', error);
-    alert('Failed to load server data. Redirecting to servers page...');
-    setTimeout(() => {
-      window.location.href = `/main/servers.html?ID=${accountID}`;
-    }, 2000);
+    alert('Failed to load server data. Please try again later.');
   }
 }
 
