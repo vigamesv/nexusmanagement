@@ -18,7 +18,7 @@ app.use("/dashboard", express.static(path.join(__dirname, "dashboard")));
 
 // PostgreSQL connection with environment variable support
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || "postgresql://neondb_owner:npg_HAoEVhfFp7Z2@ep-steep-sky-aijdtrvy-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+  connectionString: process.env.DATABASE_URL || "postgresql://neondb_owner:npg_0C7wWNVpPbKI@ep-soft-butterfly-a5vznin4.us-east-2.aws.neon.tech/neondb?sslmode=require",
   ssl: {
     rejectUnauthorized: false // Required for most cloud PostgreSQL services
   }
@@ -156,6 +156,7 @@ app.get("/api/db-status", async (req, res) => {
         SELECT column_name, data_type 
         FROM information_schema.columns 
         WHERE table_name = 'users'
+        ORDER BY ordinal_position
       `);
       usersColumns = usersResult.rows;
     } catch (e) {
@@ -177,6 +178,49 @@ app.get("/api/db-status", async (req, res) => {
       error: error.message,
       code: error.code,
       timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Test insert endpoint
+app.get("/api/test-insert", async (req, res) => {
+  try {
+    const testUsername = 'testuser_' + Date.now();
+    const testPassword = await bcrypt.hash('testpass123', 10);
+    const testAccountID = generateAccountID(testUsername);
+    
+    console.log('Testing insert with:', { testUsername, testAccountID });
+    
+    // Try to insert
+    await pool.query(
+      `INSERT INTO users (username, account_password, account_id, owned_server_ids, server_ids)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [testUsername, testPassword, testAccountID, [], []]
+    );
+    
+    console.log('Insert successful!');
+    
+    // Verify it was inserted
+    const result = await pool.query(
+      'SELECT username, account_id FROM users WHERE username = $1',
+      [testUsername]
+    );
+    
+    // Clean up test user
+    await pool.query('DELETE FROM users WHERE username = $1', [testUsername]);
+    
+    res.json({
+      success: true,
+      message: 'Test insert worked!',
+      testData: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Test insert failed:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      code: error.code,
+      detail: error.detail
     });
   }
 });
