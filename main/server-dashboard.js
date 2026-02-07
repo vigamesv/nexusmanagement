@@ -78,12 +78,14 @@ async function loadLiveData() {
       
       // Update stats
       document.getElementById('playersOnline').textContent = `${info.CurrentPlayers || 0}/${info.MaxPlayers || 0}`;
-      document.getElementById('staffOnline').textContent = info.StaffOnline || '0';
       document.getElementById('currentMap').textContent = info.MapName || 'Unknown';
       document.getElementById('infoOwner').textContent = info.OwnerUsername || 'Unknown';
       
       // Calculate uptime (mock for now)
       document.getElementById('uptime').textContent = '2h 34m';
+      
+      // Fetch staff count
+      loadStaffCount();
       
       // Load activity
       loadRecentActivity();
@@ -95,6 +97,25 @@ async function loadLiveData() {
     }
   } catch (error) {
     console.error('Error loading live data:', error);
+  }
+}
+
+// Load staff count
+async function loadStaffCount() {
+  try {
+    const response = await fetch(`/api/erlc/staff/${serverId}?accountID=${accountID}`);
+    const data = await response.json();
+    
+    if (data.success && data.staff) {
+      // Count online staff
+      const onlineStaff = data.staff.filter(s => s.IsOnline).length;
+      document.getElementById('staffOnline').textContent = `${onlineStaff}/${data.staff.length}`;
+    } else {
+      document.getElementById('staffOnline').textContent = '0';
+    }
+  } catch (error) {
+    console.error('Error loading staff:', error);
+    document.getElementById('staffOnline').textContent = '-';
   }
 }
 

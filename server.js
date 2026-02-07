@@ -643,10 +643,12 @@ app.post("/api/erlc/test-connection", async (req, res) => {
   }
 
   try {
-    // Get user's servers from ER:LC API
+    // Get user's servers from ER:LC API using correct header format
     const response = await fetch(`https://api.policeroleplay.community/v1/server`, {
+      method: 'GET',
       headers: {
-        'Server-Key': apiKey
+        'server-key': apiKey,
+        'Accept': '*/*'
       }
     });
 
@@ -709,8 +711,10 @@ app.get("/api/erlc/server-info/:serverId", async (req, res) => {
 
     // Fetch all servers from ER:LC API
     const response = await fetch(`https://api.policeroleplay.community/v1/server`, {
+      method: 'GET',
       headers: {
-        'Server-Key': server.api_key
+        'server-key': server.api_key,
+        'Accept': '*/*'
       }
     });
 
@@ -743,6 +747,51 @@ app.get("/api/erlc/server-info/:serverId", async (req, res) => {
   }
 });
 
+// Get server staff from ER:LC API
+app.get("/api/erlc/staff/:serverId", async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.status(400).json({ error: "Account ID required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT api_key FROM servers WHERE id = $1",
+      [serverId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].api_key) {
+      return res.json({ success: false, error: "API not configured" });
+    }
+
+    const server = result.rows[0];
+
+    const response = await fetch(`https://api.policeroleplay.community/v1/server/staff`, {
+      method: 'GET',
+      headers: {
+        'server-key': server.api_key,
+        'Accept': '*/*'
+      }
+    });
+
+    if (!response.ok) {
+      return res.json({ success: false, error: `API error: ${response.status}` });
+    }
+
+    const staff = await response.json();
+
+    res.json({
+      success: true,
+      staff: staff
+    });
+  } catch (error) {
+    console.error("Error fetching staff:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
 // Get server players from ER:LC API
 app.get("/api/erlc/players/:serverId", async (req, res) => {
   const { serverId } = req.params;
@@ -764,32 +813,19 @@ app.get("/api/erlc/players/:serverId", async (req, res) => {
 
     const server = result.rows[0];
 
-    // Get all servers first
-    const serversResponse = await fetch(`https://api.policeroleplay.community/v1/server`, {
+    const response = await fetch(`https://api.policeroleplay.community/v1/server/players`, {
+      method: 'GET',
       headers: {
-        'Server-Key': server.api_key
+        'server-key': server.api_key,
+        'Accept': '*/*'
       }
     });
 
-    if (!serversResponse.ok) {
-      return res.json({ success: false, error: `API error: ${serversResponse.status}` });
+    if (!response.ok) {
+      return res.json({ success: false, error: `API error: ${response.status}` });
     }
 
-    const servers = await serversResponse.json();
-    const targetServer = servers[0]; // Use first server for now
-
-    // Get players for that server
-    const playersResponse = await fetch(`https://api.policeroleplay.community/v1/server/players`, {
-      headers: {
-        'Server-Key': server.api_key
-      }
-    });
-
-    if (!playersResponse.ok) {
-      return res.json({ success: false, error: `API error: ${playersResponse.status}` });
-    }
-
-    const players = await playersResponse.json();
+    const players = await response.json();
 
     res.json({
       success: true,
@@ -823,8 +859,10 @@ app.get("/api/erlc/queue/:serverId", async (req, res) => {
     const server = result.rows[0];
 
     const response = await fetch(`https://api.policeroleplay.community/v1/server/queue`, {
+      method: 'GET',
       headers: {
-        'Server-Key': server.api_key
+        'server-key': server.api_key,
+        'Accept': '*/*'
       }
     });
 
@@ -868,8 +906,9 @@ app.post("/api/erlc/command/:serverId", async (req, res) => {
     const response = await fetch(`https://api.policeroleplay.community/v1/server/command`, {
       method: 'POST',
       headers: {
-        'Server-Key': server.api_key,
-        'Content-Type': 'application/json'
+        'server-key': server.api_key,
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
       },
       body: JSON.stringify({ command: command })
     });
