@@ -43,7 +43,20 @@ async function initializeDatabase() {
   console.log('🔧 Initializing database tables...');
   
   try {
-    // Create users table
+    // Drop old tables if they have wrong structure
+    console.log('Checking table structure...');
+    const checkColumns = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'users' AND column_name = 'username'
+    `);
+    
+    if (checkColumns.rows.length === 0) {
+      console.log('Recreating users table with correct structure...');
+      await pool.query(`DROP TABLE IF EXISTS users CASCADE`);
+    }
+    
+    // Create users table with correct structure
     console.log('Creating users table...');
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -101,7 +114,8 @@ async function initializeDatabase() {
 }
 
 // Initialize database on startup
-initializeDatabase();
+// DISABLED - Run manual SQL script instead
+// initializeDatabase();
 
 // Utility: generate account ID
 function generateAccountID(username) {
