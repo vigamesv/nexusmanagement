@@ -635,7 +635,7 @@ app.get("/api/servers/:serverId/settings", async (req, res) => {
   }
 });
         name: server.name,
-        description: server.description,
+        description server.description,
         erlcServerId: server.erlc_server_id,
         apiKey: server.api_key ? true : false, // Just a boolean
         createdAt: server.created_at
