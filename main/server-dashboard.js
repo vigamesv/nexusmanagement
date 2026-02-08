@@ -30,8 +30,10 @@ let commandHistory = [];
 // Load server data on page load
 async function loadServerData() {
   if (!serverId || !accountID) {
-    alert('Missing server or account information');
-    window.location.href = `/main/servers.html?ID=${accountID}`;
+    showError('Missing Information', 'Server or account information not found');
+    setTimeout(() => {
+      window.location.href = `/main/servers.html?ID=${accountID}`;
+    }, 2000);
     return;
   }
 
@@ -43,8 +45,10 @@ async function loadServerData() {
     console.log('Server settings response status:', response.status);
     
     if (response.status === 404) {
-      alert('⚠️ Server not found in database.\n\nThis server may have been created before the database was set up.\n\nPlease create a new server or contact support.');
-      window.location.href = `/main/servers.html?ID=${accountID}`;
+      showError('Server Not Found', 'This server may have been deleted or doesn\'t exist in the database. Please create a new server.');
+      setTimeout(() => {
+        window.location.href = `/main/servers.html?ID=${accountID}`;
+      }, 3000);
       return;
     }
     
@@ -53,8 +57,10 @@ async function loadServerData() {
 
     if (!data.success) {
       if (data.error === 'Server not found') {
-        alert('⚠️ Server not found.\n\nPlease create a new server from the servers page.');
-        window.location.href = `/main/servers.html?ID=${accountID}`;
+        showError('Server Not Found', 'Please create a new server from the servers page.');
+        setTimeout(() => {
+          window.location.href = `/main/servers.html?ID=${accountID}`;
+        }, 3000);
         return;
       }
       throw new Error(data.error || 'Failed to load server');
@@ -244,18 +250,20 @@ async function executeQuickCommand() {
   const command = input.value.trim();
   
   if (!command) {
-    alert('Please enter a command');
+    showWarning('Empty Command', 'Please enter a command to execute');
     return;
   }
   
   if (!serverData || !serverData.apiKey) {
-    alert('⚠️ API not configured.\n\nPlease set up your API key in server settings to execute commands.');
-    goToSettings();
+    showError('API Not Configured', 'Please set up your API key in server settings to execute commands');
+    setTimeout(() => goToSettings(), 2000);
     return;
   }
   
   try {
     console.log('Executing command:', command);
+    
+    const loadingToast = showLoading('Executing command...');
     
     const response = await fetch(`/api/erlc/command/${serverId}`, {
       method: 'POST',
@@ -271,8 +279,10 @@ async function executeQuickCommand() {
     const data = await response.json();
     console.log('Command response:', data);
     
+    loadingToast.remove();
+    
     if (data.success) {
-      alert(`✅ Command executed successfully:\n${command}`);
+      showSuccess('Command Executed', command);
       
       // Add to history
       addCommandToHistory(command);
@@ -300,11 +310,11 @@ async function executeQuickCommand() {
       // Refresh data after a moment
       setTimeout(refreshData, 2000);
     } else {
-      alert('❌ Command failed: ' + (data.error || 'Unknown error'));
+      showError('Command Failed', data.error || 'Unknown error');
     }
   } catch (error) {
     console.error('Error executing command:', error);
-    alert('❌ Failed to execute command. Please try again.');
+    showError('Execution Error', 'Failed to execute command. Please try again.');
   }
 }
 
