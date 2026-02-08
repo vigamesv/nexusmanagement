@@ -632,6 +632,62 @@ app.put("/api/servers/:serverId/settings", async (req, res) => {
   }
 });
 
+// Delete server
+app.delete("/api/servers/:serverId/delete", async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.body;
+
+  if (!accountID) {
+    return res.status(400).json({ error: "Account ID required" });
+  }
+
+  try {
+    // Verify user owns this server
+    const userResult = await pool.query(
+      "SELECT owned_server_ids FROM users WHERE account_id = $1",
+      [accountID]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    const user = userResult.rows[0];
+    if (!user.owned_server_ids || !user.owned_server_ids.includes(serverId)) {
+      return res.status(403).json({ error: "You don't own this server" });
+    }
+
+    // Delete server from database
+    await pool.query("DELETE FROM servers WHERE id = $1", [serverId]);
+
+    // Remove from user's owned_server_ids
+    await pool.query(
+      `UPDATE users 
+       SET owned_server_ids = array_remove(owned_server_ids, $1)
+       WHERE account_id = $2`,
+      [serverId, accountID]
+    );
+
+    // Also remove from any user's server_ids (in case they were added as members)
+    await pool.query(
+      `UPDATE users 
+       SET server_ids = array_remove(server_ids, $1)
+       WHERE $1 = ANY(server_ids)`,
+      [serverId]
+    );
+
+    console.log(`Server ${serverId} deleted by ${accountID}`);
+
+    res.json({
+      success: true,
+      message: "Server deleted successfully"
+    });
+  } catch (err) {
+    console.error("Error deleting server:", err.message);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
 // ============= ER:LC API INTEGRATION =============
 
 // Test ER:LC API connection

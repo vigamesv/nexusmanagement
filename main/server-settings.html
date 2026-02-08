@@ -41,7 +41,7 @@
         <div class="card-body">
           <p class="card-desc">
             Connect your server to the ER:LC API to enable live stats, player management, and automated features.
-            <br><a href="https://apidocs.policeroleplay.community/" target="_blank" style="color: #a020f0;">Get Your API Key <i class="fa-solid fa-external-link"></i></a>
+            <br><a href="https://policeroleplay.community/settings/api" target="_blank" style="color: #a020f0;">Get Your API Key <i class="fa-solid fa-external-link"></i></a>
           </p>
 
           <form id="apiForm">
@@ -49,7 +49,7 @@
               <label for="apiKey"><i class="fa-solid fa-key"></i> API Key</label>
               <input type="password" id="apiKey" placeholder="Enter your ER:LC API key" required>
               <small style="color: #999; display: block; margin-top: 0.5rem;">
-                Get your API key from your <a href="https://apidocs.policeroleplay.community/" target="_blank" style="color: #a020f0;">Server Settings</a> (Gamepass Required)
+                Get your API key from your <a href="https://policeroleplay.community/settings/api" target="_blank" style="color: #a020f0;">PRC account settings</a>
               </small>
             </div>
 
@@ -70,8 +70,8 @@
         </div>
       </div>
 
-      <!-- Server Info Card (shown when API is connected) -->
-      <div class="dashboard-card reveal" id="serverInfoCard" style="display: none;">
+      <!-- Server Info Card -->
+      <div class="dashboard-card reveal" id="serverInfoCard">
         <div class="card-header">
           <h3><i class="fa-solid fa-info-circle"></i> Server Information</h3>
         </div>
@@ -93,10 +93,6 @@
               <span class="detail-label"><i class="fa-solid fa-map"></i> Map:</span>
               <span class="detail-value" id="infoMap">-</span>
             </div>
-            <div class="detail-row">
-              <span class="detail-label"><i class="fa-solid fa-clock"></i> Join Code Expires:</span>
-              <span class="detail-value" id="infoExpires">-</span>
-            </div>
           </div>
         </div>
       </div>
@@ -108,6 +104,9 @@
         </div>
         <div class="card-body">
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <button class="feature-btn" onclick="goToServerDashboard()">
+              <i class="fa-solid fa-gauge-high"></i> Server Dashboard
+            </button>
             <button class="feature-btn" onclick="goToFeature('auto-announcements')">
               <i class="fa-solid fa-bullhorn"></i> Auto Announcements
             </button>
@@ -117,10 +116,22 @@
             <button class="feature-btn" onclick="goToFeature('logs')">
               <i class="fa-solid fa-database"></i> View Logs
             </button>
-            <button class="feature-btn" onclick="goToServerDashboard()">
-              <i class="fa-solid fa-gauge-high"></i> Server Dashboard
-            </button>
           </div>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="dashboard-card reveal" style="border-color: rgba(239, 68, 68, 0.5);">
+        <div class="card-header" style="background: rgba(239, 68, 68, 0.1);">
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h3>
+        </div>
+        <div class="card-body">
+          <p style="color: #999; margin-bottom: 1rem;">
+            Delete this server permanently. This action cannot be undone.
+          </p>
+          <button class="danger-btn" onclick="confirmDeleteServer()" style="background: linear-gradient(135deg, #ef4444, #dc2626); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-trash"></i> Delete Server
+          </button>
         </div>
       </div>
 
@@ -131,6 +142,38 @@
   <footer>
     <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header" style="background: rgba(239, 68, 68, 0.1); border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
+        <h2 style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Server</h2>
+        <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p style="color: #fff; font-size: 1.1rem; margin-bottom: 1rem;">
+          Are you absolutely sure you want to delete <strong id="deleteServerName">this server</strong>?
+        </p>
+        <p style="color: #999; margin-bottom: 1.5rem;">
+          This will permanently delete:
+        </p>
+        <ul style="color: #ccc; margin-left: 1.5rem; margin-bottom: 1.5rem;">
+          <li>Server configuration and settings</li>
+          <li>API key connections</li>
+          <li>All associated data</li>
+        </ul>
+        <p style="color: #ef4444; font-weight: 600;">
+          This action cannot be undone!
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="secondary-btn" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="danger-btn" onclick="deleteServer()" style="background: linear-gradient(135deg, #ef4444, #dc2626); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer;">
+          <i class="fa-solid fa-trash"></i> Yes, Delete Server
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script src="server-settings.js"></script>
 </body>

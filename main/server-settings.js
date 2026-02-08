@@ -9,9 +9,14 @@ const accountID = getQueryParam('accountID') || localStorage.getItem('accountID'
 
 // Update nav links
 if (accountID) {
-  document.getElementById('dashboardLink').href = `/dashboard/user.html?ID=${accountID}`;
-  document.getElementById('serversLink').href = `/main/servers.html?ID=${accountID}`;
+  const dashLink = document.getElementById('dashboardLink');
+  const serversLink = document.getElementById('serversLink');
+  if (dashLink) dashLink.href = `/dashboard/user.html?ID=${accountID}`;
+  if (serversLink) serversLink.href = `/main/servers.html?ID=${accountID}`;
 }
+
+// Global variables
+let serverData = null;
 
 // Load server settings on page load
 async function loadServerSettings() {
@@ -27,14 +32,15 @@ async function loadServerSettings() {
     const data = await response.json();
 
     if (data.success) {
+      serverData = data.server;
+      
       // Update server name
-      document.getElementById('serverName').textContent = data.server.name || 'Server Settings';
-      document.querySelector('.servers-hero h1').innerHTML = `<i class="fa-solid fa-cog"></i> ${data.server.name} Settings`;
-
-      // If API key exists, populate fields and show status
-      if (data.server.apiKey) {
-        document.getElementById('apiKey').value = '••••••••••••••'; // Masked for security
-        document.getElementById('serverId').value = data.server.erlcServerId || '';
+      document.getElementById('serverName').textContent = serverData.name || 'Server Settings';
+      document.title = `${serverData.name} Settings - Nexus Management`;
+      
+      // If API key exists, show masked value and status
+      if (serverData.apiKey) {
+        document.getElementById('apiKey').value = '••••••••••••••';
         
         // Show API status
         const statusEl = document.getElementById('apiStatus');
@@ -61,8 +67,13 @@ async function loadServerSettings() {
 document.getElementById('apiForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const apiKey = document.getElementById('apiKey').value.trim();
-  const erlcServerId = document.getElementById('serverId').value.trim();
+  const apiKeyInput = document.getElementById('apiKey');
+  if (!apiKeyInput) {
+    alert('API key field not found');
+    return;
+  }
+
+  const apiKey = apiKeyInput.value.trim();
 
   if (!apiKey) {
     alert('Please enter your API key');
@@ -82,7 +93,7 @@ document.getElementById('apiForm').addEventListener('submit', async (e) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ apiKey, serverId: erlcServerId })
+      body: JSON.stringify({ apiKey })
     });
 
     const testData = await testResult.json();
@@ -100,15 +111,15 @@ document.getElementById('apiForm').addEventListener('submit', async (e) => {
       },
       body: JSON.stringify({
         accountID,
-        apiKey,
-        erlcServerId
+        apiKey
       })
     });
 
     const data = await response.json();
 
     if (data.success) {
-      alert('API settings saved and connected successfully!');
+      const serverCount = testData.servers ? testData.servers.length : 0;
+      alert(`✅ API settings saved successfully!\n\nFound ${serverCount} server(s) connected to this API key.`);
       
       // Show status
       const statusEl = document.getElementById('apiStatus');
@@ -130,8 +141,13 @@ document.getElementById('apiForm').addEventListener('submit', async (e) => {
 
 // Test API connection
 async function testConnection() {
-  const apiKey = document.getElementById('apiKey').value.trim();
-  const erlcServerId = document.getElementById('serverId').value.trim();
+  const apiKeyInput = document.getElementById('apiKey');
+  if (!apiKeyInput) {
+    alert('API key field not found');
+    return;
+  }
+
+  const apiKey = apiKeyInput.value.trim();
 
   if (!apiKey) {
     alert('Please enter your API key first');
@@ -146,7 +162,9 @@ async function testConnection() {
       const data = await response.json();
       
       if (data.success && data.server.apiKey) {
-        testWithKeys(data.server.apiKey, data.server.erlcServerId);
+        // Can't test with masked key, just confirm it exists
+        alert('✅ API key is saved. To test, please refresh the page and check the server information below.');
+        loadServerInfo();
       } else {
         alert('No saved API key found');
       }
@@ -156,17 +174,14 @@ async function testConnection() {
     return;
   }
 
-  testWithKeys(apiKey, erlcServerId);
-}
-
-async function testWithKeys(apiKey, erlcServerId) {
+  // Test with provided key
   try {
     const response = await fetch(`/api/erlc/test-connection`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ apiKey, serverId: erlcServerId })
+      body: JSON.stringify({ apiKey })
     });
 
     const data = await response.json();
@@ -176,9 +191,8 @@ async function testWithKeys(apiKey, erlcServerId) {
       if (servers.length === 0) {
         alert('✅ API key is valid, but no servers found. Make sure you have an ER:LC server.');
       } else {
-        const serverList = servers.map(s => `• ${s.Name} (${s.CurrentPlayers}/${s.MaxPlayers} players)`).join('\n');
+        const serverList = servers.map(s => `• ${s.Name} (${s.CurrentPlayers || 0}/${s.MaxPlayers || 0} players)`).join('\n');
         alert(`✅ Connection successful!\n\nServers found:\n${serverList}`);
-        loadServerInfo();
       }
     } else {
       alert('❌ Connection failed: ' + (data.error || 'Invalid API key'));
@@ -198,22 +212,15 @@ async function loadServerInfo() {
     if (data.success && data.serverInfo) {
       const info = data.serverInfo;
       
-      // Show server info card
-      document.getElementById('serverInfoCard').style.display = 'block';
+      // Show and update server info card
+      const infoCard = document.getElementById('serverInfoCard');
+      if (infoCard) infoCard.style.display = 'block';
       
       // Update fields
       document.getElementById('infoServerName').textContent = info.Name || '-';
       document.getElementById('infoPlayers').textContent = `${info.CurrentPlayers || 0}/${info.MaxPlayers || 0}`;
       document.getElementById('infoOwner').textContent = info.OwnerUsername || '-';
       document.getElementById('infoMap').textContent = info.MapName || '-';
-      
-      // Format expiration time
-      if (info.JoinCodeExpiration) {
-        const expireDate = new Date(info.JoinCodeExpiration);
-        document.getElementById('infoExpires').textContent = expireDate.toLocaleString();
-      } else {
-        document.getElementById('infoExpires').textContent = '-';
-      }
     }
   } catch (error) {
     console.error('Error loading server info:', error);
@@ -227,6 +234,63 @@ function goToFeature(feature) {
 
 function goToServerDashboard() {
   window.location.href = `/main/server.html?id=${serverId}&accountID=${accountID}`;
+}
+
+// Delete server functions
+function confirmDeleteServer() {
+  if (!serverData) {
+    alert('Server data not loaded');
+    return;
+  }
+  
+  document.getElementById('deleteServerName').textContent = serverData.name;
+  document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').style.display = 'none';
+}
+
+async function deleteServer() {
+  if (!serverData || !serverId || !accountID) {
+    alert('Missing server information');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/servers/${serverId}/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ accountID })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert('✅ Server deleted successfully!');
+      closeDeleteModal();
+      
+      // Redirect to servers page
+      setTimeout(() => {
+        window.location.href = `/main/servers.html?ID=${accountID}`;
+      }, 1000);
+    } else {
+      alert('❌ Failed to delete server: ' + (data.error || 'Unknown error'));
+    }
+  } catch (error) {
+    console.error('Error deleting server:', error);
+    alert('❌ Failed to delete server. Please try again.');
+  }
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+  const modal = document.getElementById('deleteModal');
+  if (event.target === modal) {
+    closeDeleteModal();
+  }
 }
 
 // Scroll reveal animation
