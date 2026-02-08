@@ -2,124 +2,164 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Auto Announcements - ER:LC Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Announcements - Nexus Management</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="stylesheet" href="/main/servers.css">
   <link rel="stylesheet" href="/main/features/css/features.css">
+  <link rel="stylesheet" href="/main/toast-notifications.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <header>
-    <h1>Auto Announcements</h1>
-    <p class="subtitle">Schedule automated :h or :m messages</p>
-    <div class="warning-banner">API KEY REQUIRED</div>
-  </header>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="#" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+      <li><a href="#" id="serverDashLink"><i class="fa-solid fa-server"></i> Server</a></li>
+      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> All Servers</a></li>
+    </ul>
+  </nav>
 
-  <main class="feature-container">
-    <section class="feature-card visible">
-      <h2><i class="fa-solid fa-bullhorn"></i> Auto Announcements</h2>
-      <p>Configure announcements to be sent automatically at chosen intervals.</p>
+  <!-- Hero -->
+  <section class="servers-hero">
+    <div class="hero-content fade-in">
+      <h1><i class="fa-solid fa-bullhorn"></i> Auto Announcements</h1>
+      <p class="tagline">Schedule automated messages to your ER:LC server</p>
+      <p class="subtext" id="serverName">Loading...</p>
+    </div>
+  </section>
 
-      <!-- Announcement Form -->
-      <form id="announcementForm" class="form-grid">
-        <label for="announcementText">Announcement Command:</label>
-        <input type="text" id="announcementText" placeholder="Enter :h or :m" required>
+  <!-- Main Content -->
+  <section class="servers-content">
+    <div class="servers-container">
 
-        <label for="interval">Interval (minutes):</label>
-        <select id="interval" required>
-          <option value="5">Every 5 minutes</option>
-          <option value="10">Every 10 minutes</option>
-          <option value="15">Every 15 minutes</option>
-          <option value="30">Every 30 minutes</option>
-        </select>
+      <!-- Create Announcement Card -->
+      <div class="dashboard-card reveal">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-plus"></i> Create New Announcement</h3>
+        </div>
+        <div class="card-body">
+          <form id="announcementForm">
+            <div class="form-group">
+              <label for="commandType"><i class="fa-solid fa-terminal"></i> Command Type</label>
+              <select id="commandType" required>
+                <option value=":h">:h (Hint - Yellow)</option>
+                <option value=":m">:m (Message - Blue)</option>
+              </select>
+            </div>
 
-        <button type="submit" class="primary-btn">Save Announcement</button>
-      </form>
+            <div class="form-group">
+              <label for="message"><i class="fa-solid fa-message"></i> Message</label>
+              <input type="text" id="message" placeholder="Enter your message" required maxlength="200">
+              <small style="color: #999; display: block; margin-top: 0.5rem;">
+                <span id="charCount">0</span>/200 characters
+              </small>
+            </div>
 
-      <!-- Saved Announcements Section -->
-      <h2 style="margin-top:30px;"><i class="fa-solid fa-list"></i> Saved Announcements</h2>
-      <div id="announcementList" class="announcement-list">
-        <p class="log-entry">No announcements saved yet.</p>
+            <div class="form-group">
+              <label for="interval"><i class="fa-solid fa-clock"></i> Interval</label>
+              <select id="interval" required>
+                <option value="300000">Every 5 minutes</option>
+                <option value="600000">Every 10 minutes</option>
+                <option value="900000">Every 15 minutes</option>
+                <option value="1800000">Every 30 minutes</option>
+                <option value="3600000">Every hour</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fa-solid fa-toggle-on"></i> Status</label>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                  <input type="checkbox" id="enabled" checked style="width: 20px; height: 20px;">
+                  <span>Enable immediately</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="submit" class="primary-btn" style="width: 100%;">
+              <i class="fa-solid fa-save"></i> Save Announcement
+            </button>
+          </form>
+        </div>
       </div>
-    </section>
-  </main>
 
-  <!-- Fixed Return Button -->
-  <button class="return-btn" onclick="location.href='/main/server.html'">
-    <i class="fa-solid fa-arrow-left"></i> Return
-  </button>
+      <!-- Active Announcements -->
+      <div class="dashboard-card reveal">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-list-check"></i> Active Announcements</h3>
+          <button class="secondary-btn" onclick="loadAnnouncements()">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+        </div>
+        <div class="card-body">
+          <div id="announcementsList" class="announcements-list">
+            <p style="text-align: center; color: #666;">Loading announcements...</p>
+          </div>
+        </div>
+      </div>
 
+      <!-- Preview Card -->
+      <div class="dashboard-card reveal">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-eye"></i> Preview</h3>
+        </div>
+        <div class="card-body">
+          <div class="preview-box" id="previewBox">
+            <p style="color: #666; text-align: center;">Type a message to see preview</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="dashboard-card reveal">
+        <div class="card-header">
+          <h3><i class="fa-solid fa-chart-bar"></i> Statistics</h3>
+        </div>
+        <div class="card-body">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon">
+                <i class="fa-solid fa-list"></i>
+              </div>
+              <div class="stat-data">
+                <span class="stat-value" id="totalAnnouncements">0</span>
+                <span class="stat-label">Total Announcements</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon" style="background: rgba(34, 197, 94, 0.1); color: #4ade80;">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div class="stat-data">
+                <span class="stat-value" id="activeAnnouncements" style="color: #4ade80;">0</span>
+                <span class="stat-label">Active</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #f87171;">
+                <i class="fa-solid fa-circle-pause"></i>
+              </div>
+              <div class="stat-data">
+                <span class="stat-value" id="pausedAnnouncements" style="color: #f87171;">0</span>
+                <span class="stat-label">Paused</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer>
-    <p>&copy; 2026 Nexus Management</p>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
 
-  <script>
-    const form = document.getElementById("announcementForm");
-    const list = document.getElementById("announcementList");
-
-    let announcements = []; // local array for demo
-
-    // Handle form submission
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      const text = document.getElementById("announcementText").value.trim();
-      const interval = document.getElementById("interval").value;
-
-      if (!text) return;
-
-      const announcement = { id: Date.now(), text, interval };
-      announcements.push(announcement);
-      renderAnnouncements();
-
-      form.reset();
-      alert("Announcement saved locally. Backend integration coming soon!");
-    });
-
-    // Render announcements
-    function renderAnnouncements() {
-      list.innerHTML = "";
-      if (announcements.length === 0) {
-        list.innerHTML = "<p class='log-entry'>No announcements saved yet.</p>";
-        return;
-      }
-
-      announcements.forEach(a => {
-        const card = document.createElement("div");
-        card.className = "stat-box";
-        card.innerHTML = `
-          <h3><i class="fa-solid fa-bullhorn"></i> ${a.text}</h3>
-          <p class="log-entry">Scheduled every ${a.interval} minutes</p>
-          <div class="announcement-actions">
-            <button class="secondary-btn" onclick="editAnnouncement(${a.id})"><i class="fa-solid fa-pen"></i> Edit</button>
-            <button class="danger-btn" onclick="deleteAnnouncement(${a.id})"><i class="fa-solid fa-trash"></i> Delete</button>
-          </div>
-        `;
-        list.appendChild(card);
-      });
-    }
-
-    // Delete announcement with confirmation
-    function deleteAnnouncement(id) {
-      if (confirm("Are you sure you want to delete this announcement?")) {
-        announcements = announcements.filter(a => a.id !== id);
-        renderAnnouncements();
-      }
-    }
-
-    // Edit announcement
-    function editAnnouncement(id) {
-      const a = announcements.find(a => a.id === id);
-      if (!a) return;
-
-      // Pre-fill form
-      document.getElementById("announcementText").value = a.text;
-      document.getElementById("interval").value = a.interval;
-
-      // Remove old entry so saving replaces it
-      announcements = announcements.filter(x => x.id !== id);
-      renderAnnouncements();
-    }
-
-    // Initial render
-    renderAnnouncements();
-  </script>
+  <script src="/main/toast-notifications.js"></script>
+  <script src="/main/features/auto-announcements.js"></script>
 </body>
 </html>
