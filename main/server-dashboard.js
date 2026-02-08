@@ -30,7 +30,7 @@ let commandHistory = [];
 // Load server data on page load
 async function loadServerData() {
   if (!serverId || !accountID) {
-    showError('Missing Information', 'Server or account information not found');
+    showError('Missing Information', 'Server or account information not found. [ERR_MISSING_PARAMS]');
     setTimeout(() => {
       window.location.href = `/main/servers.html?ID=${accountID}`;
     }, 2000);
@@ -38,33 +38,104 @@ async function loadServerData() {
   }
 
   try {
-    console.log('Loading server data for:', serverId);
+    console.log('🔄 Loading server data...');
+    console.log('   Server ID:', serverId);
+    console.log('   Account ID:', accountID);
     
     // Fetch server info from database
     const response = await fetch(`/api/servers/${serverId}/settings?accountID=${accountID}`);
-    console.log('Server settings response status:', response.status);
+    console.log('   Response status:', response.status);
     
     if (response.status === 404) {
-      showError('Server Not Found', 'This server may have been deleted or doesn\'t exist in the database. Please create a new server.');
+      const data = await response.json();
+      const errorCode = data.code || 'UNKNOWN';
+      showError(
+        'Server Not Found', 
+        `This server doesn't exist in the database. Please create a new server. [${errorCode}]`
+      );
       setTimeout(() => {
         window.location.href = `/main/servers.html?ID=${accountID}`;
       }, 3000);
       return;
     }
     
+    if (response.status === 403) {
+      const data = await response.json();
+      const errorCode = data.code || 'UNKNOWN';
+      showError(
+        'Access Denied',
+        `You don't have permission to access this server. [${errorCode}]`
+      );
+      setTimeout(() => {
+        window.location.href = `/main/servers.html?ID=${accountID}`;
+      }, 3000);
+      return;
+    }
+    
+    if (!response.ok) {
+      const data = await response.json();
+      const errorCode = data.code || 'UNKNOWN';
+      throw new Error(`${data.error || 'Unknown error'} [${errorCode}]`);
+    }
+    
     const data = await response.json();
-    console.log('Server settings data:', data);
+    console.log('   Server data received:', data);
 
     if (!data.success) {
-      if (data.error === 'Server not found') {
-        showError('Server Not Found', 'Please create a new server from the servers page.');
-        setTimeout(() => {
-          window.location.href = `/main/servers.html?ID=${accountID}`;
-        }, 3000);
-        return;
-      }
-      throw new Error(data.error || 'Failed to load server');
+      const errorCode = data.code || 'UNKNOWN';
+      showError(
+        'Failed to Load Server',
+        `${data.error || 'Unknown error'} [${errorCode}]`
+      );
+      setTimeout(() => {
+        window.location.href = `/main/servers.html?ID=${accountID}`;
+      }, 3000);
+      return;
     }
+
+    if (data.success) {
+      serverData = data.server;
+      console.log('✅ Server data loaded successfully');
+      
+      // Update page title and header
+      const serverNameEl = document.getElementById('serverName');
+      if (serverNameEl) {
+        serverNameEl.textContent = serverData.name || 'Server Dashboard';
+        document.title = `${serverData.name} - Nexus Management`;
+      }
+      
+      // Update server info
+      const serverIdEl = document.getElementById('infoServerId');
+      const planEl = document.getElementById('infoPlan');
+      
+      if (serverIdEl) serverIdEl.textContent = serverData.id;
+      if (planEl) planEl.textContent = serverData.plan === 'Free' ? 'Nexus' : 'Nexus+';
+      
+      // Check if API is configured
+      if (serverData.apiKey === true) {
+        console.log('✅ API is configured');
+        const apiStatusEl = document.getElementById('infoApiStatus');
+        if (apiStatusEl) {
+          apiStatusEl.innerHTML = '<span class="status-dot online"></span> Connected';
+        }
+        loadLiveData();
+      } else {
+        console.log('⚠️ API not configured');
+        const apiStatusEl = document.getElementById('infoApiStatus');
+        if (apiStatusEl) {
+          apiStatusEl.innerHTML = '<span class="status-dot offline"></span> Not Configured';
+        }
+        showApiNotConfigured();
+      }
+    }
+  } catch (error) {
+    console.error('❌ Error loading server:', error);
+    showError('Failed to Load Server', `Could not load server data: ${error.message}`);
+    setTimeout(() => {
+      window.location.href = `/main/servers.html?ID=${accountID}`;
+    }, 3000);
+  }
+}
 
     if (data.success) {
       serverData = data.server;
