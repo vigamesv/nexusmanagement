@@ -1,122 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nexus Management</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="logo">Nexus Management</div>
-    <ul class="nav-links">
-      <li><a href="#hero">Home</a></li>
-      <li><a href="#affiliates">Affiliates</a></li>
-      <li><a href="#plans">Plans</a></li>
-    </ul>
-  </nav>
-
-  <!-- Hero Section -->
-  <header class="hero" id="hero">
-    <div class="hero-content fade-in">
-      <h1>Nexus Management</h1>
-      <p class="tagline">Professional staff tools for ER:LC communities.</p>
-      <p class="subtext">Organize, track, and empower your team — all in one dashboard.</p>
-      <div class="hero-buttons">
-        <button class="explore-btn" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">
-          Explore Plans
-        </button>
-        <button class="login-btn" onclick="window.location.href='/dashboard/login-pass.html'">
-          Log In
-        </button>
-      </div>
+<!-- Hero Section -->
+<header class="hero" id="hero">
+  <div class="hero-content fade-in">
+    <h1>Nexus Management</h1>
+    <p class="tagline">Professional staff tools for ER:LC communities.</p>
+    <p class="subtext">Organize, track, and empower your team — all in one dashboard.</p>
+    <div class="hero-buttons">
+      <button class="explore-btn" onclick="document.getElementById('plans').scrollIntoView({behavior:'smooth'})">
+        Explore Plans
+      </button>
+      <button class="login-btn" onclick="window.location.href='/dashboard/login-pass.html'">
+        Log In
+      </button>
+      <button class="signup-btn" onclick="window.location.href='/dashboard/signup.html'">
+        Sign Up Free
+      </button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <!-- Affiliates Section -->
-  <section class="affiliates" id="affiliates">
-    <h2 class="reveal">Our Affiliates</h2>
-    <p class="reveal intro-text">
-      Trusted partners and communities that support and enhance the ER:LC experience.
-    </p>
-    <div class="affiliates-grid">
-      <!-- Affiliate Card 1 -->
-      <div class="affiliate-card reveal stagger-1">
-        <div class="affiliate-logo">
-          <img src="/main/images/affiliate-logo-1.webp" alt="Affiliate Name">
-        </div>
-        <h3>Nebula Customs</h3>
-        <p class="affiliate-desc">
-          Our mission is to provide top tier quality, redefining the future of designs. Here we strive to provide you with quality, speed, and customer satisfaction.
-        </p>
-        <a href="#" class="affiliate-link" target="_blank">Visit Site</a>
-      </div>
-
-      <!-- Affiliate Card 2 -->
-      <div class="affiliate-card reveal stagger-2">
-        <div class="affiliate-logo">
-          <img src="affiliate-logo-2.png" alt="Affiliate Name">
-        </div>
-        <h3>Affiliate Name</h3>
-        <p class="affiliate-desc">
-          Brief description of what this affiliate offers to the community.
-        </p>
-        <a href="#" class="affiliate-link" target="_blank">Visit Site</a>
-      </div>
+<!-- Plans Section -->
+<section class="plans" id="plans">
+  <h2 class="reveal">Choose Your Plan</h2>
+  <p class="reveal intro-text">
+    Nexus Management offers flexible options to fit your community’s needs. 
+    Start with Nexus (Free), or unlock advanced features with Nexus+.
+  </p>
+  <div class="plans-grid">
+    <!-- Nexus Free Plan -->
+    <div class="plan-card reveal">
+      <h3>Nexus (Free)</h3>
+      <p class="plan-desc">
+        Perfect for small communities or new server owners who need the basics 
+        without any cost. Get started quickly and manage your staff with confidence.
+      </p>
+      <ul>
+        <li>✔ Core staff management tools</li>
+        <li>✔ Infractions logging</li>
+        <li>✔ Announcements posting</li>
+        <li>✔ Limited reports</li>
+      </ul>
+      <button class="select-btn" onclick="window.location.href='/dashboard/signup.html'">
+        Sign Up Free
+      </button>
     </div>
-  </section>
 
-  <!-- Plans Section -->
-  <section class="plans" id="plans">
-    <h2 class="reveal">Choose Your Plan</h2>
-    <p class="reveal intro-text">
-      Nexus Management offers flexible options to fit your community’s needs. 
-      Start free with essential tools, or unlock advanced features with Premium.
-    </p>
-    <div class="plans-grid">
-      <!-- Free Plan -->
-      <div class="plan-card reveal">
-        <h3>Free</h3>
-        <p class="plan-desc">
-          Perfect for small communities or new server owners who need the basics 
-          without any cost. Get started quickly and manage your staff with confidence.
-        </p>
-        <ul>
-          <li>✔ Core staff management tools</li>
-          <li>✔ Infractions logging</li>
-          <li>✔ Announcements posting</li>
-          <li>✔ Limited reports</li>
-        </ul>
-        <button class="select-btn" onclick="window.location.href='/dashboard/signup.html'">
-          Select Free
-        </button>
-      </div>
-
-      <!-- Premium Plan -->
-      <div class="plan-card premium reveal">
-        <h3>Premium <span class="price">(Unavailable)</span></h3>
-        <p class="plan-desc">
-          Designed for larger communities and professional teams. Unlock advanced analytics, 
-          unlimited storage, and priority support to keep your staff system running smoothly.
-        </p>
-        <ul>
-          <li>✔ All Free features included</li>
-          <li>✔ Advanced reports & analytics</li>
-          <li>✔ Unlimited logs storage</li>
-          <li>✔ Priority support</li>
-          <li>✔ Custom staff roles</li>
-        </ul>
-        <button class="select-btn">Unavailable</button>
-      </div>
+    <!-- Nexus+ Paid Plan -->
+    <div class="plan-card premium reveal">
+      <h3>Nexus+ <span class="price">(Coming Soon)</span></h3>
+      <p class="plan-desc">
+        Designed for larger communities and professional teams. Unlock advanced analytics, 
+        unlimited storage, and priority support to keep your staff system running smoothly.
+      </p>
+      <ul>
+        <li>✔ All Nexus (Free) features included</li>
+        <li>✔ Advanced reports & analytics</li>
+        <li>✔ Unlimited logs storage</li>
+        <li>✔ Priority support</li>
+        <li>✔ Custom staff roles</li>
+      </ul>
+      <button class="select-btn" disabled>
+        Coming Soon
+      </button>
     </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
-</html>
+	<script src="script.js"></script>
+	<link rel="stylesheet" href="styles.css">
+  </div>
+</section>

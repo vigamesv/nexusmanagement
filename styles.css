@@ -407,6 +407,21 @@ footer { text-align: center; padding: 1rem; background: #1a1a1a; color: #aaa; }
 .login-form .form-group input::placeholder {
   color: #888;
 }
+.signup-btn {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  margin-left: 10px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.signup-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #66BB6A, #388E3C);
+}
 
 
 
