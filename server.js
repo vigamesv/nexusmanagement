@@ -420,20 +420,27 @@ app.get("/auth/logout", (req, res) => {
 app.post("/api/servers/create", async (req, res) => {
   const { serverId, name, description, accountID } = req.body;
 
+  console.log('📝 Server creation request received:', { serverId, name, description, accountID });
+
   if (!serverId || !name || !accountID) {
+    console.log('❌ Missing required fields');
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
     // Verify user exists
+    console.log('🔍 Checking if user exists:', accountID);
     const userResult = await pool.query(
       "SELECT account_id FROM users WHERE account_id = $1",
       [accountID]
     );
 
     if (userResult.rows.length === 0) {
+      console.log('❌ User not found:', accountID);
       return res.status(404).json({ error: "User not found" });
     }
+
+    console.log('✅ User found, creating server...');
 
     // Create server
     await pool.query(
@@ -441,6 +448,8 @@ app.post("/api/servers/create", async (req, res) => {
        VALUES ($1, $2, $3, $4)`,
       [serverId, name, description || 'ER:LC Community Server', accountID]
     );
+
+    console.log('✅ Server inserted into database');
 
     // Add server ID to user's owned_server_ids
     await pool.query(
@@ -450,7 +459,8 @@ app.post("/api/servers/create", async (req, res) => {
       [serverId, accountID]
     );
 
-    console.log(`Server created: ${name} (${serverId}) by ${accountID}`);
+    console.log('✅ Server added to user\'s owned_server_ids');
+    console.log(`🎉 Server created successfully: ${name} (${serverId}) by ${accountID}`);
 
     res.status(201).json({
       success: true,
@@ -458,8 +468,12 @@ app.post("/api/servers/create", async (req, res) => {
       serverId: serverId
     });
   } catch (err) {
-    console.error("Error creating server:", err.message);
-    res.status(500).json({ error: "Database error" });
+    console.error("❌ Error creating server:", err.message);
+    console.error("Full error:", err);
+    res.status(500).json({ 
+      error: "Database error",
+      details: err.message 
+    });
   }
 });
 
