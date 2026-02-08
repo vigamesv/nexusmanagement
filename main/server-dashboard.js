@@ -42,8 +42,23 @@ async function loadServerData() {
     const response = await fetch(`/api/servers/${serverId}/settings?accountID=${accountID}`);
     console.log('Server settings response status:', response.status);
     
+    if (response.status === 404) {
+      alert('⚠️ Server not found in database.\n\nThis server may have been created before the database was set up.\n\nPlease create a new server or contact support.');
+      window.location.href = `/main/servers.html?ID=${accountID}`;
+      return;
+    }
+    
     const data = await response.json();
     console.log('Server settings data:', data);
+
+    if (!data.success) {
+      if (data.error === 'Server not found') {
+        alert('⚠️ Server not found.\n\nPlease create a new server from the servers page.');
+        window.location.href = `/main/servers.html?ID=${accountID}`;
+        return;
+      }
+      throw new Error(data.error || 'Failed to load server');
+    }
 
     if (data.success) {
       serverData = data.server;
@@ -78,12 +93,10 @@ async function loadServerData() {
         }
         showApiNotConfigured();
       }
-    } else {
-      throw new Error(data.error || 'Failed to load server');
     }
   } catch (error) {
     console.error('Error loading server:', error);
-    alert('Failed to load server data. Redirecting to servers page...');
+    alert('Failed to load server data.\n\nPlease try creating a new server from the servers page.');
     setTimeout(() => {
       window.location.href = `/main/servers.html?ID=${accountID}`;
     }, 2000);
