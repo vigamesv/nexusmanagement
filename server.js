@@ -692,14 +692,15 @@ app.delete("/api/servers/:serverId/delete", async (req, res) => {
 
 // Test ER:LC API connection
 app.post("/api/erlc/test-connection", async (req, res) => {
-  const { apiKey, serverId } = req.body;
+  const { apiKey } = req.body;
 
   if (!apiKey) {
     return res.status(400).json({ error: "API key required" });
   }
 
   try {
-    // Get user's servers from ER:LC API using correct header format
+    // Test connection by getting server info
+    // The apiKey here is actually the SERVER KEY from ER:LC settings
     const response = await fetch(`https://api.policeroleplay.community/v1/server`, {
       method: 'GET',
       headers: {
@@ -709,23 +710,19 @@ app.post("/api/erlc/test-connection", async (req, res) => {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('ER:LC API error:', response.status, errorText);
       return res.json({
         success: false,
-        error: `API returned ${response.status}: Invalid API key`
+        error: `API returned ${response.status}. Make sure you're using your Server Key from ER:LC settings, not a PRC account password.`
       });
     }
 
-    const servers = await response.json();
-
-    // If serverId provided, filter to that server
-    let filteredServers = servers;
-    if (serverId) {
-      filteredServers = servers.filter(s => s.Name.includes(serverId) || s.OwnerId === serverId);
-    }
+    const serverInfo = await response.json();
 
     res.json({
       success: true,
-      servers: filteredServers
+      server: serverInfo
     });
   } catch (error) {
     console.error("ER:LC API test error:", error);
@@ -748,7 +745,7 @@ app.get("/api/erlc/server-info/:serverId", async (req, res) => {
   try {
     // Get server API key from database
     const result = await pool.query(
-      "SELECT api_key, erlc_server_id FROM servers WHERE id = $1",
+      "SELECT api_key FROM servers WHERE id = $1",
       [serverId]
     );
 
@@ -765,7 +762,7 @@ app.get("/api/erlc/server-info/:serverId", async (req, res) => {
       });
     }
 
-    // Fetch all servers from ER:LC API
+    // Fetch server info from ER:LC API
     const response = await fetch(`https://api.policeroleplay.community/v1/server`, {
       method: 'GET',
       headers: {
@@ -781,18 +778,11 @@ app.get("/api/erlc/server-info/:serverId", async (req, res) => {
       });
     }
 
-    const servers = await response.json();
-    
-    // Get first server or filter by erlc_server_id if specified
-    let serverInfo = servers[0];
-    if (server.erlc_server_id && servers.length > 1) {
-      serverInfo = servers.find(s => s.Name.includes(server.erlc_server_id) || s.OwnerId === server.erlc_server_id) || servers[0];
-    }
+    const serverInfo = await response.json();
 
     res.json({
       success: true,
-      serverInfo: serverInfo,
-      allServers: servers
+      serverInfo: serverInfo
     });
   } catch (error) {
     console.error("Error fetching ER:LC server info:", error);
@@ -934,6 +924,276 @@ app.get("/api/erlc/queue/:serverId", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching queue:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get join logs from ER:LC API
+app.get("/api/erlc/joinlogs/:serverId", async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.status(400).json({ error: "Account ID required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT api_key FROM servers WHERE id = $1",
+      [serverId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].api_key) {
+      return res.json({ success: false, error: "API not configured" });
+    }
+
+    const server = result.rows[0];
+
+    const response = await fetch(`https://api.policeroleplay.community/v1/server/joinlogs`, {
+      method: 'GET',
+      headers: {
+        'server-key': server.api_key,
+        'Accept': '*/*'
+      }
+    });
+
+    if (!response.ok) {
+      return res.json({ success: false, error: `API error: ${response.status}` });
+    }
+
+    const logs = await response.json();
+
+    res.json({
+      success: true,
+      logs: logs
+    });
+  } catch (error) {
+    console.error("Error fetching join logs:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get kill logs from ER:LC API
+app.get("/api/erlc/killlogs/:serverId", async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.status(400).json({ error: "Account ID required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT api_key FROM servers WHERE id = $1",
+      [serverId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].api_key) {
+      return res.json({ success: false, error: "API not configured" });
+    }
+
+    const server = result.rows[0];
+
+    const response = await fetch(`https://api.policeroleplay.community/v1/server/killlogs`, {
+      method: 'GET',
+      headers: {
+        'server-key': server.api_key,
+        'Accept': '*/*'
+      }
+    });
+
+    if (!response.ok) {
+      return res.json({ success: false, error: `API error: ${response.status}` });
+    }
+
+    const logs = await response.json();
+
+    res.json({
+      success: true,
+      logs: logs
+    });
+  } catch (error) {
+    console.error("Error fetching kill logs:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get command logs from ER:LC API
+app.get("/api/erlc/commandlogs/:serverId", async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.status(400).json({ error: "Account ID required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT api_key FROM servers WHERE id = $1",
+      [serverId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].api_key) {
+      return res.json({ success: false, error: "API not configured" });
+    }
+
+    const server = result.rows[0];
+
+    const response = await fetch(`https://api.policeroleplay.community/v1/server/commandlogs`, {
+      method: 'GET',
+      headers: {
+        'server-key': server.api_key,
+        'Accept': '*/*'
+      }
+    });
+
+    if (!response.ok) {
+      return res.json({ success: false, error: `API error: ${response.status}` });
+    }
+
+    const logs = await response.json();
+
+    res.json({
+      success: true,
+      logs: logs
+    });
+  } catch (error) {
+    console.error("Error fetching command logs:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get mod calls from ER:LC API
+app.get("/api/erlc/modcalls/:serverId", async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.status(400).json({ error: "Account ID required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT api_key FROM servers WHERE id = $1",
+      [serverId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].api_key) {
+      return res.json({ success: false, error: "API not configured" });
+    }
+
+    const server = result.rows[0];
+
+    const response = await fetch(`https://api.policeroleplay.community/v1/server/modcalls`, {
+      method: 'GET',
+      headers: {
+        'server-key': server.api_key,
+        'Accept': '*/*'
+      }
+    });
+
+    if (!response.ok) {
+      return res.json({ success: false, error: `API error: ${response.status}` });
+    }
+
+    const modcalls = await response.json();
+
+    res.json({
+      success: true,
+      modcalls: modcalls
+    });
+  } catch (error) {
+    console.error("Error fetching mod calls:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get bans from ER:LC API
+app.get("/api/erlc/bans/:serverId", async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.status(400).json({ error: "Account ID required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT api_key FROM servers WHERE id = $1",
+      [serverId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].api_key) {
+      return res.json({ success: false, error: "API not configured" });
+    }
+
+    const server = result.rows[0];
+
+    const response = await fetch(`https://api.policeroleplay.community/v1/server/bans`, {
+      method: 'GET',
+      headers: {
+        'server-key': server.api_key,
+        'Accept': '*/*'
+      }
+    });
+
+    if (!response.ok) {
+      return res.json({ success: false, error: `API error: ${response.status}` });
+    }
+
+    const bans = await response.json();
+
+    res.json({
+      success: true,
+      bans: bans
+    });
+  } catch (error) {
+    console.error("Error fetching bans:", error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get vehicles from ER:LC API
+app.get("/api/erlc/vehicles/:serverId", async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.status(400).json({ error: "Account ID required" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT api_key FROM servers WHERE id = $1",
+      [serverId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].api_key) {
+      return res.json({ success: false, error: "API not configured" });
+    }
+
+    const server = result.rows[0];
+
+    const response = await fetch(`https://api.policeroleplay.community/v1/server/vehicles`, {
+      method: 'GET',
+      headers: {
+        'server-key': server.api_key,
+        'Accept': '*/*'
+      }
+    });
+
+    if (!response.ok) {
+      return res.json({ success: false, error: `API error: ${response.status}` });
+    }
+
+    const vehicles = await response.json();
+
+    res.json({
+      success: true,
+      vehicles: vehicles
+    });
+  } catch (error) {
+    console.error("Error fetching vehicles:", error);
     res.json({ success: false, error: error.message });
   }
 });

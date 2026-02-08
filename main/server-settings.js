@@ -99,7 +99,7 @@ document.getElementById('apiForm').addEventListener('submit', async (e) => {
     const testData = await testResult.json();
 
     if (!testData.success) {
-      alert('Failed to connect to ER:LC API. Please check your API key.');
+      alert('❌ Failed to connect to ER:LC API.\n\n' + testData.error + '\n\nMake sure you\'re using your SERVER KEY from ER:LC game settings (not your PRC account password).');
       return;
     }
 
@@ -118,8 +118,8 @@ document.getElementById('apiForm').addEventListener('submit', async (e) => {
     const data = await response.json();
 
     if (data.success) {
-      const serverCount = testData.servers ? testData.servers.length : 0;
-      alert(`✅ API settings saved successfully!\n\nFound ${serverCount} server(s) connected to this API key.`);
+      const serverName = testData.server ? testData.server.Name : 'your server';
+      alert(`✅ API settings saved successfully!\n\nConnected to: ${serverName}`);
       
       // Show status
       const statusEl = document.getElementById('apiStatus');
@@ -187,15 +187,10 @@ async function testConnection() {
     const data = await response.json();
 
     if (data.success) {
-      const servers = data.servers || [];
-      if (servers.length === 0) {
-        alert('✅ API key is valid, but no servers found. Make sure you have an ER:LC server.');
-      } else {
-        const serverList = servers.map(s => `• ${s.Name} (${s.CurrentPlayers || 0}/${s.MaxPlayers || 0} players)`).join('\n');
-        alert(`✅ Connection successful!\n\nServers found:\n${serverList}`);
-      }
+      const server = data.server;
+      alert(`✅ Connection successful!\n\nServer: ${server.Name}\nPlayers: ${server.CurrentPlayers}/${server.MaxPlayers}\nOwner: ${server.OwnerUsername}`);
     } else {
-      alert('❌ Connection failed: ' + (data.error || 'Invalid API key'));
+      alert('❌ Connection failed.\n\n' + (data.error || 'Invalid Server Key') + '\n\nMake sure you\'re using your SERVER KEY from ER:LC game settings.');
     }
   } catch (error) {
     console.error('Test connection error:', error);
