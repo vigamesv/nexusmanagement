@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>Server Settings</title></head>
+<body>
+<h2>Server Settings</h2>
+<input id="apiKey" placeholder="PRC_XXXXXXXXXXXX" />
+<input id="erlcServerId" placeholder="ERLC Server ID" />
+<button onclick="save()">Save</button>
+
+<script>
+async function save() {
+  const serverId = localStorage.getItem("serverId") || "demo-server";
+  await fetch(`/api/server/${serverId}/settings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      apiKey: document.getElementById("apiKey").value,
+      erlcServerId: document.getElementById("erlcServerId").value,
+    }),
+  });
+  alert("Saved");
+}
+</script>
+</body>
+</html>

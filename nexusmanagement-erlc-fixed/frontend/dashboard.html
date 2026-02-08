@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>Server Dashboard</title></head>
+<body>
+<h2 id="serverName">Loading...</h2>
+<p>Players: <span id="playerCount"></span></p>
+
+<h3>Execute Server Command</h3>
+<input id="serverCommand" placeholder=":kick username" />
+<button onclick="executeCommand()">Execute</button>
+<pre id="commandResult"></pre>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
