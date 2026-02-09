@@ -484,9 +484,6 @@ app.post("/api/servers/create", async (req, res) => {
   }
 });
 
-
-});
-
 // Get all servers for a user
 app.get("/api/servers/user/:accountID", async (req, res) => {
   const { accountID } = req.params;
