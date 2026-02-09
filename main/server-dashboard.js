@@ -205,48 +205,6 @@ async function loadServerData() {
   }
 }
 
-    if (data.success) {
-      serverData = data.server;
-      
-      // Update page title and header
-      const serverNameEl = document.getElementById('serverName');
-      if (serverNameEl) {
-        serverNameEl.textContent = serverData.name || 'Server Dashboard';
-        document.title = `${serverData.name} - Nexus Management`;
-      }
-      
-      // Update server info
-      const serverIdEl = document.getElementById('infoServerId');
-      const planEl = document.getElementById('infoPlan');
-      
-      if (serverIdEl) serverIdEl.textContent = serverData.id;
-      if (planEl) planEl.textContent = serverData.plan === 'Free' ? 'Nexus' : 'Nexus+';
-      
-      // Check if API is configured
-      if (serverData.apiKey === true) {
-        console.log('API is configured, loading live data...');
-        const apiStatusEl = document.getElementById('infoApiStatus');
-        if (apiStatusEl) {
-          apiStatusEl.innerHTML = '<span class="status-dot online"></span> Connected';
-        }
-        loadLiveData();
-      } else {
-        console.log('API not configured');
-        const apiStatusEl = document.getElementById('infoApiStatus');
-        if (apiStatusEl) {
-          apiStatusEl.innerHTML = '<span class="status-dot offline"></span> Not Configured';
-        }
-        showApiNotConfigured();
-      }
-    }
-  } catch (error) {
-    console.error('Error loading server:', error);
-    alert('Failed to load server data.\n\nPlease try creating a new server from the servers page.');
-    setTimeout(() => {
-      window.location.href = `/main/servers.html?ID=${accountID}`;
-    }, 2000);
-  }
-}
 
 // Load live data from ER:LC API
 async function loadLiveData() {
