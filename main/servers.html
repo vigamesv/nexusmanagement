@@ -7,8 +7,149 @@
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/dashboard/dashboard.css">
   <link rel="stylesheet" href="servers.css">
-  <link rel="stylesheet" href="/main/toast-notifications.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* Toast Notification System - Inline */
+    .toast-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      pointer-events: none;
+    }
+    .toast {
+      background: rgba(26, 26, 26, 0.95);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      min-width: 300px;
+      max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      pointer-events: auto;
+      animation: slideIn 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .toast::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #a020f0;
+    }
+    .toast.success::before { background: #4ade80; }
+    .toast.error::before { background: #f87171; }
+    .toast.warning::before { background: #fbbf24; }
+    .toast.info::before { background: #60a5fa; }
+    .toast-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .toast.success .toast-icon {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+    .toast.error .toast-icon {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+    .toast.info .toast-icon {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+    .toast-content {
+      flex: 1;
+    }
+    .toast-title {
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      margin: 0 0 0.25rem 0;
+    }
+    .toast-message {
+      color: #999;
+      font-size: 0.9rem;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .toast-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: #999;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .toast-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+    .toast.removing {
+      animation: slideOut 0.3s ease forwards;
+    }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(160, 32, 240, 0.2);
+      border-top-color: #a020f0;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @media (max-width: 768px) {
+      .toast-container {
+        left: 20px;
+        right: 20px;
+        top: 70px;
+      }
+      .toast {
+        min-width: auto;
+        max-width: none;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
@@ -153,7 +294,81 @@
     </div>
   </div>
 
-  <script src="/main/toast-notifications.js"></script>
+  <script>
+    // Toast Notification System - Inline
+    function initToastContainer() {
+      if (!document.querySelector('.toast-container')) {
+        const container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+      }
+    }
+
+    function showToast(type, title, message, duration = 4000) {
+      initToastContainer();
+      
+      const container = document.querySelector('.toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icons = {
+        success: 'fa-circle-check',
+        error: 'fa-circle-xmark',
+        warning: 'fa-triangle-exclamation',
+        info: 'fa-circle-info'
+      };
+      
+      toast.innerHTML = `
+        <div class="toast-icon">
+          <i class="fa-solid ${icons[type]}"></i>
+        </div>
+        <div class="toast-content">
+          <div class="toast-title">${title}</div>
+          ${message ? `<div class="toast-message">${message}</div>` : ''}
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      `;
+      
+      container.appendChild(toast);
+      
+      if (duration > 0) {
+        setTimeout(() => {
+          toast.classList.add('removing');
+          setTimeout(() => toast.remove(), 300);
+        }, duration);
+      }
+      
+      return toast;
+    }
+
+    function showSuccess(title, message, duration) {
+      return showToast('success', title, message, duration);
+    }
+
+    function showError(title, message, duration) {
+      return showToast('error', title, message, duration);
+    }
+
+    function showWarning(title, message, duration) {
+      return showToast('warning', title, message, duration);
+    }
+
+    function showInfo(title, message, duration) {
+      return showToast('info', title, message, duration);
+    }
+
+    function showLoading(message) {
+      return showToast('info', message, '<div class="spinner"></div>', 0);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initToastContainer);
+    } else {
+      initToastContainer();
+    }
+  </script>
   <script src="servers.js"></script>
 </body>
 </html>
