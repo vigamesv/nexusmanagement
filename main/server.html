@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/dashboard/dashboard.css">
   <link rel="stylesheet" href="/main/servers.css">
-  <link rel="stylesheet" href="server-dashboard.css">
+  <link rel="stylesheet" href="/main/server-dashboard.css">
+  <link rel="stylesheet" href="/main/toast-notifications.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -85,18 +86,48 @@
   <section class="dashboard-main">
     <div class="dashboard-grid">
       
+      <!-- Command Execution Panel -->
+      <div class="dashboard-section reveal">
+        <h2><i class="fa-solid fa-terminal"></i> Execute Command</h2>
+        <div class="command-panel">
+          <div class="form-group">
+            <label for="quickCommand"><i class="fa-solid fa-code"></i> Enter Command</label>
+            <input type="text" id="quickCommand" placeholder="e.g., :h Server restart in 5 minutes" class="command-input">
+            <small style="color: #999; display: block; margin-top: 0.5rem;">
+              Commands: :h (hint), :m (message), :shutdown, :tp, etc.
+            </small>
+          </div>
+          <button class="execute-btn" onclick="executeQuickCommand()">
+            <i class="fa-solid fa-paper-plane"></i> Execute
+          </button>
+          
+          <!-- Quick Command Buttons -->
+          <div class="quick-commands">
+            <button class="quick-cmd-btn" onclick="setQuickCommand(':h ')">
+              <i class="fa-solid fa-bullhorn"></i> Hint
+            </button>
+            <button class="quick-cmd-btn" onclick="setQuickCommand(':m ')">
+              <i class="fa-solid fa-comment"></i> Message
+            </button>
+            <button class="quick-cmd-btn" onclick="setQuickCommand(':shutdown')">
+              <i class="fa-solid fa-power-off"></i> Shutdown
+            </button>
+          </div>
+          
+          <!-- Command History -->
+          <div class="command-history" id="commandHistory">
+            <h3><i class="fa-solid fa-history"></i> Recent Commands</h3>
+            <div id="historyList" class="history-list">
+              <p style="color: #666; text-align: center;">No commands executed yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Quick Actions -->
       <div class="dashboard-section reveal">
         <h2><i class="fa-solid fa-bolt"></i> Quick Actions</h2>
         <div class="quick-actions-grid">
-          <button class="action-card" onclick="executeCommand(':shutdown')">
-            <i class="fa-solid fa-power-off"></i>
-            <span>Shutdown Server</span>
-          </button>
-          <button class="action-card" onclick="executeCommand(':announcement ')">
-            <i class="fa-solid fa-bullhorn"></i>
-            <span>Send Announcement</span>
-          </button>
           <button class="action-card" onclick="refreshData()">
             <i class="fa-solid fa-rotate"></i>
             <span>Refresh Data</span>
@@ -104,6 +135,14 @@
           <button class="action-card" onclick="goToSettings()">
             <i class="fa-solid fa-cog"></i>
             <span>Server Settings</span>
+          </button>
+          <button class="action-card" onclick="goToFeature('live-stats')">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Live Stats</span>
+          </button>
+          <button class="action-card" onclick="goToFeature('logs')">
+            <i class="fa-solid fa-database"></i>
+            <span>View Logs</span>
           </button>
         </div>
       </div>
@@ -183,10 +222,6 @@
               <p class="activity-time">Just now</p>
             </div>
           </div>
-          <div class="activity-empty">
-            <i class="fa-solid fa-inbox"></i>
-            <p>No recent activity</p>
-          </div>
         </div>
       </div>
 
@@ -204,7 +239,7 @@
           </div>
           <div class="info-item">
             <span class="info-label"><i class="fa-solid fa-tag"></i> Plan:</span>
-            <span class="info-value" id="infoPlan">Free</span>
+            <span class="info-value" id="infoPlan">Nexus</span>
           </div>
           <div class="info-item">
             <span class="info-label"><i class="fa-solid fa-signal"></i> API Status:</span>
@@ -223,31 +258,7 @@
     <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
 
-  <!-- Command Modal -->
-  <div id="commandModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2><i class="fa-solid fa-terminal"></i> Execute Command</h2>
-        <span class="close-btn" onclick="closeCommandModal()">&times;</span>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="commandInput"><i class="fa-solid fa-code"></i> Command</label>
-          <input type="text" id="commandInput" placeholder="Enter command (e.g., :h message)" autofocus>
-          <small style="color: #999; display: block; margin-top: 0.5rem;">
-            Commands will be executed on your ER:LC server
-          </small>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="secondary-btn" onclick="closeCommandModal()">Cancel</button>
-        <button type="button" class="primary-btn" onclick="submitCommand()">
-          <i class="fa-solid fa-paper-plane"></i> Execute
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script src="server-dashboard.js"></script>
+  <script src="/main/toast-notifications.js"></script>
+  <script src="/main/server-dashboard.js"></script>
 </body>
 </html>

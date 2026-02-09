@@ -529,3 +529,148 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Command Panel Styles */
+.command-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.command-input {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(11, 11, 11, 0.8);
+  border: 1px solid rgba(160, 32, 240, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s ease;
+}
+
+.command-input:focus {
+  outline: none;
+  border-color: #a020f0;
+  box-shadow: 0 0 0 3px rgba(160, 32, 240, 0.1);
+  background: rgba(11, 11, 11, 0.95);
+}
+
+.execute-btn {
+  background: linear-gradient(135deg, #a020f0, #7a0fcf);
+  color: #fff;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.execute-btn:hover {
+  background: linear-gradient(135deg, #8a1cd1, #6a0faf);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(160, 32, 240, 0.5);
+}
+
+.quick-commands {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.8rem;
+}
+
+.quick-cmd-btn {
+  background: rgba(160, 32, 240, 0.1);
+  border: 1px solid rgba(160, 32, 240, 0.3);
+  color: #a020f0;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.quick-cmd-btn:hover {
+  background: rgba(160, 32, 240, 0.2);
+  border-color: #a020f0;
+  transform: translateY(-2px);
+}
+
+.command-history {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.command-history h3 {
+  color: #a020f0;
+  font-size: 1rem;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem;
+  background: rgba(160, 32, 240, 0.05);
+  border-left: 3px solid #a020f0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.history-cmd {
+  color: #fff;
+  font-family: 'Courier New', monospace;
+}
+
+.history-time {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+/* Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.fade-in.active {
+  opacity: 1;
+}
