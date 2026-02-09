@@ -418,29 +418,44 @@ app.get("/auth/logout", (req, res) => {
 
 // Create new server
 app.post("/api/servers/create", async (req, res) => {
-  const { serverId, name, description, accountID } = req.body;
+  const { serverId, name, apiKey, accountID } = req.body;
+
+  console.log('📝 Server creation request:', { serverId, name, hasApiKey: !!apiKey, accountID });
 
   if (!serverId || !name || !accountID) {
-    return res.status(400).json({ error: "Missing required fields" });
+    console.log('❌ Missing required fields');
+    return res.status(400).json({ 
+      error: "Missing required fields",
+      code: "MISSING_FIELDS"
+    });
   }
 
   try {
     // Verify user exists
+    console.log('🔍 Checking if user exists:', accountID);
     const userResult = await pool.query(
       "SELECT account_id FROM users WHERE account_id = $1",
       [accountID]
     );
 
     if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
+      console.log('❌ User not found:', accountID);
+      return res.status(404).json({ 
+        error: "User not found",
+        code: "USER_NOT_FOUND"
+      });
     }
 
-    // Create server
+    console.log('✅ User found, creating server...');
+
+    // Create server with API key
     await pool.query(
-      `INSERT INTO servers (id, name, description, owner_account_id)
-       VALUES ($1, $2, $3, $4)`,
-      [serverId, name, description || 'ER:LC Community Server', accountID]
+      `INSERT INTO servers (id, name, description, owner_account_id, api_key)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [serverId, name, 'ER:LC Community Server', accountID, apiKey || null]
     );
+
+    console.log('✅ Server inserted into database');
 
     // Add server ID to user's owned_server_ids
     await pool.query(
@@ -450,7 +465,8 @@ app.post("/api/servers/create", async (req, res) => {
       [serverId, accountID]
     );
 
-    console.log(`Server created: ${name} (${serverId}) by ${accountID}`);
+    console.log('✅ Server added to user\'s owned_server_ids');
+    console.log(`🎉 Server created: ${name} (${serverId}) by ${accountID}`);
 
     res.status(201).json({
       success: true,
@@ -458,9 +474,17 @@ app.post("/api/servers/create", async (req, res) => {
       serverId: serverId
     });
   } catch (err) {
-    console.error("Error creating server:", err.message);
-    res.status(500).json({ error: "Database error" });
+    console.error("❌ Error creating server:", err.message);
+    console.error("Full error:", err);
+    res.status(500).json({ 
+      error: "Database error",
+      code: "DATABASE_ERROR",
+      details: err.message 
+    });
   }
+});
+
+
 });
 
 // Get all servers for a user
@@ -530,39 +554,71 @@ app.get("/api/servers/:serverId/settings", async (req, res) => {
   const { serverId } = req.params;
   const { accountID } = req.query;
 
+  console.log('📋 GET /api/servers/:serverId/settings');
+  console.log('   Server ID:', serverId);
+  console.log('   Account ID:', accountID);
+
   if (!accountID) {
-    return res.status(400).json({ error: "Account ID required" });
+    console.log('❌ ERROR: Missing accountID');
+    return res.status(400).json({ 
+      error: "Account ID required",
+      code: "MISSING_ACCOUNT_ID"
+    });
   }
 
   try {
+    console.log('🔍 Querying servers table...');
     const result = await pool.query(
       "SELECT * FROM servers WHERE id = $1",
       [serverId]
     );
 
+    console.log(`   Found ${result.rows.length} server(s)`);
+
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Server not found" });
+      console.log('❌ ERROR: Server not found in database');
+      console.log('   Searched for ID:', serverId);
+      return res.status(404).json({ 
+        error: "Server not found",
+        code: "SERVER_NOT_FOUND",
+        serverId: serverId
+      });
     }
 
     const server = result.rows[0];
+    console.log('✅ Server found:', server.name);
 
     // Verify user owns or is member of this server
+    console.log('🔍 Checking user access...');
     const userResult = await pool.query(
       "SELECT owned_server_ids, server_ids FROM users WHERE account_id = $1",
       [accountID]
     );
 
     if (userResult.rows.length === 0) {
-      return res.status(403).json({ error: "Unauthorized" });
+      console.log('❌ ERROR: User not found');
+      return res.status(403).json({ 
+        error: "User not found",
+        code: "USER_NOT_FOUND"
+      });
     }
 
     const user = userResult.rows[0];
+    console.log('   User owned servers:', user.owned_server_ids);
+    console.log('   User member servers:', user.server_ids);
+    
     const hasAccess = (user.owned_server_ids && user.owned_server_ids.includes(serverId)) ||
                       (user.server_ids && user.server_ids.includes(serverId));
 
     if (!hasAccess) {
-      return res.status(403).json({ error: "You don't have access to this server" });
+      console.log('❌ ERROR: User does not have access to this server');
+      return res.status(403).json({ 
+        error: "You don't have access to this server",
+        code: "ACCESS_DENIED"
+      });
     }
+
+    console.log('✅ Access granted');
 
     // Don't send the full API key, just indicate if it exists
     res.json({
@@ -571,14 +627,21 @@ app.get("/api/servers/:serverId/settings", async (req, res) => {
         id: server.id,
         name: server.name,
         description: server.description,
-        erlcServerId: server.erlc_server_id,
-        apiKey: server.api_key ? true : false, // Just a boolean
+        plan: server.plan || 'Free',
+        apiKey: !!server.api_key,
         createdAt: server.created_at
       }
     });
+    
+    console.log('✅ Server settings sent successfully');
   } catch (err) {
-    console.error("Error fetching server settings:", err.message);
-    res.status(500).json({ error: "Database error" });
+    console.error("❌ DATABASE ERROR:", err.message);
+    console.error("   Stack:", err.stack);
+    res.status(500).json({ 
+      error: "Database error",
+      code: "DATABASE_ERROR",
+      details: err.message
+    });
   }
 });
 
