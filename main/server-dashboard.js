@@ -1,3 +1,71 @@
+// Toast Notification Functions
+function initToastContainer() {
+  if (!document.querySelector('.toast-container')) {
+    const container = document.createElement('div');
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+}
+
+function showToast(type, title, message, duration = 4000) {
+  initToastContainer();
+  
+  const container = document.querySelector('.toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  const icons = {
+    success: 'fa-circle-check',
+    error: 'fa-circle-xmark',
+    warning: 'fa-triangle-exclamation',
+    info: 'fa-circle-info'
+  };
+  
+  toast.innerHTML = `
+    <div class="toast-icon">
+      <i class="fa-solid ${icons[type]}"></i>
+    </div>
+    <div class="toast-content">
+      <div class="toast-title">${title}</div>
+      ${message ? `<div class="toast-message">${message}</div>` : ''}
+    </div>
+    <button class="toast-close" onclick="this.parentElement.remove()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  `;
+  
+  container.appendChild(toast);
+  
+  if (duration > 0) {
+    setTimeout(() => {
+      toast.classList.add('removing');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+  
+  return toast;
+}
+
+function showSuccess(title, message, duration) {
+  return showToast('success', title, message, duration);
+}
+
+function showError(title, message, duration) {
+  return showToast('error', title, message, duration);
+}
+
+function showWarning(title, message, duration) {
+  return showToast('warning', title, message, duration);
+}
+
+function showInfo(title, message, duration) {
+  return showToast('info', title, message, duration);
+}
+
+function showLoading(message) {
+  return showToast('info', message, '<div class="spinner"></div>', 0);
+}
+
 // Get URL parameters
 function getQueryParam(name) {
   const urlParams = new URLSearchParams(window.location.search);
