@@ -418,10 +418,16 @@ app.get("/auth/logout", (req, res) => {
 
 // Create new server
 app.post("/api/servers/create", async (req, res) => {
-  const { serverId, name, description, accountID } = req.body;
+  const { serverId, name, apiKey, accountID } = req.body;
+
+  console.log('📝 Server creation request:', { serverId, name, hasApiKey: !!apiKey, accountID });
 
   if (!serverId || !name || !accountID) {
-    return res.status(400).json({ error: "Missing required fields" });
+    console.log('❌ Missing required fields');
+    return res.status(400).json({ 
+      error: "Missing required fields",
+      code: "MISSING_FIELDS"
+    });
   }
 
   try {
@@ -433,7 +439,11 @@ app.post("/api/servers/create", async (req, res) => {
     );
 
     if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
+      console.log('❌ User not found:', accountID);
+      return res.status(404).json({ 
+        error: "User not found",
+        code: "USER_NOT_FOUND"
+      });
     }
 
     console.log('✅ User found, creating server...');
@@ -455,7 +465,8 @@ app.post("/api/servers/create", async (req, res) => {
       [serverId, accountID]
     );
 
-    console.log(`Server created: ${name} (${serverId}) by ${accountID}`);
+    console.log('✅ Server added to user\'s owned_server_ids');
+    console.log(`🎉 Server created: ${name} (${serverId}) by ${accountID}`);
 
     res.status(201).json({
       success: true,
@@ -463,8 +474,13 @@ app.post("/api/servers/create", async (req, res) => {
       serverId: serverId
     });
   } catch (err) {
-    console.error("Error creating server:", err.message);
-    res.status(500).json({ error: "Database error" });
+    console.error("❌ Error creating server:", err.message);
+    console.error("Full error:", err);
+    res.status(500).json({ 
+      error: "Database error",
+      code: "DATABASE_ERROR",
+      details: err.message 
+    });
   }
 });
 
@@ -611,8 +627,8 @@ app.get("/api/servers/:serverId/settings", async (req, res) => {
         id: server.id,
         name: server.name,
         description: server.description,
-        erlcServerId: server.erlc_server_id,
-        apiKey: server.api_key ? true : false, // Just a boolean
+        plan: server.plan || 'Free',
+        apiKey: !!server.api_key,
         createdAt: server.created_at
       }
     });
