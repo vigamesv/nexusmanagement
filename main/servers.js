@@ -23,7 +23,7 @@ let memberServers = [];
 // Load user data and servers on page load
 async function loadUserAndServers() {
   if (!accountID) {
-    showError("No account ID found. Please log in again.");
+    showError("Missing Account", "No account ID found. Please log in again.");
     setTimeout(() => {
       window.location.href = '/';
     }, 2000);
@@ -31,52 +31,33 @@ async function loadUserAndServers() {
   }
 
   try {
-    // Fetch user data
-    const userRes = await fetch(`/api/user/${accountID}`);
-    const userData = await userRes.json();
+    console.log('🔄 Loading servers for account:', accountID);
+    
+    // Fetch servers from backend
+    const response = await fetch(`/api/servers/user/${accountID}`);
+    const data = await response.json();
 
-    if (!userData.success) {
-      throw new Error(userData.error || 'Failed to load user data');
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to load servers');
     }
 
-    currentUser = userData.user;
+    console.log('✅ Servers loaded:', data);
 
-    // Parse server IDs
-    const ownedServerIds = currentUser.owned_server_ids || [];
-    const memberServerIds = currentUser.server_ids || [];
+    ownedServers = data.ownedServers || [];
+    memberServers = data.memberServers || [];
 
     // Update stats
-    document.getElementById('ownedCount').textContent = ownedServerIds.length;
-    document.getElementById('memberCount').textContent = memberServerIds.length;
-    document.getElementById('totalCount').textContent = ownedServerIds.length + memberServerIds.length;
-
-    // For now, create mock server data since we don't have a servers table yet
-    // In production, you'd fetch from /api/servers endpoint
-    ownedServers = ownedServerIds.map((id, index) => ({
-      id: id,
-      name: `Server ${index + 1}`,
-      description: 'ER:LC Community Server',
-      plan: 'Free',
-      staffCount: 0,
-      createdAt: new Date().toISOString()
-    }));
-
-    memberServers = memberServerIds.map((id, index) => ({
-      id: id,
-      name: `Community Server ${index + 1}`,
-      description: 'You are a member of this server',
-      plan: 'Free',
-      staffCount: 0,
-      owner: 'Server Owner'
-    }));
+    document.getElementById('ownedCount').textContent = ownedServers.length;
+    document.getElementById('memberCount').textContent = memberServers.length;
+    document.getElementById('totalCount').textContent = ownedServers.length + memberServers.length;
 
     // Display servers
     displayOwnedServers();
     displayMemberServers();
 
   } catch (error) {
-    console.error('Error loading user data:', error);
-    showError('Failed to load server data. Please try again.');
+    console.error('❌ Error loading servers:', error);
+    showError('Failed to Load Servers', 'Could not load server data. Please try again.');
   }
 }
 
@@ -107,13 +88,13 @@ function displayOwnedServers() {
         <h3>${escapeHtml(server.name)}</h3>
       </div>
       <div class="server-body">
-        <p class="server-desc">${escapeHtml(server.description)}</p>
+        <p class="server-desc">${escapeHtml(server.description || 'ER:LC Community Server')}</p>
         <div class="server-meta">
           <span class="meta-item">
-            <i class="fa-solid fa-tag"></i> ${server.plan}
+            <i class="fa-solid fa-tag"></i> ${server.plan === 'Free' ? 'Nexus' : 'Nexus+'}
           </span>
           <span class="meta-item">
-            <i class="fa-solid fa-users"></i> ${server.staffCount} Staff
+            <i class="fa-solid fa-users"></i> ${server.staffCount || 0} Staff
           </span>
         </div>
       </div>
@@ -153,13 +134,13 @@ function displayMemberServers() {
         <h3>${escapeHtml(server.name)}</h3>
       </div>
       <div class="server-body">
-        <p class="server-desc">${escapeHtml(server.description)}</p>
+        <p class="server-desc">${escapeHtml(server.description || 'ER:LC Community Server')}</p>
         <div class="server-meta">
           <span class="meta-item">
-            <i class="fa-solid fa-user-shield"></i> ${server.owner}
+            <i class="fa-solid fa-user-shield"></i> ${server.owner || 'Server Owner'}
           </span>
           <span class="meta-item">
-            <i class="fa-solid fa-users"></i> ${server.staffCount} Staff
+            <i class="fa-solid fa-users"></i> ${server.staffCount || 0} Staff
           </span>
         </div>
       </div>
@@ -177,54 +158,69 @@ document.getElementById('createServerForm').addEventListener('submit', async (e)
   e.preventDefault();
 
   const serverName = document.getElementById('serverName').value.trim();
-  const serverDescription = document.getElementById('serverDescription').value.trim();
+  const serverApiKey = document.getElementById('serverApiKey').value.trim();
 
   if (!serverName) {
-    showError('Please enter a server name');
+    showError('Empty Name', 'Please enter a server name');
     return;
   }
 
   try {
+    console.log('📝 Creating server:', serverName);
+    
     // Generate a unique server ID
     const serverId = `SRV-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-    // In production, you would POST to /api/servers/create
-    // For now, we'll update the user's owned_server_ids array
-    const currentOwned = currentUser.owned_server_ids || [];
-    currentOwned.push(serverId);
+    const loadingToast = showLoading('Creating server...');
 
-    // Update user in database (you'll need to create this endpoint)
-    const response = await fetch(`/api/user/${accountID}/update`, {
-      method: 'PUT',
+    // Create server in database
+    const response = await fetch(`/api/servers/create`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        owned_server_ids: currentOwned
+        serverId,
+        name: serverName,
+        apiKey: serverApiKey || null,
+        accountID: accountID
       })
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to create server');
+    const data = await response.json();
+    
+    loadingToast.remove();
+
+    console.log('📊 Server creation response:', data);
+
+    if (!data.success) {
+      const errorCode = data.code || 'UNKNOWN';
+      showError('Creation Failed', `${data.error || 'Failed to create server'} [${errorCode}]`);
+      return;
     }
 
     // Show success message
-    showSuccess('Server created successfully!');
+    showSuccess(
+      'Server Created', 
+      serverApiKey ? 'Server created with API key configured!' : 'Server created successfully!'
+    );
+    
     closeCreateModal();
 
     // Reload servers
     setTimeout(() => {
-      window.location.reload();
+      loadUserAndServers();
     }, 1000);
 
   } catch (error) {
-    console.error('Error creating server:', error);
-    showError('Failed to create server. Please try again.');
+    console.error('❌ Error creating server:', error);
+    showError('Creation Error', 'Failed to create server. Please try again.');
   }
 });
 
 // Manage server
 function manageServer(serverId) {
+  console.log('🔧 Managing server:', serverId);
   // Navigate to server dashboard
   window.location.href = `/main/server.html?id=${serverId}&accountID=${accountID}`;
 }
@@ -235,7 +231,10 @@ function viewServerDetails(serverId, type) {
     ? ownedServers.find(s => s.id === serverId)
     : memberServers.find(s => s.id === serverId);
 
-  if (!server) return;
+  if (!server) {
+    showError('Server Not Found', 'Could not find server details');
+    return;
+  }
 
   const modal = document.getElementById('serverModal');
   const modalBody = document.getElementById('serverModalBody');
@@ -252,15 +251,15 @@ function viewServerDetails(serverId, type) {
       </div>
       <div class="detail-row">
         <span class="detail-label"><i class="fa-solid fa-align-left"></i> Description:</span>
-        <span class="detail-value">${escapeHtml(server.description)}</span>
+        <span class="detail-value">${escapeHtml(server.description || 'ER:LC Community Server')}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label"><i class="fa-solid fa-tag"></i> Plan:</span>
-        <span class="detail-value">${server.plan}</span>
+        <span class="detail-value">${server.plan === 'Free' ? 'Nexus' : 'Nexus+'}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label"><i class="fa-solid fa-users"></i> Staff Count:</span>
-        <span class="detail-value">${server.staffCount}</span>
+        <span class="detail-value">${server.staffCount || 0}</span>
       </div>
       ${type === 'owned' ? `
         <div class="detail-row">
@@ -270,7 +269,7 @@ function viewServerDetails(serverId, type) {
       ` : `
         <div class="detail-row">
           <span class="detail-label"><i class="fa-solid fa-user-shield"></i> Owner:</span>
-          <span class="detail-value">${escapeHtml(server.owner)}</span>
+          <span class="detail-value">${escapeHtml(server.owner || 'Unknown')}</span>
         </div>
       `}
     </div>
@@ -321,16 +320,6 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-function showError(message) {
-  // You can implement a toast notification system here
-  alert(message);
-}
-
-function showSuccess(message) {
-  // You can implement a toast notification system here
-  alert(message);
-}
-
 // Scroll reveal animation
 function revealOnScroll() {
   const reveals = document.querySelectorAll('.reveal');
@@ -349,6 +338,9 @@ window.addEventListener('scroll', revealOnScroll);
 
 // Initialize on page load
 window.addEventListener('load', () => {
+  console.log('🚀 Servers page initialized');
+  console.log('   Account ID:', accountID);
+  
   loadUserAndServers();
   revealOnScroll();
   
