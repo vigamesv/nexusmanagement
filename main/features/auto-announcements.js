@@ -179,23 +179,15 @@ function toggleAnnouncement(id) {
   saveAnnouncements();
   renderAnnouncements();
 }
-
 // Delete announcement
-async function deleteAnnouncement(id) {
-  const confirmed = await confirmAction(
-    'Delete Announcement',
-    'Are you sure you want to delete this announcement? This cannot be undone.'
-  );
-  
-  if (!confirmed) return;
-  
+function deleteAnnouncement(id) {
   stopAnnouncement(id);
   announcements = announcements.filter(a => a.id !== id);
   saveAnnouncements();
   renderAnnouncements();
-  
   showSuccess('Deleted', 'Announcement removed');
 }
+
 
 // Test announcement (run once now)
 async function testAnnouncement(id) {
