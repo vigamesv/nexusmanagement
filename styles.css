@@ -422,6 +422,26 @@ footer { text-align: center; padding: 1rem; background: #1a1a1a; color: #aaa; }
   transform: scale(1.05);
   background: linear-gradient(135deg, #66BB6A, #388E3C);
 }
+.addbot-btn {
+  background: linear-gradient(135deg, #5865F2, #7289DA);
+  color: #fff;
+  border: none;
+  padding: 14px 24px;
+  margin-left: 10px;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(88, 101, 242, 0.7);
+  transition: all 0.3s ease;
+}
+
+.addbot-btn:hover {
+  background: linear-gradient(135deg, #4752C4, #5865F2);
+  box-shadow: 0 0 25px rgba(88, 101, 242, 1);
+  transform: scale(1.05);
+}
+
 
 
 
