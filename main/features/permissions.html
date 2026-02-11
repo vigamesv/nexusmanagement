@@ -2,67 +2,188 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Staff Permissions - Nexus Dashboard</title>
-  <link rel="stylesheet" href="/main/features/css/features.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Permissions Editor - Nexus Management</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="stylesheet" href="/main/servers.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .permissions-hero {
+      background: linear-gradient(135deg, #1a0a2e 0%, #0a0a0a 100%);
+      padding: 6rem 2rem 3rem 2rem;
+      text-align: center;
+    }
+    .permissions-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .permissions-card {
+      background: rgba(26, 26, 26, 0.8);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .add-staff-form {
+      display: grid;
+      grid-template-columns: 1fr 200px auto;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .add-staff-form input {
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .add-staff-form input:focus {
+      outline: none;
+      border-color: #a020f0;
+    }
+    .add-staff-form select {
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .add-btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #a020f0, #7a0fcf);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(160, 32, 240, 0.5);
+    }
+    .permissions-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .permissions-table th {
+      background: rgba(160, 32, 240, 0.1);
+      color: #a020f0;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid rgba(160, 32, 240, 0.3);
+    }
+    .permissions-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(160, 32, 240, 0.1);
+      color: #fff;
+    }
+    .permissions-table tr:hover {
+      background: rgba(160, 32, 240, 0.05);
+    }
+    .role-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .role-owner { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .role-admin { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+    .role-mod { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+    .role-staff { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .checkbox-wrapper input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      accent-color: #a020f0;
+    }
+    .action-btn {
+      padding: 0.5rem 1rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 6px;
+      color: #f87171;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .action-btn:hover {
+      background: rgba(239, 68, 68, 0.3);
+      border-color: #f87171;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 4rem;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Nexus Dashboard</h1>
-    <p class="subtitle">Staff Permissions Editor</p>
-    <div class="warning-banner">STAFF ACCESS REQUIRED</div>
-  </header>
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="#" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+      <li><a href="#" id="serverDashLink"><i class="fa-solid fa-server"></i> Server</a></li>
+      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> All Servers</a></li>
+    </ul>
+  </nav>
 
-  <main class="feature-container">
-    <section class="feature-card visible">
-      <h2><i class="fa-solid fa-user-shield"></i> Permissions Editor</h2>
-      <p>Assign and manage staff permissions. (Frontend demo, backend integration with Discord coming soon)</p>
+  <section class="permissions-hero">
+    <h1><i class="fa-solid fa-user-shield"></i> Permissions Editor</h1>
+    <p class="tagline">Manage staff roles and permissions</p>
+    <p class="subtext" id="serverName">Loading...</p>
+  </section>
 
-      <!-- Permissions Table -->
-      <table class="permissions-table">
-        <thead>
-          <tr>
-            <th>Staff Member</th>
-            <th>Manage Shifts</th>
-            <th>Manage Announcements</th>
-            <th>Access Logs</th>
-            <th>Access Dashboard</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Alex (Moderator)</td>
-            <td><input type="checkbox" checked></td>
-            <td><input type="checkbox"></td>
-            <td><input type="checkbox"></td>
-            <td><input type="checkbox" checked></td>
-          </tr>
-          <tr>
-            <td>Chris (Admin)</td>
-            <td><input type="checkbox" checked></td>
-            <td><input type="checkbox" checked></td>
-            <td><input type="checkbox" checked></td>
-            <td><input type="checkbox" checked></td>
-          </tr>
-          <tr>
-            <td>Sam (Co-Owner)</td>
-            <td><input type="checkbox" checked></td>
-            <td><input type="checkbox" checked></td>
-            <td><input type="checkbox" checked></td>
-            <td><input type="checkbox" checked></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
+  <div class="permissions-container">
+    <div class="permissions-card">
+      <h2 style="color: #fff; margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-user-plus"></i> Add Staff Member
+      </h2>
+      
+      <form class="add-staff-form" id="addStaffForm">
+        <input type="text" id="staffUsername" placeholder="Roblox Username" required>
+        <select id="staffRole" required>
+          <option value="Staff">Staff</option>
+          <option value="Moderator">Moderator</option>
+          <option value="Administrator">Administrator</option>
+          <option value="Owner">Owner</option>
+        </select>
+        <button type="submit" class="add-btn">
+          <i class="fa-solid fa-plus"></i> Add Staff
+        </button>
+      </form>
+    </div>
 
-  <!-- Fixed Return Button -->
-  <button class="return-btn" onclick="location.href='/main/server.html'">
-    <i class="fa-solid fa-arrow-left"></i> Return
-  </button>
+    <div class="permissions-card">
+      <h2 style="color: #fff; margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-list"></i> Staff Members
+      </h2>
+      
+      <div id="staffTableContainer">
+        <div class="empty-state">
+          <i class="fa-solid fa-users" style="font-size: 3rem; color: #666;"></i>
+          <p>No staff members added yet</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <footer>
-    <p>&copy; 2026 Nexus Management</p>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
+
+  <script src="/main/features/js/permissions.js"></script>
 </body>
 </html>

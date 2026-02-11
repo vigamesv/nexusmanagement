@@ -2,93 +2,228 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Live Stats - Nexus Dashboard</title>
-  <link rel="stylesheet" href="/main/features/css/features.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Stats - Nexus Management</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="stylesheet" href="/main/servers.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .stats-hero {
+      background: linear-gradient(135deg, #1a0a2e 0%, #0a0a0a 100%);
+      padding: 6rem 2rem 3rem 2rem;
+      text-align: center;
+    }
+    .stats-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .stat-card {
+      background: rgba(26, 26, 26, 0.8);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(160, 32, 240, 0.3);
+    }
+    .stat-card h3 {
+      color: #999;
+      font-size: 0.9rem;
+      margin: 0 0 1rem 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .stat-value {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #a020f0;
+      margin: 0;
+    }
+    .section-title {
+      color: #fff;
+      font-size: 1.5rem;
+      margin: 3rem 0 1.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-title i { color: #a020f0; }
+    .players-grid, .staff-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .player-card, .staff-card {
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid rgba(160, 32, 240, 0.2);
+      border-radius: 8px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.2s ease;
+    }
+    .player-card:hover, .staff-card:hover {
+      border-color: #a020f0;
+      transform: translateX(5px);
+    }
+    .player-avatar, .staff-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #a020f0, #7a0fcf);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .player-info, .staff-info { flex: 1; }
+    .player-name, .staff-name {
+      color: #fff;
+      font-weight: 600;
+      margin: 0 0 0.25rem 0;
+      font-size: 1rem;
+    }
+    .player-details, .staff-details {
+      color: #999;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+    .team-badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-right: 0.5rem;
+    }
+    .team-police { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .team-sheriff { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+    .team-fire { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .team-dot { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
+    .team-civilian { background: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+    .status-online { color: #4ade80; }
+    .status-offline { color: #6b7280; }
+    .permission-badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(160, 32, 240, 0.2);
+      color: #a020f0;
+    }
+    .permission-admin { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .permission-mod { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+    .empty-state {
+      text-align: center;
+      padding: 4rem;
+      color: #666;
+    }
+    .refresh-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #a020f0, #7a0fcf);
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(160, 32, 240, 0.5);
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    .refresh-btn:hover {
+      transform: scale(1.1) rotate(180deg);
+    }
+    .refresh-btn.loading {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Live Stats</h1>
-    <p class="subtitle">Real-time ER:LC Server Data</p>
-    <div class="warning-banner">API KEY REQUIRED</div>
-  </header>
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="#" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+      <li><a href="#" id="serverDashLink"><i class="fa-solid fa-server"></i> Server</a></li>
+      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> All Servers</a></li>
+    </ul>
+  </nav>
 
-  <main class="feature-container">
-    <section class="feature-card visible">
-      <h2><i class="fa-solid fa-chart-line"></i> Live Stats</h2>
-      <p>Monitor live players and staff activity in real-time.</p>
+  <section class="stats-hero">
+    <h1><i class="fa-solid fa-chart-line"></i> Live Statistics</h1>
+    <p class="tagline">Real-time server data from ER:LC</p>
+    <p class="subtext" id="serverName">Loading...</p>
+  </section>
 
-      <!-- One Big Rectangular Box -->
-      <div class="stats-rectangle">
-
-        <!-- Top Row -->
-        <div class="overview-row">
-          <div class="overview-box">
-            <h3><i class="fa-solid fa-users"></i> Total Active Players</h3>
-            <p class="stat-value" data-target="35">0</p>
-          </div>
-          <div class="overview-box">
-            <h3><i class="fa-solid fa-list"></i> Total Queue</h3>
-            <p class="stat-value" data-target="3">0</p>
-          </div>
-        </div>
-
-        <!-- Columns -->
-        <div class="columns-row">
-          <!-- Team Players -->
-          <div class="stats-column">
-            <h2>Team Players</h2>
-            <div class="stat-box"><h3>DOT</h3><p class="stat-value" data-target="4">0</p></div>
-            <div class="stat-box"><h3>Fire Department</h3><p class="stat-value" data-target="8">0</p></div>
-            <div class="stat-box"><h3>Sheriff</h3><p class="stat-value" data-target="6">0</p></div>
-            <div class="stat-box"><h3>Police</h3><p class="stat-value" data-target="15">0</p></div>
-            <div class="stat-box"><h3>Civilian</h3><p class="stat-value" data-target="24">0</p></div>
-          </div>
-
-          <!-- Active Staff -->
-          <div class="stats-column">
-            <h2>Active Staff</h2>
-            <div class="stat-box"><h3>Moderators</h3><p class="stat-value" data-target="2">0</p></div>
-            <div class="stat-box"><h3>Admins</h3><p class="stat-value" data-target="1">0</p></div>
-            <div class="stat-box"><h3>Co-Owners</h3><p class="stat-value" data-target="1">0</p></div>
-          </div>
-        </div>
-
+  <div class="stats-container">
+    <div class="overview-grid">
+      <div class="stat-card">
+        <h3><i class="fa-solid fa-users"></i> Players Online</h3>
+        <p class="stat-value" id="totalPlayers">--</p>
       </div>
-    </section>
-  </main>
+      <div class="stat-card">
+        <h3><i class="fa-solid fa-user-shield"></i> Staff Online</h3>
+        <p class="stat-value" id="staffOnline">--</p>
+      </div>
+      <div class="stat-card">
+        <h3><i class="fa-solid fa-list"></i> Queue</h3>
+        <p class="stat-value" id="queueCount">--</p>
+      </div>
+      <div class="stat-card">
+        <h3><i class="fa-solid fa-map"></i> Current Map</h3>
+        <p class="stat-value" style="font-size: 1.5rem;" id="currentMap">--</p>
+      </div>
+    </div>
 
-  <!-- Fixed Return Button -->
-  <button class="return-btn" onclick="location.href='/main/server.html'">
-    <i class="fa-solid fa-arrow-left"></i> Return
+    <h2 class="section-title"><i class="fa-solid fa-users"></i> Active Players</h2>
+    <div id="playersList" class="players-grid">
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: #a020f0;"></i>
+        <p>Loading players...</p>
+      </div>
+    </div>
+
+    <h2 class="section-title"><i class="fa-solid fa-user-shield"></i> Server Staff</h2>
+    <div id="staffList" class="staff-grid">
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: #a020f0;"></i>
+        <p>Loading staff...</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="refresh-btn" onclick="loadAllData()" title="Refresh Data">
+    <i class="fa-solid fa-rotate" id="refreshIcon"></i>
   </button>
 
   <footer>
-    <p>&copy; 2026 Nexus Management</p>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
 
-  <script>
-    // Counting animation
-    function animateCounters() {
-      const counters = document.querySelectorAll('.stat-value');
-      counters.forEach(counter => {
-        const target = +counter.getAttribute('data-target');
-        let count = 0;
-        const increment = Math.max(1, target / 100);
-
-        const update = () => {
-          count += increment;
-          if (count < target) {
-            counter.textContent = Math.floor(count);
-            requestAnimationFrame(update);
-          } else {
-            counter.textContent = target;
-          }
-        };
-        update();
-      });
-    }
-    window.onload = animateCounters;
-  </script>
+  <script src="/main/features/js/live-stats.js"></script>
 </body>
 </html>

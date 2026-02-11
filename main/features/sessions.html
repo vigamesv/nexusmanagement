@@ -2,130 +2,212 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sessions Management - Nexus Dashboard</title>
-  <link rel="stylesheet" href="/main/features/css/sessions.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sessions Management - Nexus Management</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="stylesheet" href="/main/servers.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .sessions-hero {
+      background: linear-gradient(135deg, #1a0a2e 0%, #0a0a0a 100%);
+      padding: 6rem 2rem 3rem 2rem;
+      text-align: center;
+    }
+    .sessions-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .session-card {
+      background: rgba(26, 26, 26, 0.8);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .session-status {
+      text-align: center;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      animation: pulse 2s infinite;
+    }
+    .status-badge.active {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+      border: 2px solid #4ade80;
+    }
+    .status-badge.inactive {
+      background: rgba(107, 114, 128, 0.2);
+      color: #9ca3af;
+      border: 2px solid #6b7280;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .session-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .metric-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(160, 32, 240, 0.2);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .metric-label {
+      color: #999;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #a020f0;
+      margin: 0;
+    }
+    .session-controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+    }
+    .session-btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .session-btn.start {
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #fff;
+    }
+    .session-btn.end {
+      background: linear-gradient(135deg, #f87171, #ef4444);
+      color: #fff;
+    }
+    .session-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(160, 32, 240, 0.3);
+    }
+    .session-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .session-history {
+      margin-top: 3rem;
+    }
+    .history-item {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(160, 32, 240, 0.2);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .history-info h4 {
+      color: #fff;
+      margin: 0 0 0.5rem 0;
+    }
+    .history-info p {
+      color: #999;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    .history-stats {
+      text-align: right;
+    }
+    .history-duration {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #a020f0;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Nexus Dashboard</h1>
-    <p class="subtitle">Sessions Control Panel</p>
-    <div class="warning-banner">STAFF ACCESS REQUIRED</div>
-  </header>
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="#" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+      <li><a href="#" id="serverDashLink"><i class="fa-solid fa-server"></i> Server</a></li>
+      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> All Servers</a></li>
+    </ul>
+  </nav>
 
-  <main class="feature-container">
-    <section class="feature-card visible">
-      <h2><i class="fa-solid fa-calendar-check"></i> Session Control</h2>
-      <p>Manage SSU/Shutdown sessions. ER:LC + Discord integration will be added after backend setup.</p>
+  <section class="sessions-hero">
+    <h1><i class="fa-solid fa-calendar-check"></i> Sessions Management</h1>
+    <p class="tagline">Track and manage SSU/Shutdown sessions</p>
+    <p class="subtext" id="serverName">Loading...</p>
+  </section>
 
-      <!-- Session Control Panel -->
-      <div class="session-panel">
-        <!-- Status Badge -->
-        <div id="sessionStatus" class="status-badge inactive">No Session Active</div>
+  <div class="sessions-container">
+    <div class="session-card">
+      <div class="session-status">
+        <div class="status-badge inactive" id="sessionStatus">No Active Session</div>
+      </div>
 
-        <!-- Metrics -->
-        <div class="session-metrics">
-          <div class="metric-box">
-            <h3>Players</h3>
-            <p id="playerCount" class="metric-value">0 / 40</p>
-          </div>
-          <div class="metric-box">
-            <h3>Duration</h3>
-            <p id="sessionDuration" class="metric-value">0h 0m</p>
-          </div>
+      <div class="session-metrics">
+        <div class="metric-box">
+          <div class="metric-label"><i class="fa-solid fa-clock"></i> Duration</div>
+          <div class="metric-value" id="sessionDuration">00:00:00</div>
         </div>
-        
-        <!-- Action Buttons -->
-        <div class="session-actions">
-          <button id="sessionToggle" class="session-btn start">
-            <i class="fa-solid fa-play"></i> Start
-          </button>
-          <button class="session-btn boost"><i class="fa-solid fa-bolt"></i> Boost</button>
-          <button class="session-btn low"><i class="fa-solid fa-user-slash"></i> Low Players</button>
+        <div class="metric-box">
+          <div class="metric-label"><i class="fa-solid fa-users"></i> Current Players</div>
+          <div class="metric-value" id="playerCount">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label"><i class="fa-solid fa-chart-line"></i> Peak Players</div>
+          <div class="metric-value" id="peakPlayers">0</div>
         </div>
       </div>
-    </section>
-  </main>
 
-  <!-- Fixed Return Button -->
-  <button class="return-btn" onclick="location.href='/main/server.html'">
-    <i class="fa-solid fa-arrow-left"></i> Return
-  </button>
+      <div class="session-controls">
+        <button class="session-btn start" id="startBtn" onclick="startSession()">
+          <i class="fa-solid fa-play"></i> Start Session
+        </button>
+        <button class="session-btn end" id="endBtn" onclick="endSession()" style="display: none;">
+          <i class="fa-solid fa-stop"></i> End Session
+        </button>
+      </div>
+    </div>
+
+    <div class="session-card session-history">
+      <h2 style="color: #fff; margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-history"></i> Session History
+      </h2>
+      <div id="historyList">
+        <p style="text-align: center; color: #666; padding: 2rem;">No previous sessions</p>
+      </div>
+    </div>
+  </div>
 
   <footer>
-    <p>&copy; 2026 Nexus Management</p>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
-  <script>
-    const sessionToggle = document.getElementById("sessionToggle");
-    const sessionStatus = document.getElementById("sessionStatus");
-    const playerCount = document.getElementById("playerCount");
-    const sessionDuration = document.getElementById("sessionDuration");
 
-    let sessionActive = false;
-    let startTime = null;
-    let durationInterval = null;
-
-    // Counter animation function
-    function animateCounter(element, start, end, suffix = "") {
-      let current = start;
-      const increment = end > start ? 1 : -1;
-      const duration = 1000; // total animation time in ms
-      const stepTime = Math.abs(Math.floor(duration / (end - start || 1)));
-
-      const timer = setInterval(() => {
-        current += increment;
-        element.textContent = `${current}${suffix}`;
-        if (current === end) clearInterval(timer);
-      }, stepTime);
-    }
-
-    sessionToggle.addEventListener("click", () => {
-      if (!sessionActive) {
-        // Start session
-        sessionActive = true;
-        startTime = new Date();
-
-        sessionToggle.classList.remove("start");
-        sessionToggle.classList.add("end");
-        sessionToggle.innerHTML = '<i class="fa-solid fa-stop"></i> End';
-
-        sessionStatus.textContent = "Session Active";
-        sessionStatus.classList.remove("inactive");
-        sessionStatus.classList.add("active");
-
-        // Animate player count up to demo value
-        animateCounter(playerCount, 0, 32, " / 40");
-
-        // Start duration counter
-        durationInterval = setInterval(() => {
-          const now = new Date();
-          const diff = Math.floor((now - startTime) / 1000); // seconds
-          const hours = Math.floor(diff / 3600);
-          const minutes = Math.floor((diff % 3600) / 60);
-          sessionDuration.textContent = `${hours}h ${minutes}m`;
-        }, 60000);
-        sessionDuration.textContent = "0h 0m";
-
-      } else {
-        // End session
-        sessionActive = false;
-        clearInterval(durationInterval);
-
-        sessionToggle.classList.remove("end");
-        sessionToggle.classList.add("start");
-        sessionToggle.innerHTML = '<i class="fa-solid fa-play"></i> Start';
-
-        sessionStatus.textContent = "No Session Active";
-        sessionStatus.classList.remove("active");
-        sessionStatus.classList.add("inactive");
-
-        // Animate player count back down to 0
-        animateCounter(playerCount, parseInt(playerCount.textContent), 0, " / 40");
-
-        // Reset duration
-        sessionDuration.textContent = "0h 0m";
-      }
-    });
-  </script>
+  <script src="/main/features/js/sessions.js"></script>
 </body>
 </html>

@@ -2,73 +2,221 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Logs - ER:LC Dashboard</title>
-  <!-- External CSS -->
-  <link rel="stylesheet" href="/main/features/css/features.css">
-  <!-- Font Awesome Icons -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Logs - Nexus Management</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/dashboard/dashboard.css">
+  <link rel="stylesheet" href="/main/servers.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="icon" type="image/webp" href="/images/favicon.webp">
-
+  <style>
+    .logs-hero {
+      background: linear-gradient(135deg, #1a0a2e 0%, #0a0a0a 100%);
+      padding: 6rem 2rem 3rem 2rem;
+      text-align: center;
+    }
+    .logs-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .logs-controls {
+      background: rgba(26, 26, 26, 0.8);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-btn {
+      padding: 0.75rem 1.5rem;
+      background: rgba(160, 32, 240, 0.1);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 8px;
+      color: #a020f0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: rgba(160, 32, 240, 0.2);
+      border-color: #a020f0;
+    }
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      padding: 0.75rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .search-box:focus {
+      outline: none;
+      border-color: #a020f0;
+    }
+    .logs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .log-item {
+      background: rgba(26, 26, 26, 0.6);
+      border: 1px solid rgba(160, 32, 240, 0.2);
+      border-left: 4px solid #a020f0;
+      border-radius: 8px;
+      padding: 1.25rem;
+      transition: all 0.2s ease;
+    }
+    .log-item:hover {
+      transform: translateX(5px);
+      border-color: #a020f0;
+    }
+    .log-item.join { border-left-color: #4ade80; }
+    .log-item.leave { border-left-color: #f87171; }
+    .log-item.kill { border-left-color: #f59e0b; }
+    .log-item.command { border-left-color: #60a5fa; }
+    .log-item.modcall { border-left-color: #ec4899; }
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .log-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .log-type.join { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+    .log-type.leave { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .log-type.kill { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+    .log-type.command { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .log-type.modcall { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
+    .log-time {
+      color: #999;
+      font-size: 0.85rem;
+    }
+    .log-content {
+      color: #fff;
+      font-size: 1rem;
+      margin: 0;
+    }
+    .log-details {
+      color: #999;
+      font-size: 0.9rem;
+      margin: 0.5rem 0 0 0;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 4rem;
+      color: #666;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-box {
+      background: rgba(26, 26, 26, 0.8);
+      border: 1px solid rgba(160, 32, 240, 0.3);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .stat-box h4 {
+      color: #999;
+      font-size: 0.85rem;
+      margin: 0 0 0.5rem 0;
+      text-transform: uppercase;
+    }
+    .stat-box .value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #a020f0;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Logs</h1>
-    <p class="subtitle">Server Infractions & Staff Activity</p>
-    <!-- Global API Key Warning Banner -->
-    <div class="warning-banner">API KEY REQUIRED</div>
-  </header>
+  <nav class="navbar">
+    <div class="logo">Nexus Management</div>
+    <ul class="nav-links">
+      <li><a href="#" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+      <li><a href="#" id="serverDashLink"><i class="fa-solid fa-server"></i> Server</a></li>
+      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> All Servers</a></li>
+    </ul>
+  </nav>
 
-  <main class="feature-container">
-    <section class="feature-card animate">
-      <h2><i class="fa-solid fa-database"></i> Logs & History</h2>
-      <p>Track punishments, promotions, and staff actions in real-time.</p>
+  <section class="logs-hero">
+    <h1><i class="fa-solid fa-database"></i> Activity Logs</h1>
+    <p class="tagline">Monitor server activity in real-time</p>
+    <p class="subtext" id="serverName">Loading...</p>
+  </section>
 
-      <!-- Logs Grid (placeholder content for now) -->
-      <div class="stats-grid">
-        <div class="stat-box">
-          <h3><i class="fa-solid fa-gavel"></i> Infractions</h3>
-          <p class="log-entry">[API KEY REQUIRED to view infractions]</p>
-        </div>
-
-        <div class="stat-box">
-          <h3><i class="fa-solid fa-user-plus"></i> Promotions</h3>
-          <p class="log-entry">[API KEY REQUIRED to view promotions]</p>
-        </div>
-
-        <div class="stat-box">
-          <h3><i class="fa-solid fa-clock-rotate-left"></i> History</h3>
-          <p class="log-entry">[API KEY REQUIRED to view history]</p>
-        </div>
-
-        <div class="stat-box">
-          <h3><i class="fa-solid fa-user-shield"></i> Staff Actions</h3>
-          <p class="log-entry">[API KEY REQUIRED to view staff actions]</p>
-        </div>
+  <div class="logs-container">
+    <div class="stats-row">
+      <div class="stat-box">
+        <h4><i class="fa-solid fa-right-to-bracket"></i> Joins</h4>
+        <div class="value" id="joinCount">0</div>
       </div>
-    </section>
-  </main>
+      <div class="stat-box">
+        <h4><i class="fa-solid fa-right-from-bracket"></i> Leaves</h4>
+        <div class="value" id="leaveCount">0</div>
+      </div>
+      <div class="stat-box">
+        <h4><i class="fa-solid fa-skull"></i> Kills</h4>
+        <div class="value" id="killCount">0</div>
+      </div>
+      <div class="stat-box">
+        <h4><i class="fa-solid fa-terminal"></i> Commands</h4>
+        <div class="value" id="commandCount">0</div>
+      </div>
+      <div class="stat-box">
+        <h4><i class="fa-solid fa-hand"></i> Mod Calls</h4>
+        <div class="value" id="modcallCount">0</div>
+      </div>
+    </div>
 
-  <!-- Fixed Return Button -->
-  <button class="return-btn" onclick="location.href='/main/server.html'">
-    <i class="fa-solid fa-arrow-left"></i> Return
-  </button>
+    <div class="logs-controls">
+      <button class="filter-btn active" data-filter="all" onclick="filterLogs('all')">
+        <i class="fa-solid fa-list"></i> All
+      </button>
+      <button class="filter-btn" data-filter="join" onclick="filterLogs('join')">
+        <i class="fa-solid fa-right-to-bracket"></i> Joins
+      </button>
+      <button class="filter-btn" data-filter="kill" onclick="filterLogs('kill')">
+        <i class="fa-solid fa-skull"></i> Kills
+      </button>
+      <button class="filter-btn" data-filter="command" onclick="filterLogs('command')">
+        <i class="fa-solid fa-terminal"></i> Commands
+      </button>
+      <button class="filter-btn" data-filter="modcall" onclick="filterLogs('modcall')">
+        <i class="fa-solid fa-hand"></i> Mod Calls
+      </button>
+      <input type="text" class="search-box" id="searchBox" placeholder="Search logs..." onkeyup="searchLogs()">
+    </div>
+
+    <div id="logsList" class="logs-list">
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: #a020f0;"></i>
+        <p>Loading activity logs...</p>
+      </div>
+    </div>
+  </div>
 
   <footer>
-    <p>&copy; 2026 Nexus Management</p>
+    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
 
-  <script>
-    // Reveal animation
-    const animatedElements = document.querySelectorAll('.animate');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.2 });
-
-    animatedElements.forEach(el => observer.observe(el));
-  </script>
+  <script src="/main/features/js/logs.js"></script>
 </body>
 </html>
