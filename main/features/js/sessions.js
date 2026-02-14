@@ -174,11 +174,44 @@ function resumeSession() {
   updatePlayerCount();
 }
 
-function endSession() {
+async function endSession() {
   if (!currentSession) return;
   
   const duration = Math.floor((Date.now() - currentSession.startTime) / 1000);
   
+  // Send :shutdown command to server
+  const loadingToast = showInfo('Ending Session', 'Sending shutdown command to server...');
+  
+  try {
+    const response = await fetch(`/api/erlc/command/${serverId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        accountID: accountID,
+        command: ':shutdown'
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      console.log('✅ Shutdown command sent successfully');
+      loadingToast.remove();
+      showSuccess('Shutdown Command Sent', 'Server shutdown initiated');
+    } else {
+      console.error('❌ Failed to send shutdown command:', data.error);
+      loadingToast.remove();
+      showInfo('Session Ended', 'Could not send shutdown command, but session ended');
+    }
+  } catch (error) {
+    console.error('Error sending shutdown command:', error);
+    loadingToast.remove();
+    showInfo('Session Ended', 'Session ended locally');
+  }
+  
+  // Save to history
   sessionHistory.unshift({
     ...currentSession,
     endTime: Date.now(),

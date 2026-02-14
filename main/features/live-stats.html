@@ -3,163 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Stats - Nexus Management</title>
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/dashboard/dashboard.css">
-  <link rel="stylesheet" href="/main/servers.css">
+  <title>Live Statistics - Nexus Management</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    .stats-hero {
-      background: linear-gradient(135deg, #1a0a2e 0%, #0a0a0a 100%);
-      padding: 6rem 2rem 3rem 2rem;
-      text-align: center;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .stats-container {
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #0f0f23;
+      color: #e4e4e7;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: rgba(15, 15, 35, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #a1a1aa;
+      text-decoration: none;
+      transition: color 0.3s;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      color: #8b5cf6;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.05));
+      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #71717a;
+      font-size: 1.1rem;
+    }
+
+    .server-name {
+      color: #8b5cf6;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .container {
       max-width: 1400px;
       margin: 0 auto;
       padding: 3rem 2rem;
     }
-    .overview-grid {
+
+    .stats-overview {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
       margin-bottom: 3rem;
     }
-    .stat-card {
-      background: rgba(26, 26, 26, 0.8);
-      border: 1px solid rgba(160, 32, 240, 0.3);
+
+    .stat-box {
+      background: rgba(24, 24, 37, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
       border-radius: 12px;
-      padding: 2rem;
-      text-align: center;
-      transition: all 0.3s ease;
+      padding: 1.5rem;
+      transition: all 0.3s;
     }
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(160, 32, 240, 0.3);
+
+    .stat-box:hover {
+      border-color: #8b5cf6;
+      transform: translateY(-2px);
     }
-    .stat-card h3 {
-      color: #999;
-      font-size: 0.9rem;
-      margin: 0 0 1rem 0;
+
+    .stat-label {
+      color: #71717a;
+      font-size: 0.875rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
     }
+
     .stat-value {
-      font-size: 3rem;
-      font-weight: bold;
-      color: #a020f0;
-      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #8b5cf6;
     }
+
     .section-title {
-      color: #fff;
-      font-size: 1.5rem;
-      margin: 3rem 0 1.5rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 3rem 0 1.5rem;
+      color: #e4e4e7;
     }
-    .section-title i { color: #a020f0; }
-    .players-grid, .staff-grid {
+
+    .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1rem;
-      margin-bottom: 3rem;
     }
-    .player-card, .staff-card {
-      background: rgba(26, 26, 26, 0.6);
-      border: 1px solid rgba(160, 32, 240, 0.2);
-      border-radius: 8px;
+
+    .card {
+      background: rgba(24, 24, 37, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 12px;
       padding: 1.25rem;
       display: flex;
-      align-items: center;
       gap: 1rem;
-      transition: all 0.2s ease;
+      transition: all 0.3s;
     }
-    .player-card:hover, .staff-card:hover {
-      border-color: #a020f0;
-      transform: translateX(5px);
+
+    .card:hover {
+      border-color: #8b5cf6;
+      transform: translateX(4px);
     }
-    .player-avatar, .staff-avatar {
+
+    .avatar {
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #a020f0, #7a0fcf);
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      color: #fff;
-      flex-shrink: 0;
+      font-weight: 700;
+      color: white;
     }
-    .player-info, .staff-info { flex: 1; }
-    .player-name, .staff-name {
-      color: #fff;
+
+    .card-info {
+      flex: 1;
+    }
+
+    .card-name {
       font-weight: 600;
-      margin: 0 0 0.25rem 0;
-      font-size: 1rem;
+      color: #e4e4e7;
+      margin-bottom: 0.25rem;
     }
-    .player-details, .staff-details {
-      color: #999;
-      font-size: 0.85rem;
-      margin: 0;
-    }
-    .team-badge {
-      display: inline-block;
-      padding: 0.25rem 0.6rem;
+
+    .badge {
+      padding: 0.25rem 0.5rem;
       border-radius: 4px;
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
       margin-right: 0.5rem;
     }
-    .team-police { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
-    .team-sheriff { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
-    .team-fire { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-    .team-dot { background: rgba(249, 115, 22, 0.2); color: #fb923c; }
-    .team-civilian { background: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+
+    .badge-police { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .badge-sheriff { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+    .badge-fire { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .badge-civilian { background: rgba(156, 163, 175, 0.2); color: #9ca3af; }
     .status-online { color: #4ade80; }
-    .status-offline { color: #6b7280; }
-    .permission-badge {
-      display: inline-block;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: rgba(160, 32, 240, 0.2);
-      color: #a020f0;
-    }
-    .permission-admin { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-    .permission-mod { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
-    .empty-state {
-      text-align: center;
-      padding: 4rem;
-      color: #666;
-    }
+    .status-offline { color: #71717a; }
+
     .refresh-btn {
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      width: 60px;
-      height: 60px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #a020f0, #7a0fcf);
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
       border: none;
-      color: #fff;
-      font-size: 1.5rem;
+      color: white;
+      font-size: 1.25rem;
       cursor: pointer;
-      box-shadow: 0 5px 20px rgba(160, 32, 240, 0.5);
-      transition: all 0.3s ease;
-      z-index: 100;
+      transition: all 0.3s;
     }
+
     .refresh-btn:hover {
       transform: scale(1.1) rotate(180deg);
     }
-    .refresh-btn.loading {
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #71717a;
+      border-top: 1px solid rgba(139, 92, 246, 0.1);
+      margin-top: 4rem;
     }
   </style>
 </head>
@@ -169,55 +226,49 @@
     <ul class="nav-links">
       <li><a href="#" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
       <li><a href="#" id="serverDashLink"><i class="fa-solid fa-server"></i> Server</a></li>
-      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> All Servers</a></li>
+      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> Servers</a></li>
     </ul>
   </nav>
 
-  <section class="stats-hero">
+  <section class="hero">
     <h1><i class="fa-solid fa-chart-line"></i> Live Statistics</h1>
-    <p class="tagline">Real-time server data from ER:LC</p>
-    <p class="subtext" id="serverName">Loading...</p>
+    <p>Real-time server data from ER:LC</p>
+    <p class="server-name" id="serverName">Loading...</p>
   </section>
 
-  <div class="stats-container">
-    <div class="overview-grid">
-      <div class="stat-card">
-        <h3><i class="fa-solid fa-users"></i> Players Online</h3>
-        <p class="stat-value" id="totalPlayers">--</p>
+  <div class="container">
+    <div class="stats-overview">
+      <div class="stat-box">
+        <div class="stat-label"><i class="fa-solid fa-users"></i> Players Online</div>
+        <div class="stat-value" id="totalPlayers">--</div>
       </div>
-      <div class="stat-card">
-        <h3><i class="fa-solid fa-user-shield"></i> Staff Online</h3>
-        <p class="stat-value" id="staffOnline">--</p>
+      <div class="stat-box">
+        <div class="stat-label"><i class="fa-solid fa-user-shield"></i> Staff Online</div>
+        <div class="stat-value" id="staffOnline">--</div>
       </div>
-      <div class="stat-card">
-        <h3><i class="fa-solid fa-list"></i> Queue</h3>
-        <p class="stat-value" id="queueCount">--</p>
+      <div class="stat-box">
+        <div class="stat-label"><i class="fa-solid fa-list"></i> Queue</div>
+        <div class="stat-value" id="queueCount">--</div>
       </div>
-      <div class="stat-card">
-        <h3><i class="fa-solid fa-map"></i> Current Map</h3>
-        <p class="stat-value" style="font-size: 1.5rem;" id="currentMap">--</p>
+      <div class="stat-box">
+        <div class="stat-label"><i class="fa-solid fa-map"></i> Current Map</div>
+        <div class="stat-value" style="font-size: 1.25rem;" id="currentMap">--</div>
       </div>
     </div>
 
     <h2 class="section-title"><i class="fa-solid fa-users"></i> Active Players</h2>
-    <div id="playersList" class="players-grid">
-      <div class="empty-state">
-        <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: #a020f0;"></i>
-        <p>Loading players...</p>
-      </div>
+    <div id="playersList" class="cards-grid">
+      <p style="text-align:center;color:#71717a;padding:2rem">Loading...</p>
     </div>
 
     <h2 class="section-title"><i class="fa-solid fa-user-shield"></i> Server Staff</h2>
-    <div id="staffList" class="staff-grid">
-      <div class="empty-state">
-        <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: #a020f0;"></i>
-        <p>Loading staff...</p>
-      </div>
+    <div id="staffList" class="cards-grid">
+      <p style="text-align:center;color:#71717a;padding:2rem">Loading...</p>
     </div>
   </div>
 
-  <button class="refresh-btn" onclick="loadAllData()" title="Refresh Data">
-    <i class="fa-solid fa-rotate" id="refreshIcon"></i>
+  <button class="refresh-btn" onclick="loadAllData()">
+    <i class="fa-solid fa-rotate"></i>
   </button>
 
   <footer>

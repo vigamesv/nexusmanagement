@@ -4,123 +4,219 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sessions Management - Nexus Management</title>
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/dashboard/dashboard.css">
-  <link rel="stylesheet" href="/main/servers.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    .sessions-hero {
-      background: linear-gradient(135deg, #1a0a2e 0%, #0a0a0a 100%);
-      padding: 6rem 2rem 3rem 2rem;
-      text-align: center;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .sessions-container {
-      max-width: 1200px;
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #0f0f23;
+      color: #e4e4e7;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: rgba(15, 15, 35, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #a1a1aa;
+      text-decoration: none;
+      transition: color 0.3s;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      color: #8b5cf6;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.05));
+      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #71717a;
+      font-size: 1.1rem;
+    }
+
+    .server-name {
+      color: #8b5cf6;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    .container {
+      max-width: 1000px;
       margin: 0 auto;
       padding: 3rem 2rem;
     }
+
     .session-card {
-      background: rgba(26, 26, 26, 0.8);
-      border: 1px solid rgba(160, 32, 240, 0.3);
+      background: rgba(24, 24, 37, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
       border-radius: 12px;
       padding: 2rem;
       margin-bottom: 2rem;
     }
-    .session-status {
+
+    .status-section {
       text-align: center;
-      padding: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
       margin-bottom: 2rem;
     }
+
     .status-badge {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
       padding: 1rem 2rem;
       border-radius: 50px;
       font-size: 1.25rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      animation: pulse 2s infinite;
     }
+
     .status-badge.active {
-      background: rgba(34, 197, 94, 0.2);
+      background: rgba(74, 222, 128, 0.2);
       color: #4ade80;
       border: 2px solid #4ade80;
     }
+
     .status-badge.inactive {
-      background: rgba(107, 114, 128, 0.2);
-      color: #9ca3af;
-      border: 2px solid #6b7280;
+      background: rgba(113, 113, 122, 0.2);
+      color: #71717a;
+      border: 2px solid #71717a;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-    .session-metrics {
+
+    .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1.5rem;
       margin: 2rem 0;
     }
-    .metric-box {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(160, 32, 240, 0.2);
+
+    .metric {
+      background: rgba(15, 15, 35, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
       border-radius: 8px;
       padding: 1.5rem;
       text-align: center;
     }
+
     .metric-label {
-      color: #999;
-      font-size: 0.9rem;
+      color: #71717a;
+      font-size: 0.875rem;
+      font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
       margin-bottom: 0.75rem;
     }
+
     .metric-value {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #a020f0;
-      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #8b5cf6;
+      font-family: 'Courier New', monospace;
     }
-    .session-controls {
+
+    .controls {
       display: flex;
       gap: 1rem;
       justify-content: center;
-      flex-wrap: wrap;
       margin: 2rem 0;
     }
-    .session-btn {
+
+    .btn {
       padding: 1rem 2rem;
       border: none;
       border-radius: 8px;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
-    .session-btn.start {
+
+    .btn-start {
       background: linear-gradient(135deg, #4ade80, #22c55e);
-      color: #fff;
+      color: white;
     }
-    .session-btn.end {
-      background: linear-gradient(135deg, #f87171, #ef4444);
-      color: #fff;
-    }
-    .session-btn:hover {
+
+    .btn-start:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(160, 32, 240, 0.3);
+      box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4);
     }
-    .session-btn:disabled {
+
+    .btn-end {
+      background: linear-gradient(135deg, #f87171, #ef4444);
+      color: white;
+    }
+
+    .btn-end:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(248, 113, 113, 0.4);
+    }
+
+    .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
-    .session-history {
-      margin-top: 3rem;
+
+    .history-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 3rem 0 1.5rem;
+      color: #e4e4e7;
     }
+
     .history-item {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(160, 32, 240, 0.2);
+      background: rgba(24, 24, 37, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-left: 4px solid #8b5cf6;
       border-radius: 8px;
       padding: 1.25rem;
       margin-bottom: 1rem;
@@ -128,22 +224,40 @@
       justify-content: space-between;
       align-items: center;
     }
+
     .history-info h4 {
-      color: #fff;
-      margin: 0 0 0.5rem 0;
+      color: #e4e4e7;
+      margin-bottom: 0.5rem;
     }
+
     .history-info p {
-      color: #999;
-      margin: 0;
-      font-size: 0.9rem;
+      color: #71717a;
+      font-size: 0.875rem;
     }
-    .history-stats {
-      text-align: right;
-    }
+
     .history-duration {
       font-size: 1.5rem;
-      font-weight: bold;
-      color: #a020f0;
+      font-weight: 700;
+      color: #8b5cf6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #71717a;
+      border-top: 1px solid rgba(139, 92, 246, 0.1);
+      margin-top: 4rem;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -153,54 +267,53 @@
     <ul class="nav-links">
       <li><a href="#" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
       <li><a href="#" id="serverDashLink"><i class="fa-solid fa-server"></i> Server</a></li>
-      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> All Servers</a></li>
+      <li><a href="#" id="serversLink"><i class="fa-solid fa-list"></i> Servers</a></li>
     </ul>
   </nav>
 
-  <section class="sessions-hero">
+  <section class="hero">
     <h1><i class="fa-solid fa-calendar-check"></i> Sessions Management</h1>
-    <p class="tagline">Track and manage SSU/Shutdown sessions</p>
-    <p class="subtext" id="serverName">Loading...</p>
+    <p>Track and manage SSU/Shutdown sessions</p>
+    <p class="server-name" id="serverName">Loading...</p>
   </section>
 
-  <div class="sessions-container">
+  <div class="container">
     <div class="session-card">
-      <div class="session-status">
-        <div class="status-badge inactive" id="sessionStatus">No Active Session</div>
+      <div class="status-section">
+        <div class="status-badge inactive" id="sessionStatus">
+          <i class="fa-solid fa-circle"></i>
+          <span>No Active Session</span>
+        </div>
       </div>
 
-      <div class="session-metrics">
-        <div class="metric-box">
+      <div class="metrics-grid">
+        <div class="metric">
           <div class="metric-label"><i class="fa-solid fa-clock"></i> Duration</div>
           <div class="metric-value" id="sessionDuration">00:00:00</div>
         </div>
-        <div class="metric-box">
+        <div class="metric">
           <div class="metric-label"><i class="fa-solid fa-users"></i> Current Players</div>
           <div class="metric-value" id="playerCount">--</div>
         </div>
-        <div class="metric-box">
+        <div class="metric">
           <div class="metric-label"><i class="fa-solid fa-chart-line"></i> Peak Players</div>
           <div class="metric-value" id="peakPlayers">0</div>
         </div>
       </div>
 
-      <div class="session-controls">
-        <button class="session-btn start" id="startBtn" onclick="startSession()">
+      <div class="controls">
+        <button class="btn btn-start" id="startBtn" onclick="startSession()">
           <i class="fa-solid fa-play"></i> Start Session
         </button>
-        <button class="session-btn end" id="endBtn" onclick="endSession()" style="display: none;">
+        <button class="btn btn-end" id="endBtn" onclick="endSession()" style="display: none;">
           <i class="fa-solid fa-stop"></i> End Session
         </button>
       </div>
     </div>
 
-    <div class="session-card session-history">
-      <h2 style="color: #fff; margin-bottom: 1.5rem;">
-        <i class="fa-solid fa-history"></i> Session History
-      </h2>
-      <div id="historyList">
-        <p style="text-align: center; color: #666; padding: 2rem;">No previous sessions</p>
-      </div>
+    <h2 class="history-title"><i class="fa-solid fa-history"></i> Session History</h2>
+    <div id="historyList">
+      <p style="text-align: center; color: #71717a; padding: 2rem;">No previous sessions</p>
     </div>
   </div>
 
