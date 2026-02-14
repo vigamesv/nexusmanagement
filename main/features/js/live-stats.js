@@ -82,7 +82,9 @@ function getPermissionBadge(permission) {
 // Load all data
 async function loadAllData() {
   const refreshIcon = document.getElementById('refreshIcon');
-  refreshIcon.classList.add('loading');
+  if (refreshIcon) {
+    refreshIcon.classList.add('loading');
+  }
 
   try {
     // Load server info
@@ -132,7 +134,9 @@ async function loadAllData() {
     console.error('Error loading data:', error);
     showError('Failed to Load', 'Could not fetch server data');
   } finally {
-    refreshIcon.classList.remove('loading');
+    if (refreshIcon) {
+      refreshIcon.classList.remove('loading');
+    }
   }
 }
 
