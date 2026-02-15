@@ -326,13 +326,15 @@
           </span>
         </div>
       </div>
-
+		<script>
+		    const linkbtn = document.getElementById("/link.html?:accountID")
+		</script>
       <div class="activity-feed" id="activityFeed">
         <div class="empty-state">
           <i class="fa-solid fa-clock-rotate-left"></i>
           <p style="font-size: 1.125rem; font-weight: 600; color: #cbd5e1;">No recent activity</p>
           <p style="font-size: 0.9375rem;">Link your Discord server to see session starts, shifts, and more</p>
-          <a href="/link.html?id=:accountID" class="btn-primary">
+          <a id="linkbtn" class="btn-primary">
             <i class="fa-brands fa-discord"></i> Link Discord Server
           </a>
         </div>
