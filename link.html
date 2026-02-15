@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Discord Server - Nexus Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #ffffff;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: rgba(26, 26, 46, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    nav .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    nav .nav-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav .nav-links a:hover {
+      color: #667eea;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem 3rem 2rem;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #94a3b8;
+      font-size: 1.1rem;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+
+    .link-card {
+      background: rgba(26, 26, 46, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .step:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+      color: #e2e8f0;
+    }
+
+    .step-content p {
+      color: #94a3b8;
+      font-size: 0.9375rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: 0.9375rem;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: rgba(15, 15, 35, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #64748b;
+    }
+
+    .code-input {
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 0.5rem;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      display: none;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .alert.show {
+      display: flex;
+    }
+
+    .alert-success {
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: #34d399;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    .alert-info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #3b82f6;
+    }
+
+    .alert i {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(102, 126, 234, 0.2);
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #64748b;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 4rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .link-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <div class="logo">Nexus Management</div>
+      <ul class="nav-links">
+        <li><a href="/dashboard/user.html" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+        <li><a href="/main/servers.html" id="serversLink"><i class="fa-solid fa-server"></i> Servers</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1><i class="fa-brands fa-discord"></i> Link Discord Server</h1>
+    <p>Connect your Discord server to Nexus Management</p>
+  </section>
+
+  <div class="container">
+    <div class="link-card">
+      <div id="instructions">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Run /link in Discord</h3>
+            <p>Open your Discord server and run the <code style="background: rgba(102, 126, 234, 0.2); padding: 0.25rem 0.5rem; border-radius: 4px;">/link</code> command in any channel</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Get your 6-digit code</h3>
+            <p>The bot will send you a unique 6-digit code (expires in 10 minutes)</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Enter code below</h3>
+            <p>Select your server and enter the code to complete the linking</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="alertContainer"></div>
+
+      <form id="linkForm">
+        <div class="form-group">
+          <label for="serverSelect"><i class="fa-solid fa-server"></i> Select Server</label>
+          <select id="serverSelect" required>
+            <option value="">Loading servers...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="linkCode"><i class="fa-solid fa-key"></i> Enter Link Code</label>
+          <input 
+            type="text" 
+            id="linkCode" 
+            class="code-input"
+            placeholder="ABC123"
+            maxlength="6"
+            pattern="[A-Z0-9]{6}"
+            required
+            autocomplete="off"
+          >
+        </div>
+
+        <button type="submit" class="btn-primary" id="submitBtn">
+          <i class="fa-solid fa-link"></i> Link Server
+        </button>
+      </form>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p style="color: #94a3b8;">Linking your server...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Nexus Management. | We are not affiliated with ER:LC in any way.</p>
+  </footer>
+
+  <script>
+    const accountID = localStorage.getItem('accountID');
+
+    if (accountID) {
+      document.getElementById('dashboardLink').href = `/dashboard/user.html?ID=${accountID}`;
+      document.getElementById('serversLink').href = `/main/servers.html?ID=${accountID}`;
+    }
+
+    function showAlert(type, message) {
+      const container = document.getElementById('alertContainer');
+      const icons = {
+        success: 'fa-circle-check',
+        error: 'fa-circle-xmark',
+        info: 'fa-circle-info'
+      };
+
+      container.innerHTML = `
+        <div class="alert alert-${type} show">
+          <i class="fa-solid ${icons[type]}"></i>
+          <div>${message}</div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        container.innerHTML = '';
+      }, 10000);
+    }
+
+    async function loadServers() {
+      try {
+        const response = await fetch(`/api/servers/user?accountID=${accountID}`);
+        const data = await response.json();
+        
+        const select = document.getElementById('serverSelect');
+        
+        if (data.success && data.servers.length > 0) {
+          select.innerHTML = '<option value="">Select a server...</option>';
+          data.servers.forEach(server => {
+            const option = document.createElement('option');
+            option.value = server.id;
+            option.textContent = server.name;
+            select.appendChild(option);
+          });
+        } else {
+          select.innerHTML = '<option value="">No servers found</option>';
+          showAlert('info', 'Please create a server first on your dashboard.');
+        }
+      } catch (error) {
+        console.error('Error loading servers:', error);
+        showAlert('error', 'Failed to load servers. Please refresh the page.');
+      }
+    }
+
+    document.getElementById('linkCode').addEventListener('input', (e) => {
+      e.target.value = e.target.value.toUpperCase();
+    });
+
+    document.getElementById('linkForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const serverId = document.getElementById('serverSelect').value;
+      const code = document.getElementById('linkCode').value.toUpperCase();
+
+      if (!serverId) {
+        showAlert('error', 'Please select a server.');
+        return;
+      }
+
+      if (code.length !== 6) {
+        showAlert('error', 'Please enter a valid 6-digit code.');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      const formElement = document.getElementById('linkForm');
+      const loading = document.getElementById('loading');
+
+      submitBtn.disabled = true;
+      formElement.style.display = 'none';
+      loading.classList.add('show');
+
+      try {
+        const response = await fetch('/api/servers/link', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            serverId: serverId,
+            code: code,
+            accountID: accountID
+          })
+        });
+
+        const data = await response.json();
+
+        loading.classList.remove('show');
+        formElement.style.display = 'block';
+        submitBtn.disabled = false;
+
+        if (data.success) {
+          showAlert('success', `✅ Successfully linked to ${data.discordGuildName}!`);
+          document.getElementById('linkCode').value = '';
+          
+          setTimeout(() => {
+            window.location.href = `/main/server.html?id=${serverId}&accountID=${accountID}`;
+          }, 2000);
+        } else {
+          showAlert('error', data.error || 'Failed to link server. Please check your code and try again.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        loading.classList.remove('show');
+        formElement.style.display = 'block';
+        submitBtn.disabled = false;
+        showAlert('error', 'An error occurred. Please try again.');
+      }
+    });
+
+    window.addEventListener('load', () => {
+      if (!accountID) {
+        window.location.href = '/login';
+        return;
+      }
+      
+      loadServers();
+    });
+  </script>
+</body>
+</html>
