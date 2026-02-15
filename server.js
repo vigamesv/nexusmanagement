@@ -1332,7 +1332,7 @@ process.on('SIGTERM', () => {
     console.log('Database pool closed');
   });
 });
-const pool = new Pool({
+const pool1 = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
@@ -1346,7 +1346,7 @@ router.get('/api/servers/user', async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
+    const result = await pool1.query(
       `SELECT id, name, created_at FROM servers WHERE account_id = $1 ORDER BY created_at DESC`,
       [accountID]
     );
@@ -1374,7 +1374,7 @@ router.post('/api/servers/link', async (req, res) => {
 
   try {
     // 1. Verify code exists and hasn't expired
-    const codeResult = await pool.query(
+    const codeResult = await pool1.query(
       `SELECT * FROM link_codes 
        WHERE code = $1 AND expires_at > NOW()`,
       [code.toUpperCase()]
@@ -1390,7 +1390,7 @@ router.post('/api/servers/link', async (req, res) => {
     const linkData = codeResult.rows[0];
 
     // 2. Verify server belongs to user
-    const serverResult = await pool.query(
+    const serverResult = await pool1.query(
       `SELECT * FROM servers 
        WHERE id = $1 AND account_id = $2`,
       [serverId, accountID]
@@ -1404,7 +1404,7 @@ router.post('/api/servers/link', async (req, res) => {
     }
 
     // 3. Check if Discord server is already linked to another website server
-    const existingLink = await pool.query(
+    const existingLink = await pool1.query(
       `SELECT * FROM server_links 
        WHERE discord_guild_id = $1`,
       [linkData.discord_guild_id]
@@ -1418,7 +1418,7 @@ router.post('/api/servers/link', async (req, res) => {
     }
 
     // 4. Create or update link
-    await pool.query(
+    await pool1.query(
       `INSERT INTO server_links 
        (website_server_id, discord_guild_id, discord_guild_name, owner_account_id, linked_at)
        VALUES ($1, $2, $3, $4, NOW())
@@ -1431,13 +1431,13 @@ router.post('/api/servers/link', async (req, res) => {
     );
 
     // 5. Delete used code
-    await pool.query(
+    await pool1.query(
       `DELETE FROM link_codes WHERE code = $1`,
       [code.toUpperCase()]
     );
 
     // 6. Log activity
-    await pool.query(
+    await pool1.query(
       `INSERT INTO activity_logs (server_id, type, message, timestamp)
        VALUES ($1, 'discord_link', $2, NOW())`,
       [serverId, `Discord server "${linkData.discord_guild_name}" linked`]
@@ -1469,7 +1469,7 @@ router.get('/api/servers/:serverId/discord-link', async (req, res) => {
 
   try {
     // Verify server ownership
-    const serverCheck = await pool.query(
+    const serverCheck = await pool1.query(
       `SELECT * FROM servers WHERE id = $1 AND account_id = $2`,
       [serverId, accountID]
     );
@@ -1479,7 +1479,7 @@ router.get('/api/servers/:serverId/discord-link', async (req, res) => {
     }
 
     // Check for link
-    const linkResult = await pool.query(
+    const linkResult = await pool1.query(
       `SELECT * FROM server_links WHERE website_server_id = $1`,
       [serverId]
     );
@@ -1515,7 +1515,7 @@ router.post('/api/servers/:serverId/unlink-discord', async (req, res) => {
 
   try {
     // Verify ownership
-    const serverCheck = await pool.query(
+    const serverCheck = await pool1.query(
       `SELECT * FROM servers WHERE id = $1 AND account_id = $2`,
       [serverId, accountID]
     );
@@ -1525,14 +1525,14 @@ router.post('/api/servers/:serverId/unlink-discord', async (req, res) => {
     }
 
     // Delete link
-    const result = await pool.query(
+    const result = await pool1.query(
       `DELETE FROM server_links WHERE website_server_id = $1 RETURNING discord_guild_name`,
       [serverId]
     );
 
     if (result.rows.length > 0) {
       // Log activity
-      await pool.query(
+      await pool1.query(
         `INSERT INTO activity_logs (server_id, type, message, timestamp)
          VALUES ($1, 'discord_unlink', $2, NOW())`,
         [serverId, `Discord server "${result.rows[0].discord_guild_name}" unlinked`]
@@ -1565,7 +1565,7 @@ router.get('/api/servers/:serverId/activity', async (req, res) => {
 
   try {
     // Verify ownership
-    const serverCheck = await pool.query(
+    const serverCheck = await pool1.query(
       `SELECT * FROM servers WHERE id = $1 AND account_id = $2`,
       [serverId, accountID]
     );
@@ -1575,7 +1575,7 @@ router.get('/api/servers/:serverId/activity', async (req, res) => {
     }
 
     // Get linked Discord guild ID
-    const linkResult = await pool.query(
+    const linkResult = await pool1.query(
       `SELECT discord_guild_id FROM server_links WHERE website_server_id = $1`,
       [serverId]
     );
@@ -1590,7 +1590,7 @@ router.get('/api/servers/:serverId/activity', async (req, res) => {
     const activities = [];
 
     // Sessions
-    const sessions = await pool.query(
+    const sessions = await pool1.query(
       `SELECT * FROM sessions WHERE guild_id = $1 ORDER BY timestamp DESC LIMIT 10`,
       [guildId]
     );
@@ -1607,7 +1607,7 @@ router.get('/api/servers/:serverId/activity', async (req, res) => {
     });
 
     // Shifts
-    const shifts = await pool.query(
+    const shifts = await pool1.query(
       `SELECT * FROM shifts WHERE guild_id = $1 AND end_time IS NOT NULL ORDER BY end_time DESC LIMIT 10`,
       [guildId]
     );
