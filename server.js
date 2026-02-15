@@ -1305,7 +1305,351 @@ app.post("/api/erlc/command/:serverId", async (req, res) => {
     res.json({ success: false, error: error.message });
   }
 });
+// ============= DISCORD LINKING API ENDPOINTS =============
+// Add these routes to your existing server.js file (before the 404 handler)
 
+// GET /api/servers/user - Get user's servers for dropdown (modified to use owner_account_id)
+app.get('/api/servers/user', async (req, res) => {
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.json({ success: false, error: 'Account ID required' });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT id, name, created_at FROM servers WHERE owner_account_id = $1 ORDER BY created_at DESC`,
+      [accountID]
+    );
+
+    res.json({
+      success: true,
+      servers: result.rows
+    });
+  } catch (error) {
+    console.error('Error fetching servers:', error);
+    res.json({ success: false, error: 'Database error' });
+  }
+});
+
+// POST /api/servers/link - Link Discord server to website server
+app.post('/api/servers/link', async (req, res) => {
+  const { serverId, code, accountID } = req.body;
+
+  if (!serverId || !code || !accountID) {
+    return res.json({ 
+      success: false, 
+      error: 'Server ID, code, and account ID required' 
+    });
+  }
+
+  try {
+    // 1. Verify code exists and hasn't expired
+    const codeResult = await pool.query(
+      `SELECT * FROM link_codes 
+       WHERE code = $1 AND expires_at > NOW()`,
+      [code.toUpperCase()]
+    );
+
+    if (codeResult.rows.length === 0) {
+      return res.json({ 
+        success: false, 
+        error: 'Invalid or expired code. Please run /link in Discord again.' 
+      });
+    }
+
+    const linkData = codeResult.rows[0];
+
+    // 2. Verify server belongs to user
+    const serverResult = await pool.query(
+      `SELECT * FROM servers 
+       WHERE id = $1 AND owner_account_id = $2`,
+      [serverId, accountID]
+    );
+
+    if (serverResult.rows.length === 0) {
+      return res.json({ 
+        success: false, 
+        error: 'Server not found or access denied' 
+      });
+    }
+
+    // 3. Check if Discord server is already linked
+    const existingLink = await pool.query(
+      `SELECT * FROM server_links 
+       WHERE discord_guild_id = $1`,
+      [linkData.discord_guild_id]
+    );
+
+    if (existingLink.rows.length > 0 && existingLink.rows[0].website_server_id !== serverId) {
+      return res.json({ 
+        success: false, 
+        error: 'This Discord server is already linked to another Nexus server.' 
+      });
+    }
+
+    // 4. Create or update link
+    await pool.query(
+      `INSERT INTO server_links 
+       (website_server_id, discord_guild_id, discord_guild_name, owner_account_id, linked_at)
+       VALUES ($1, $2, $3, $4, NOW())
+       ON CONFLICT (discord_guild_id) 
+       DO UPDATE SET 
+         website_server_id = $1,
+         owner_account_id = $4,
+         linked_at = NOW()`,
+      [serverId, linkData.discord_guild_id, linkData.discord_guild_name, accountID]
+    );
+
+    // 5. Delete used code
+    await pool.query(`DELETE FROM link_codes WHERE code = $1`, [code.toUpperCase()]);
+
+    console.log(`✅ Discord server "${linkData.discord_guild_name}" linked to ${serverId}`);
+
+    res.json({ 
+      success: true,
+      discordGuildName: linkData.discord_guild_name,
+      discordGuildId: linkData.discord_guild_id
+    });
+
+  } catch (error) {
+    console.error('Error linking server:', error);
+    res.json({ success: false, error: 'Database error. Please try again.' });
+  }
+});
+
+// GET /api/servers/:serverId/discord-link - Check if server is linked
+app.get('/api/servers/:serverId/discord-link', async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.json({ success: false, error: 'Account ID required' });
+  }
+
+  try {
+    const serverCheck = await pool.query(
+      `SELECT * FROM servers WHERE id = $1 AND owner_account_id = $2`,
+      [serverId, accountID]
+    );
+
+    if (serverCheck.rows.length === 0) {
+      return res.json({ success: false, error: 'Access denied' });
+    }
+
+    const linkResult = await pool.query(
+      `SELECT * FROM server_links WHERE website_server_id = $1`,
+      [serverId]
+    );
+
+    if (linkResult.rows.length > 0) {
+      res.json({
+        success: true,
+        linked: true,
+        guildId: linkResult.rows[0].discord_guild_id,
+        guildName: linkResult.rows[0].discord_guild_name,
+        linkedAt: linkResult.rows[0].linked_at
+      });
+    } else {
+      res.json({ success: true, linked: false });
+    }
+  } catch (error) {
+    console.error('Error checking link:', error);
+    res.json({ success: false, error: 'Database error' });
+  }
+});
+
+// POST /api/servers/:serverId/unlink-discord
+app.post('/api/servers/:serverId/unlink-discord', async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.body;
+
+  if (!accountID) {
+    return res.json({ success: false, error: 'Account ID required' });
+  }
+
+  try {
+    const serverCheck = await pool.query(
+      `SELECT * FROM servers WHERE id = $1 AND owner_account_id = $2`,
+      [serverId, accountID]
+    );
+
+    if (serverCheck.rows.length === 0) {
+      return res.json({ success: false, error: 'Access denied' });
+    }
+
+    const result = await pool.query(
+      `DELETE FROM server_links WHERE website_server_id = $1 RETURNING discord_guild_name`,
+      [serverId]
+    );
+
+    if (result.rows.length > 0) {
+      res.json({ success: true, message: 'Discord server unlinked successfully' });
+    } else {
+      res.json({ success: false, error: 'No Discord server linked' });
+    }
+  } catch (error) {
+    console.error('Error unlinking:', error);
+    res.json({ success: false, error: 'Database error' });
+  }
+});
+
+// GET /api/servers/:serverId/activity - Get activity logs
+app.get('/api/servers/:serverId/activity', async (req, res) => {
+  const { serverId } = req.params;
+  const { accountID } = req.query;
+
+  if (!accountID) {
+    return res.json({ success: false, error: 'Account ID required' });
+  }
+
+  try {
+    const serverCheck = await pool.query(
+      `SELECT * FROM servers WHERE id = $1 AND owner_account_id = $2`,
+      [serverId, accountID]
+    );
+
+    if (serverCheck.rows.length === 0) {
+      return res.json({ success: false, error: 'Access denied' });
+    }
+
+    const linkResult = await pool.query(
+      `SELECT discord_guild_id FROM server_links WHERE website_server_id = $1`,
+      [serverId]
+    );
+
+    if (linkResult.rows.length === 0) {
+      return res.json({ success: true, activity: [] });
+    }
+
+    const guildId = linkResult.rows[0].discord_guild_id;
+    const activities = [];
+
+    try {
+      const sessions = await pool.query(
+        `SELECT * FROM sessions WHERE guild_id = $1 ORDER BY timestamp DESC LIMIT 10`,
+        [guildId]
+      );
+
+      sessions.rows.forEach(s => {
+        activities.push({
+          type: s.action === 'start' ? 'success' : 'info',
+          icon: s.action === 'start' ? 'fa-play' : 'fa-stop',
+          message: `${s.username} ${s.action === 'start' ? 'started' : 'ended'} ${s.session_type || ''} session`,
+          timeAgo: getTimeAgo(new Date(s.timestamp)),
+          timestamp: s.timestamp
+        });
+      });
+    } catch (e) {
+      console.log('Sessions table not found');
+    }
+
+    try {
+      const shifts = await pool.query(
+        `SELECT * FROM shifts WHERE guild_id = $1 AND end_time IS NOT NULL ORDER BY end_time DESC LIMIT 10`,
+        [guildId]
+      );
+
+      shifts.rows.forEach(s => {
+        const hours = Math.floor(s.duration_seconds / 3600);
+        const minutes = Math.floor((s.duration_seconds % 3600) / 60);
+        activities.push({
+          type: 'info',
+          icon: 'fa-clock',
+          message: `${s.username} ended shift as ${s.role} (${hours}h ${minutes}m)`,
+          timeAgo: getTimeAgo(new Date(s.end_time)),
+          timestamp: s.end_time
+        });
+      });
+    } catch (e) {
+      console.log('Shifts table not found');
+    }
+
+    activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    res.json({ success: true, activity: activities.slice(0, 15) });
+  } catch (error) {
+    console.error('Error fetching activity:', error);
+    res.json({ success: false, error: 'Database error' });
+  }
+});
+
+// POST /api/discord/erlc/command - Proxy commands from bot
+app.post('/api/discord/erlc/command', async (req, res) => {
+  const { guildId, command } = req.body;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || authHeader !== `Bearer ${process.env.BOT_API_KEY}`) {
+    return res.json({ success: false, error: 'Unauthorized' });
+  }
+
+  try {
+    const linkResult = await pool.query(
+      `SELECT website_server_id FROM server_links WHERE discord_guild_id = $1`,
+      [guildId]
+    );
+
+    if (linkResult.rows.length === 0) {
+      return res.json({ success: false, error: 'Discord server not linked' });
+    }
+
+    const serverId = linkResult.rows[0].website_server_id;
+
+    const serverResult = await pool.query(`SELECT api_key FROM servers WHERE id = $1`, [serverId]);
+
+    if (serverResult.rows.length === 0 || !serverResult.rows[0].api_key) {
+      return res.json({ success: false, error: 'ER:LC API key not set' });
+    }
+
+    const apiKey = serverResult.rows[0].api_key;
+    
+    const erlcResponse = await fetch(`https://api.policeroleplay.community/v1/server/command`, {
+      method: 'POST',
+      headers: { 
+        'server-key': apiKey,
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
+      },
+      body: JSON.stringify({ command })
+    });
+
+    if (!erlcResponse.ok) {
+      return res.json({ success: false, error: `ER:LC API error: ${erlcResponse.status}` });
+    }
+
+    const result = await erlcResponse.json();
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error('Error sending command:', error);
+    res.json({ success: false, error: 'Failed to send command' });
+  }
+});
+
+// POST /api/discord/activity - Log activity from bot
+app.post('/api/discord/activity', async (req, res) => {
+  const { guildId, type, message } = req.body;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || authHeader !== `Bearer ${process.env.BOT_API_KEY}`) {
+    return res.json({ success: false, error: 'Unauthorized' });
+  }
+
+  try {
+    const linkResult = await pool.query(
+      `SELECT website_server_id FROM server_links WHERE discord_guild_id = $1`,
+      [guildId]
+    );
+
+    if (linkResult.rows.length === 0) {
+      return res.json({ success: false, error: 'Not linked' });
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error logging activity:', error);
+    res.json({ success: false, error: 'Failed to log' });
+  }
+});
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
@@ -1332,321 +1676,3 @@ process.on('SIGTERM', () => {
     console.log('Database pool closed');
   });
 });
-const pool1 = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
-
-// GET /api/servers/user - Get user's servers
-router.get('/api/servers/user', async (req, res) => {
-  const { accountID } = req.query;
-
-  if (!accountID) {
-    return res.json({ success: false, error: 'Account ID required' });
-  }
-
-  try {
-    const result = await pool1.query(
-      `SELECT id, name, created_at FROM servers WHERE account_id = $1 ORDER BY created_at DESC`,
-      [accountID]
-    );
-
-    res.json({
-      success: true,
-      servers: result.rows
-    });
-  } catch (error) {
-    console.error('Error fetching servers:', error);
-    res.json({ success: false, error: 'Database error' });
-  }
-});
-
-// POST /api/servers/link - Link Discord server to website server
-router.post('/api/servers/link', async (req, res) => {
-  const { serverId, code, accountID } = req.body;
-
-  if (!serverId || !code || !accountID) {
-    return res.json({ 
-      success: false, 
-      error: 'Server ID, code, and account ID required' 
-    });
-  }
-
-  try {
-    // 1. Verify code exists and hasn't expired
-    const codeResult = await pool1.query(
-      `SELECT * FROM link_codes 
-       WHERE code = $1 AND expires_at > NOW()`,
-      [code.toUpperCase()]
-    );
-
-    if (codeResult.rows.length === 0) {
-      return res.json({ 
-        success: false, 
-        error: 'Invalid or expired code. Please run /link in Discord again.' 
-      });
-    }
-
-    const linkData = codeResult.rows[0];
-
-    // 2. Verify server belongs to user
-    const serverResult = await pool1.query(
-      `SELECT * FROM servers 
-       WHERE id = $1 AND account_id = $2`,
-      [serverId, accountID]
-    );
-
-    if (serverResult.rows.length === 0) {
-      return res.json({ 
-        success: false, 
-        error: 'Server not found or access denied' 
-      });
-    }
-
-    // 3. Check if Discord server is already linked to another website server
-    const existingLink = await pool1.query(
-      `SELECT * FROM server_links 
-       WHERE discord_guild_id = $1`,
-      [linkData.discord_guild_id]
-    );
-
-    if (existingLink.rows.length > 0 && existingLink.rows[0].website_server_id !== serverId) {
-      return res.json({ 
-        success: false, 
-        error: 'This Discord server is already linked to another Nexus server. Please unlink it first.' 
-      });
-    }
-
-    // 4. Create or update link
-    await pool1.query(
-      `INSERT INTO server_links 
-       (website_server_id, discord_guild_id, discord_guild_name, owner_account_id, linked_at)
-       VALUES ($1, $2, $3, $4, NOW())
-       ON CONFLICT (discord_guild_id) 
-       DO UPDATE SET 
-         website_server_id = $1,
-         owner_account_id = $4,
-         linked_at = NOW()`,
-      [serverId, linkData.discord_guild_id, linkData.discord_guild_name, accountID]
-    );
-
-    // 5. Delete used code
-    await pool1.query(
-      `DELETE FROM link_codes WHERE code = $1`,
-      [code.toUpperCase()]
-    );
-
-    // 6. Log activity
-    await pool1.query(
-      `INSERT INTO activity_logs (server_id, type, message, timestamp)
-       VALUES ($1, 'discord_link', $2, NOW())`,
-      [serverId, `Discord server "${linkData.discord_guild_name}" linked`]
-    );
-
-    res.json({ 
-      success: true,
-      discordGuildName: linkData.discord_guild_name,
-      discordGuildId: linkData.discord_guild_id
-    });
-
-  } catch (error) {
-    console.error('Error linking server:', error);
-    res.json({ 
-      success: false, 
-      error: 'Database error. Please try again.' 
-    });
-  }
-});
-
-// GET /api/servers/:serverId/discord-link - Check if server is linked to Discord
-router.get('/api/servers/:serverId/discord-link', async (req, res) => {
-  const { serverId } = req.params;
-  const { accountID } = req.query;
-
-  if (!accountID) {
-    return res.json({ success: false, error: 'Account ID required' });
-  }
-
-  try {
-    // Verify server ownership
-    const serverCheck = await pool1.query(
-      `SELECT * FROM servers WHERE id = $1 AND account_id = $2`,
-      [serverId, accountID]
-    );
-
-    if (serverCheck.rows.length === 0) {
-      return res.json({ success: false, error: 'Access denied' });
-    }
-
-    // Check for link
-    const linkResult = await pool1.query(
-      `SELECT * FROM server_links WHERE website_server_id = $1`,
-      [serverId]
-    );
-
-    if (linkResult.rows.length > 0) {
-      res.json({
-        success: true,
-        linked: true,
-        guildId: linkResult.rows[0].discord_guild_id,
-        guildName: linkResult.rows[0].discord_guild_name,
-        linkedAt: linkResult.rows[0].linked_at
-      });
-    } else {
-      res.json({
-        success: true,
-        linked: false
-      });
-    }
-  } catch (error) {
-    console.error('Error checking link:', error);
-    res.json({ success: false, error: 'Database error' });
-  }
-});
-
-// POST /api/servers/:serverId/unlink-discord - Unlink Discord server
-router.post('/api/servers/:serverId/unlink-discord', async (req, res) => {
-  const { serverId } = req.params;
-  const { accountID } = req.body;
-
-  if (!accountID) {
-    return res.json({ success: false, error: 'Account ID required' });
-  }
-
-  try {
-    // Verify ownership
-    const serverCheck = await pool1.query(
-      `SELECT * FROM servers WHERE id = $1 AND account_id = $2`,
-      [serverId, accountID]
-    );
-
-    if (serverCheck.rows.length === 0) {
-      return res.json({ success: false, error: 'Access denied' });
-    }
-
-    // Delete link
-    const result = await pool1.query(
-      `DELETE FROM server_links WHERE website_server_id = $1 RETURNING discord_guild_name`,
-      [serverId]
-    );
-
-    if (result.rows.length > 0) {
-      // Log activity
-      await pool1.query(
-        `INSERT INTO activity_logs (server_id, type, message, timestamp)
-         VALUES ($1, 'discord_unlink', $2, NOW())`,
-        [serverId, `Discord server "${result.rows[0].discord_guild_name}" unlinked`]
-      );
-
-      res.json({ 
-        success: true,
-        message: 'Discord server unlinked successfully'
-      });
-    } else {
-      res.json({ 
-        success: false, 
-        error: 'No Discord server linked' 
-      });
-    }
-  } catch (error) {
-    console.error('Error unlinking:', error);
-    res.json({ success: false, error: 'Database error' });
-  }
-});
-
-// GET /api/servers/:serverId/activity - Get activity logs for server dashboard
-router.get('/api/servers/:serverId/activity', async (req, res) => {
-  const { serverId } = req.params;
-  const { accountID } = req.query;
-
-  if (!accountID) {
-    return res.json({ success: false, error: 'Account ID required' });
-  }
-
-  try {
-    // Verify ownership
-    const serverCheck = await pool1.query(
-      `SELECT * FROM servers WHERE id = $1 AND account_id = $2`,
-      [serverId, accountID]
-    );
-
-    if (serverCheck.rows.length === 0) {
-      return res.json({ success: false, error: 'Access denied' });
-    }
-
-    // Get linked Discord guild ID
-    const linkResult = await pool1.query(
-      `SELECT discord_guild_id FROM server_links WHERE website_server_id = $1`,
-      [serverId]
-    );
-
-    if (linkResult.rows.length === 0) {
-      return res.json({ success: true, activity: [] });
-    }
-
-    const guildId = linkResult.rows[0].discord_guild_id;
-
-    // Get recent activity from sessions, shifts, etc.
-    const activities = [];
-
-    // Sessions
-    const sessions = await pool1.query(
-      `SELECT * FROM sessions WHERE guild_id = $1 ORDER BY timestamp DESC LIMIT 10`,
-      [guildId]
-    );
-
-    sessions.rows.forEach(s => {
-      const timeAgo = getTimeAgo(new Date(s.timestamp));
-      activities.push({
-        type: s.action === 'start' ? 'success' : 'info',
-        icon: s.action === 'start' ? 'fa-play' : 'fa-stop',
-        message: `${s.username} ${s.action === 'start' ? 'started' : 'ended'} ${s.session_type || ''} session`,
-        timeAgo: timeAgo,
-        timestamp: s.timestamp
-      });
-    });
-
-    // Shifts
-    const shifts = await pool1.query(
-      `SELECT * FROM shifts WHERE guild_id = $1 AND end_time IS NOT NULL ORDER BY end_time DESC LIMIT 10`,
-      [guildId]
-    );
-
-    shifts.rows.forEach(s => {
-      const timeAgo = getTimeAgo(new Date(s.end_time));
-      const hours = Math.floor(s.duration_seconds / 3600);
-      const minutes = Math.floor((s.duration_seconds % 3600) / 60);
-      activities.push({
-        type: 'info',
-        icon: 'fa-clock',
-        message: `${s.username} ended shift as ${s.role} (${hours}h ${minutes}m)`,
-        timeAgo: timeAgo,
-        timestamp: s.end_time
-      });
-    });
-
-    // Sort by timestamp
-    activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-    res.json({
-      success: true,
-      activity: activities.slice(0, 15)
-    });
-
-  } catch (error) {
-    console.error('Error fetching activity:', error);
-    res.json({ success: false, error: 'Database error' });
-  }
-});
-
-function getTimeAgo(date) {
-  const seconds = Math.floor((new Date() - date) / 1000);
-  
-  if (seconds < 60) return 'Just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-  return `${Math.floor(seconds / 604800)}w ago`;
-}
-
-module.exports = router;
