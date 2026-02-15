@@ -1332,6 +1332,9 @@ process.on('SIGTERM', () => {
     console.log('Database pool closed');
   });
 });
+// SERVER LINKING API ENDPOINT
+const router = express.Router();
+
 const pool1 = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
