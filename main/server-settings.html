@@ -4,181 +4,393 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Server Settings - Nexus Management</title>
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/dashboard/dashboard.css">
-  <link rel="stylesheet" href="/main/servers.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #0f0f23;
+      color: #e4e4e7;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: rgba(15, 15, 35, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: #a1a1aa;
+      text-decoration: none;
+      transition: color 0.3s;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: #8b5cf6; }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.05));
+      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p { color: #71717a; font-size: 1.1rem; }
+
+    .container { max-width: 1000px; margin: 0 auto; padding: 3rem 2rem; }
+
+    .card {
+      background: rgba(24, 24, 37, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    }
+
+    .card-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #e4e4e7;
+    }
+
+    .card-header i { color: #8b5cf6; }
+
+    .form-group { margin-bottom: 1.5rem; }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #e4e4e7;
+      font-weight: 600;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(15, 15, 35, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 8px;
+      color: #e4e4e7;
+      font-size: 1rem;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #8b5cf6;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 0.5rem;
+      color: #71717a;
+      font-size: 0.875rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #8b5cf6;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .btn-group { display: flex; gap: 1rem; }
+
+    .link-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 8px;
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    .link-status.not-linked {
+      background: rgba(234, 179, 8, 0.1);
+      border-color: rgba(234, 179, 8, 0.3);
+      color: #fbbf24;
+    }
+
+    .danger-zone {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .danger-zone .card-header {
+      border-bottom-color: rgba(239, 68, 68, 0.2);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #71717a;
+      border-top: 1px solid rgba(139, 92, 246, 0.1);
+      margin-top: 4rem;
+    }
+  </style>
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar">
     <div class="logo">Nexus Management</div>
     <ul class="nav-links">
       <li><a href="/dashboard/user.html" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
       <li><a href="/main/servers.html" id="serversLink"><i class="fa-solid fa-server"></i> Servers</a></li>
-      <li><a href="/auth/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+      <li><a href="#" id="serverDashLink"><i class="fa-solid fa-chart-line"></i> Server Dashboard</a></li>
+      <li><a href="/auth/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
     </ul>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="servers-hero">
-    <div class="hero-content fade-in">
-      <h1><i class="fa-solid fa-cog"></i> Server Settings</h1>
-      <p class="tagline" id="serverName">Loading...</p>
-      <p class="subtext">Configure your server's ER:LC API integration</p>
-    </div>
+  <section class="hero">
+    <h1><i class="fa-solid fa-cog"></i> Server Settings</h1>
+    <p id="serverName">Loading...</p>
   </section>
 
-  <!-- Main Content -->
-  <section class="servers-content">
-    <div class="servers-container">
-      
-      <!-- API Configuration Card -->
-      <div class="dashboard-card reveal">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-key"></i> ER:LC API Configuration</h3>
-        </div>
-        <div class="card-body">
-          <p class="card-desc">
-            Connect your server to the ER:LC API to enable live stats, player management, and automated features.
-            <br><strong style="color: #ffc107;">⚠️ Important:</strong> You need your <strong>Server Key</strong> from your ER:LC private server settings.
-          </p>
-
-          <form id="apiForm">
-            <div class="form-group">
-              <label for="apiKey"><i class="fa-solid fa-key"></i> ER:LC Server Key</label>
-              <input type="password" id="apiKey" placeholder="Enter your ER:LC Server Key" required>
-              <small style="color: #999; display: block; margin-top: 0.5rem;">
-                <strong>How to get your Server Key:</strong><br>
-                1. Join your ER:LC private server<br>
-                2. Open Settings (gear icon top right)<br>
-                3. Find "ER:LC API" section<br>
-                4. Copy the Server Key shown there
-              </small>
-            </div>
-
-            <div class="api-status" id="apiStatus" style="display: none;">
-              <i class="fa-solid fa-circle-check"></i>
-              <span>API Connected Successfully</span>
-            </div>
-
-            <div class="button-group" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-              <button type="submit" class="primary-btn" style="flex: 1;">
-                <i class="fa-solid fa-check"></i> Save & Test Connection
-              </button>
-              <button type="button" class="secondary-btn" onclick="testConnection()" style="flex: 1;">
-                <i class="fa-solid fa-signal"></i> Test Connection
-              </button>
-            </div>
-          </form>
-        </div>
+  <div class="container">
+    
+    <!-- Discord Linking -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fa-brands fa-discord"></i>
+        <h3>Discord Integration</h3>
       </div>
-
-      <!-- Server Info Card -->
-      <div class="dashboard-card reveal" id="serverInfoCard">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-info-circle"></i> Server Information</h3>
+      <div id="discordStatus">
+        <div class="link-status not-linked">
+          <i class="fa-solid fa-link-slash"></i> Not Linked
         </div>
-        <div class="card-body">
-          <div class="server-details">
-            <div class="detail-row">
-              <span class="detail-label"><i class="fa-solid fa-server"></i> Server Name:</span>
-              <span class="detail-value" id="infoServerName">-</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label"><i class="fa-solid fa-users"></i> Current Players:</span>
-              <span class="detail-value" id="infoPlayers">-</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label"><i class="fa-solid fa-crown"></i> Owner:</span>
-              <span class="detail-value" id="infoOwner">-</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label"><i class="fa-solid fa-map"></i> Map:</span>
-              <span class="detail-value" id="infoMap">-</span>
-            </div>
-          </div>
-        </div>
+        <p style="color: #71717a; margin: 1rem 0;">
+          Link this server to your Discord to use the Nexus bot for sessions, shifts, and auto-announcements.
+        </p>
+        <button class="btn btn-primary" onclick="window.location.href='/link'">
+          <i class="fa-brands fa-discord"></i> Link Discord Server
+        </button>
       </div>
+    </div>
 
-      <!-- Quick Actions -->
-      <div class="dashboard-card reveal">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-bolt"></i> Quick Actions</h3>
-        </div>
-        <div class="card-body">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-            <button class="feature-btn" onclick="goToServerDashboard()">
-              <i class="fa-solid fa-gauge-high"></i> Server Dashboard
-            </button>
-            <button class="feature-btn" onclick="goToFeature('auto-announcements')">
-              <i class="fa-solid fa-bullhorn"></i> Auto Announcements
-            </button>
-            <button class="feature-btn" onclick="goToFeature('live-stats')">
-              <i class="fa-solid fa-chart-line"></i> Live Stats
-            </button>
-            <button class="feature-btn" onclick="goToFeature('logs')">
-              <i class="fa-solid fa-database"></i> View Logs
-            </button>
-          </div>
-        </div>
+    <!-- API Configuration -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fa-solid fa-key"></i>
+        <h3>ER:LC API Configuration</h3>
       </div>
-
-      <!-- Danger Zone -->
-      <div class="dashboard-card reveal" style="border-color: rgba(239, 68, 68, 0.5);">
-        <div class="card-header" style="background: rgba(239, 68, 68, 0.1);">
-          <h3><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</h3>
+      <form id="apiForm">
+        <div class="form-group">
+          <label for="apiKey"><i class="fa-solid fa-key"></i> ER:LC Server Key</label>
+          <input type="password" id="apiKey" placeholder="Enter your ER:LC Server Key" required>
+          <small>
+            <strong>How to get your Server Key:</strong><br>
+            1. Join your ER:LC private server<br>
+            2. Open Settings (gear icon top right)<br>
+            3. Find "ER:LC API" section<br>
+            4. Copy the Server Key
+          </small>
         </div>
-        <div class="card-body">
-          <p style="color: #999; margin-bottom: 1rem;">
-            Delete this server permanently. This action cannot be undone.
-          </p>
-          <button class="danger-btn" onclick="confirmDeleteServer()" style="background: linear-gradient(135deg, #ef4444, #dc2626); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer;">
-            <i class="fa-solid fa-trash"></i> Delete Server
+
+        <div class="btn-group">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">
+            <i class="fa-solid fa-check"></i> Save & Test
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="testConnection()">
+            <i class="fa-solid fa-signal"></i> Test Connection
           </button>
         </div>
-      </div>
-
+      </form>
     </div>
-  </section>
 
-  <!-- Footer -->
+    <!-- Danger Zone -->
+    <div class="card danger-zone">
+      <div class="card-header">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <h3 style="color: #ef4444;">Danger Zone</h3>
+      </div>
+      <p style="color: #71717a; margin-bottom: 1rem;">
+        Delete this server permanently. This action cannot be undone.
+      </p>
+      <button class="btn btn-danger" onclick="deleteServer()">
+        <i class="fa-solid fa-trash"></i> Delete Server
+      </button>
+    </div>
+
+  </div>
+
   <footer>
     <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
   </footer>
 
-  <!-- Delete Confirmation Modal -->
-  <div id="deleteModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header" style="background: rgba(239, 68, 68, 0.1); border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
-        <h2 style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Server</h2>
-        <span class="close-btn" onclick="closeDeleteModal()">&times;</span>
-      </div>
-      <div class="modal-body">
-        <p style="color: #fff; font-size: 1.1rem; margin-bottom: 1rem;">
-          Are you absolutely sure you want to delete <strong id="deleteServerName">this server</strong>?
-        </p>
-        <p style="color: #999; margin-bottom: 1.5rem;">
-          This will permanently delete:
-        </p>
-        <ul style="color: #ccc; margin-left: 1.5rem; margin-bottom: 1.5rem;">
-          <li>Server configuration and settings</li>
-          <li>API key connections</li>
-          <li>All associated data</li>
-        </ul>
-        <p style="color: #ef4444; font-weight: 600;">
-          This action cannot be undone!
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="secondary-btn" onclick="closeDeleteModal()">Cancel</button>
-        <button type="button" class="danger-btn" onclick="deleteServer()" style="background: linear-gradient(135deg, #ef4444, #dc2626); border: none; padding: 0.8rem 1.5rem; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer;">
-          <i class="fa-solid fa-trash"></i> Yes, Delete Server
-        </button>
-      </div>
-    </div>
-  </div>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const serverId = urlParams.get('id');
+    const accountID = urlParams.get('accountID') || localStorage.getItem('accountID');
 
-  <script src="server-settings.js"></script>
+    if (accountID && serverId) {
+      document.getElementById('dashboardLink').href = `/dashboard/user.html?ID=${accountID}`;
+      document.getElementById('serversLink').href = `/main/servers.html?ID=${accountID}`;
+      document.getElementById('serverDashLink').href = `/main/server.html?id=${serverId}&accountID=${accountID}`;
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch(`/api/servers/${serverId}/settings?accountID=${accountID}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          document.getElementById('serverName').textContent = data.server.name;
+          if (data.server.api_key) {
+            document.getElementById('apiKey').value = '••••••••••••';
+          }
+        }
+
+        await checkDiscordLink();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function checkDiscordLink() {
+      try {
+        const response = await fetch(`/api/servers/${serverId}/discord-link?accountID=${accountID}`);
+        const data = await response.json();
+        
+        if (data.linked) {
+          document.getElementById('discordStatus').innerHTML = `
+            <div class="link-status">
+              <i class="fa-solid fa-circle-check"></i> Linked to ${data.guildName}
+            </div>
+            <p style="color: #71717a; margin: 1rem 0;">
+              Your Discord server is connected. Use /setup in Discord to configure the bot.
+            </p>
+            <button class="btn btn-danger" onclick="unlinkDiscord()">
+              <i class="fa-solid fa-link-slash"></i> Unlink Discord
+            </button>
+          `;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    document.getElementById('apiForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const apiKey = document.getElementById('apiKey').value;
+
+      try {
+        const response = await fetch(`/api/servers/${serverId}/api-key`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accountID, apiKey })
+        });
+
+        const data = await response.json();
+        alert(data.success ? '✅ API key saved successfully!' : '❌ Error: ' + data.error);
+      } catch (error) {
+        alert('❌ Error saving API key');
+      }
+    });
+
+    async function testConnection() {
+      const response = await fetch(`/api/servers/${serverId}/test-connection?accountID=${accountID}`);
+      const data = await response.json();
+      alert(data.success ? '✅ Connection successful!' : '❌ Connection failed: ' + data.error);
+    }
+
+    async function unlinkDiscord() {
+      if (confirm('Unlink Discord server?')) {
+        const response = await fetch(`/api/servers/${serverId}/unlink-discord`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accountID })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          alert('✅ Discord server unlinked');
+          location.reload();
+        }
+      }
+    }
+
+    async function deleteServer() {
+      if (confirm('Delete this server permanently? This cannot be undone!')) {
+        const response = await fetch(`/api/servers/${serverId}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ accountID })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          alert('✅ Server deleted');
+          window.location.href = '/main/servers.html';
+        }
+      }
+    }
+
+    window.addEventListener('load', () => {
+      if (!serverId || !accountID) {
+        window.location.href = '/main/servers.html';
+        return;
+      }
+      loadData();
+    });
+  </script>
 </body>
 </html>

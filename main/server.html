@@ -4,390 +4,425 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Server Dashboard - Nexus Management</title>
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/dashboard/dashboard.css">
-  <link rel="stylesheet" href="/main/servers.css">
-  <link rel="stylesheet" href="/main/server-dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* Toast Notification System - Inline */
-    .toast-container {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      z-index: 10000;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #ffffff;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Navbar matching homepage */
+    nav {
+      background: rgba(26, 26, 46, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    nav .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    nav .nav-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav .nav-links a:hover {
+      color: #667eea;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem 3rem 2rem;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: #94a3b8;
+      font-size: 1.1rem;
+    }
+
+    .server-name {
+      color: #667eea;
+      font-weight: 600;
+      margin-top: 0.75rem;
+      font-size: 1.25rem;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* Activity Section */
+    .activity-card {
+      background: rgba(26, 26, 46, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-title i {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .link-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .link-status.linked {
+      background: rgba(52, 211, 153, 0.1);
+      border-color: rgba(52, 211, 153, 0.3);
+      color: #34d399;
+    }
+
+    .link-status.not-linked {
+      background: rgba(251, 191, 36, 0.1);
+      border-color: rgba(251, 191, 36, 0.3);
+      color: #fbbf24;
+    }
+
+    /* Activity Feed */
+    .activity-feed {
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      pointer-events: none;
     }
-    .toast {
-      background: rgba(26, 26, 26, 0.95);
-      border: 1px solid rgba(160, 32, 240, 0.3);
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
+
+    .activity-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 1rem;
-      min-width: 300px;
-      max-width: 400px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      pointer-events: auto;
-      animation: slideIn 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      padding: 1.25rem;
+      background: rgba(15, 15, 35, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      transition: all 0.3s;
     }
-    .toast::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: #a020f0;
+
+    .activity-item:hover {
+      border-color: rgba(102, 126, 234, 0.3);
+      transform: translateX(4px);
+      background: rgba(15, 15, 35, 0.6);
     }
-    .toast.success::before { background: #4ade80; }
-    .toast.error::before { background: #f87171; }
-    .toast.warning::before { background: #fbbf24; }
-    .toast.info::before { background: #60a5fa; }
-    .toast-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+
+    .activity-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
       flex-shrink: 0;
+      font-size: 1.1rem;
     }
-    .toast.success .toast-icon {
-      background: rgba(34, 197, 94, 0.2);
-      color: #4ade80;
+
+    .activity-icon.success {
+      background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(16, 185, 129, 0.2));
+      color: #34d399;
     }
-    .toast.error .toast-icon {
-      background: rgba(239, 68, 68, 0.2);
-      color: #f87171;
+
+    .activity-icon.info {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+      color: #3b82f6;
     }
-    .toast.warning .toast-icon {
-      background: rgba(234, 179, 8, 0.2);
+
+    .activity-icon.warning {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
       color: #fbbf24;
     }
-    .toast.info .toast-icon {
-      background: rgba(59, 130, 246, 0.2);
-      color: #60a5fa;
+
+    .activity-icon.error {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+      color: #ef4444;
     }
-    .toast-content {
+
+    .activity-content {
       flex: 1;
     }
-    .toast-title {
-      color: #fff;
-      font-weight: 600;
-      font-size: 1rem;
-      margin: 0 0 0.25rem 0;
+
+    .activity-text {
+      color: #e2e8f0;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
     }
-    .toast-message {
-      color: #999;
-      font-size: 0.9rem;
-      margin: 0;
-      line-height: 1.4;
+
+    .activity-time {
+      color: #64748b;
+      font-size: 0.875rem;
     }
-    .toast-close {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
-      border: none;
-      color: #999;
-      cursor: pointer;
-      display: flex;
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #64748b;
+    }
+
+    .empty-state i {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      opacity: 0.4;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .empty-state p {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Button */
+    .btn-primary {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
+      gap: 0.5rem;
+      padding: 0.875rem 1.75rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      margin-top: 1rem;
     }
-    .toast-close:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
     }
-    @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #64748b;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 4rem;
     }
-    @keyframes slideOut {
-      from {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      to {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-    }
-    .toast.removing {
-      animation: slideOut 0.3s ease forwards;
-    }
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(160, 32, 240, 0.2);
-      border-top-color: #a020f0;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+
     @media (max-width: 768px) {
-      .toast-container {
-        left: 20px;
-        right: 20px;
-        top: 70px;
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
       }
-      .toast {
-        min-width: auto;
-        max-width: none;
+
+      nav .nav-links {
+        gap: 1rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="logo">Nexus Management</div>
-    <ul class="nav-links">
-      <li><a href="/dashboard/user.html" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
-      <li><a href="/main/servers.html" id="serversLink"><i class="fa-solid fa-server"></i> Servers</a></li>
-      <li><a href="#" id="settingsLink"><i class="fa-solid fa-cog"></i> Settings</a></li>
-      <li><a href="/auth/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-    </ul>
+  <nav>
+    <div class="container">
+      <div class="logo">Nexus Management</div>
+      <ul class="nav-links">
+        <li><a href="/dashboard/user.html" id="dashboardLink"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+        <li><a href="/main/servers.html" id="serversLink"><i class="fa-solid fa-server"></i> Servers</a></li>
+        <li><a href="#" id="settingsLink"><i class="fa-solid fa-cog"></i> Settings</a></li>
+        <li><a href="/auth/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+      </ul>
+    </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="server-hero">
-    <div class="hero-content fade-in">
-      <div class="server-header-info">
-        <div class="server-icon-large">
-          <i class="fa-solid fa-server"></i>
-        </div>
-        <div>
-          <h1 id="serverName">Loading...</h1>
-          <p class="tagline">
-            <span id="serverStatus" class="status-badge">
-              <i class="fa-solid fa-circle"></i> Checking status...
-            </span>
-          </p>
-        </div>
-      </div>
-    </div>
+  <section class="hero">
+    <h1><i class="fa-solid fa-server"></i> Server Dashboard</h1>
+    <p>Manage your ER:LC server</p>
+    <p class="server-name" id="serverName">Loading...</p>
   </section>
 
-  <!-- Server Stats Bar -->
-  <section class="stats-bar reveal">
-    <div class="stat-item">
-      <div class="stat-icon-small">
-        <i class="fa-solid fa-users"></i>
-      </div>
-      <div class="stat-data">
-        <span class="stat-value" id="playersOnline">-</span>
-        <span class="stat-label">Players Online</span>
-      </div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-icon-small">
-        <i class="fa-solid fa-user-shield"></i>
-      </div>
-      <div class="stat-data">
-        <span class="stat-value" id="staffOnline">-</span>
-        <span class="stat-label">Staff Online</span>
-      </div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-icon-small">
-        <i class="fa-solid fa-clock"></i>
-      </div>
-      <div class="stat-data">
-        <span class="stat-value" id="uptime">-</span>
-        <span class="stat-label">Uptime</span>
-      </div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-icon-small">
-        <i class="fa-solid fa-map"></i>
-      </div>
-      <div class="stat-data">
-        <span class="stat-value" id="currentMap">-</span>
-        <span class="stat-label">Current Map</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Main Dashboard Content -->
-  <section class="dashboard-main">
-    <div class="dashboard-grid">
-      
-      <!-- Command Execution Panel -->
-      <div class="dashboard-section reveal">
-        <h2><i class="fa-solid fa-terminal"></i> Execute Command</h2>
-        <div class="command-panel">
-          <div class="form-group">
-            <label for="quickCommand"><i class="fa-solid fa-code"></i> Enter Command</label>
-            <input type="text" id="quickCommand" placeholder="e.g., :h Server restart in 5 minutes" class="command-input">
-            <small style="color: #999; display: block; margin-top: 0.5rem;">
-              Commands: :h (hint), :m (message), :shutdown, :tp, etc.
-            </small>
-          </div>
-          <button class="execute-btn" onclick="executeQuickCommand()">
-            <i class="fa-solid fa-paper-plane"></i> Execute
-          </button>
-          
-          <!-- Quick Command Buttons -->
-          <div class="quick-commands">
-            <button class="quick-cmd-btn" onclick="setQuickCommand(':h ')">
-              <i class="fa-solid fa-bullhorn"></i> Hint
-            </button>
-            <button class="quick-cmd-btn" onclick="setQuickCommand(':m ')">
-              <i class="fa-solid fa-comment"></i> Message
-            </button>
-            <button class="quick-cmd-btn" onclick="setQuickCommand(':shutdown')">
-              <i class="fa-solid fa-power-off"></i> Shutdown
-            </button>
-          </div>
-          
-          <!-- Command History -->
-          <div class="command-history" id="commandHistory">
-            <h3><i class="fa-solid fa-history"></i> Recent Commands</h3>
-            <div id="historyList" class="history-list">
-              <p style="color: #666; text-align: center;">No commands executed yet</p>
-            </div>
-          </div>
+  <div class="container">
+    <div class="activity-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fa-solid fa-clock-rotate-left"></i> Recent Activity
+        </h2>
+        <div id="linkStatus">
+          <span class="link-status not-linked">
+            <i class="fa-solid fa-link-slash"></i> Not Linked to Discord
+          </span>
         </div>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="dashboard-section reveal">
-        <h2><i class="fa-solid fa-bolt"></i> Quick Actions</h2>
-        <div class="quick-actions-grid">
-          <button class="action-card" onclick="refreshData()">
-            <i class="fa-solid fa-rotate"></i>
-            <span>Refresh Data</span>
-          </button>
-          <button class="action-card" onclick="goToSettings()">
-            <i class="fa-solid fa-cog"></i>
-            <span>Server Settings</span>
-          </button>
-          <button class="action-card" onclick="goToFeature('live-stats')">
-            <i class="fa-solid fa-chart-line"></i>
-            <span>Live Stats</span>
-          </button>
-          <button class="action-card" onclick="goToFeature('logs')">
-            <i class="fa-solid fa-database"></i>
-            <span>View Logs</span>
-          </button>
+      <div class="activity-feed" id="activityFeed">
+        <div class="empty-state">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <p style="font-size: 1.125rem; font-weight: 600; color: #cbd5e1;">No recent activity</p>
+          <p style="font-size: 0.9375rem;">Link your Discord server to see session starts, shifts, and more</p>
+          <a href="/link" class="btn-primary">
+            <i class="fa-brands fa-discord"></i> Link Discord Server
+          </a>
         </div>
       </div>
-
-      <!-- Features Grid -->
-      <div class="dashboard-section full-width reveal">
-        <h2><i class="fa-solid fa-grid"></i> Management Features</h2>
-        <div class="features-grid">
-          
-          <div class="feature-card reveal stagger-1" onclick="goToFeature('auto-announcements')">
-            <div class="feature-icon">
-              <i class="fa-solid fa-bullhorn"></i>
-            </div>
-            <h3>Auto Announcements</h3>
-            <p>Schedule automated server messages and alerts</p>
-            <div class="feature-badge">Active</div>
-          </div>
-
-          <div class="feature-card reveal stagger-2" onclick="goToFeature('live-stats')">
-            <div class="feature-icon">
-              <i class="fa-solid fa-chart-line"></i>
-            </div>
-            <h3>Live Statistics</h3>
-            <p>Real-time player and server analytics</p>
-            <div class="feature-badge new">New</div>
-          </div>
-          <div class="feature-card reveal stagger-1" onclick="goToFeature('logs')">
-            <div class="feature-icon">
-              <i class="fa-solid fa-database"></i>
-            </div>
-            <h3>Activity Logs</h3>
-            <p>View complete server history and events</p>
-            <div class="feature-badge">Active</div>
-          </div>
-
-          <div class="feature-card reveal stagger-2" onclick="goToFeature('permissions')">
-            <div class="feature-icon">
-              <i class="fa-solid fa-lock"></i>
-            </div>
-          <div class="feature-card reveal stagger-3 premium">
-            <div class="feature-icon">
-              <i class="fa-solid fa-gem"></i>
-            </div>
-            <h3>Premium Analytics</h3>
-            <p>Advanced insights and custom reports</p>
-            <div class="feature-badge premium-badge">Premium</div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Recent Activity -->
-      <div class="dashboard-section reveal">
-        <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</h2>
-        <div class="activity-feed" id="activityFeed">
-          <div class="activity-item">
-            <div class="activity-icon">
-              <i class="fa-solid fa-circle-info"></i>
-            </div>
-            <div class="activity-content">
-              <p class="activity-text">Server dashboard loaded</p>
-              <p class="activity-time">Just now</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Server Info Card -->
-      <div class="dashboard-section reveal">
-        <h2><i class="fa-solid fa-info-circle"></i> Server Information</h2>
-        <div class="info-list">
-          <div class="info-item">
-            <span class="info-label"><i class="fa-solid fa-id-badge"></i> Server ID:</span>
-            <span class="info-value" id="infoServerId">-</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label"><i class="fa-solid fa-crown"></i> Owner:</span>
-            <span class="info-value" id="infoOwner">-</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label"><i class="fa-solid fa-tag"></i> Plan:</span>
-            <span class="info-value" id="infoPlan">Nexus</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label"><i class="fa-solid fa-signal"></i> API Status:</span>
-            <span class="info-value" id="infoApiStatus">
-              <span class="status-dot offline"></span> Not Connected
-            </span>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </section>
+  </div>
 
-  <!-- Footer -->
   <footer>
-    <p>&copy; 2026 Nexus Management | ER:LC Staff Management</p>
+    <p>© 2026 Nexus Management. | We are not affiliated with ER:LC in any way.</p>
   </footer>
 
-  <script src="/main/server-dashboard.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const serverId = urlParams.get('id');
+    const accountID = urlParams.get('accountID') || localStorage.getItem('accountID');
+
+    if (accountID && serverId) {
+      document.getElementById('dashboardLink').href = `/dashboard/user.html?ID=${accountID}`;
+      document.getElementById('serversLink').href = `/main/servers.html?ID=${accountID}`;
+      document.getElementById('settingsLink').href = `/main/server-settings.html?id=${serverId}&accountID=${accountID}`;
+    }
+
+    async function loadServerData() {
+      try {
+        const response = await fetch(`/api/servers/${serverId}/settings?accountID=${accountID}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          document.getElementById('serverName').textContent = data.server.name;
+          await checkDiscordLink();
+          await loadActivity();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function checkDiscordLink() {
+      try {
+        const response = await fetch(`/api/servers/${serverId}/discord-link?accountID=${accountID}`);
+        const data = await response.json();
+        
+        if (data.linked) {
+          document.getElementById('linkStatus').innerHTML = `
+            <span class="link-status linked">
+              <i class="fa-solid fa-circle-check"></i> Linked to ${data.guildName}
+            </span>
+          `;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function loadActivity() {
+      try {
+        const response = await fetch(`/api/servers/${serverId}/activity?accountID=${accountID}`);
+        const data = await response.json();
+        
+        if (data.success && data.activity?.length > 0) {
+          const container = document.getElementById('activityFeed');
+          container.innerHTML = data.activity.map(a => {
+            const iconClass = a.type || 'info';
+            const icon = a.icon || 'fa-circle-info';
+            return `
+              <div class="activity-item">
+                <div class="activity-icon ${iconClass}">
+                  <i class="fa-solid ${icon}"></i>
+                </div>
+                <div class="activity-content">
+                  <p class="activity-text">${a.message}</p>
+                  <p class="activity-time">${a.timeAgo || 'Just now'}</p>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    window.addEventListener('load', () => {
+      if (!serverId || !accountID) {
+        window.location.href = '/main/servers.html';
+        return;
+      }
+      loadServerData();
+      setInterval(loadActivity, 30000);
+    });
+  </script>
 </body>
 </html>
